@@ -1,10 +1,9 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function sendDraftNotification(title: string, slug: string) {
   if (!process.env.RESEND_API_KEY) return
 
+  const resend = new Resend(process.env.RESEND_API_KEY)
   await resend.emails.send({
     from: 'content@helpfulhomebuyersusa.com',
     to: 'info@helpfulhomebuyersusa.com',
