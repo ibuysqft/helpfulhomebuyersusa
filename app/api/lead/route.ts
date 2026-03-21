@@ -13,6 +13,10 @@ const VALID_CONDITIONS = [
   'Needs minor repairs',
   'Needs major repairs/renovation',
   'Uninhabitable',
+  'Move-In Ready',
+  'Minor Repairs',
+  'Major Repairs',
+  'Tear-Down',
 ] as const
 
 export async function POST(req: NextRequest) {
@@ -32,7 +36,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  const { address, phone, condition, website, name, email, situation, property_type, timeline } = body
+  const { address, phone, condition, website, name, firstName, lastName, email, situation, property_type, propertyType, timeline } = body
+  const resolvedName = name?.trim() || [firstName, lastName].filter(Boolean).join(' ') || undefined
 
   // Honeypot
   if (website) return NextResponse.json({ error: 'Invalid submission' }, { status: 400 })
@@ -75,10 +80,10 @@ export async function POST(req: NextRequest) {
     address: address.trim(),
     phone: phone.trim(),
     condition: condition ?? '',
-    name: name?.trim(),
+    name: resolvedName,
     email: email?.trim(),
     situation: situation?.trim(),
-    property_type: property_type?.trim(),
+    property_type: (property_type ?? propertyType)?.trim(),
     timeline: timeline?.trim(),
     sourceUrl: referer,
     sourceCity,
