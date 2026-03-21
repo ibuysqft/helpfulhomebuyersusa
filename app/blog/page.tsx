@@ -13,8 +13,6 @@ export const metadata: Metadata = {
 }
 
 export default async function BlogPage() {
-  'use cache'
-
   const { data: posts } = await supabase
     .from('blog_posts')
     .select('id, title, slug, meta_description, published_at, city_tags')
