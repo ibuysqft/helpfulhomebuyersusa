@@ -5,6 +5,11 @@ interface GHLPayload {
   address: string
   phone: string
   condition: string
+  name?: string
+  email?: string
+  situation?: string
+  property_type?: string
+  timeline?: string
   sourceUrl?: string
   sourceCity?: string
   utmSource?: string | null
@@ -29,6 +34,42 @@ export async function sendToGHL(payload: GHLPayload): Promise<GHLResult> {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 8000)
 
+    const nameParts = payload.name?.trim().split(/\s+/) ?? []
+    const firstName = nameParts[0] ?? ''
+    const lastName = nameParts.slice(1).join(' ')
+
+    const customFields = [
+      { key: 'property_condition', field_value: payload.condition },
+      { key: 'source_city', field_value: payload.sourceCity ?? '' },
+      { key: 'source_url', field_value: payload.sourceUrl ?? '' },
+      { key: 'utm_source', field_value: payload.utmSource ?? '' },
+      { key: 'utm_medium', field_value: payload.utmMedium ?? '' },
+      { key: 'utm_campaign', field_value: payload.utmCampaign ?? '' },
+    ]
+
+    if (payload.situation) {
+      customFields.push({ key: 'seller_situation', field_value: payload.situation })
+    }
+    if (payload.property_type) {
+      customFields.push({ key: 'property_type', field_value: payload.property_type })
+    }
+    if (payload.timeline) {
+      customFields.push({ key: 'sell_timeline', field_value: payload.timeline })
+    }
+
+    const contactBody: Record<string, unknown> = {
+      locationId: GHL_LOCATION_ID,
+      phone: payload.phone,
+      address1: payload.address,
+      source: 'helpfulhomebuyersusa.com',
+      tags: ['website-lead', payload.sourceCity ?? ''].filter(Boolean),
+      customFields,
+    }
+
+    if (firstName) contactBody.firstName = firstName
+    if (lastName) contactBody.lastName = lastName
+    if (payload.email) contactBody.email = payload.email
+
     const res = await fetch(`${GHL_API_URL}/contacts/`, {
       method: 'POST',
       headers: {
@@ -36,21 +77,7 @@ export async function sendToGHL(payload: GHLPayload): Promise<GHLResult> {
         Authorization: `Bearer ${apiKey}`,
         Version: '2021-07-28',
       },
-      body: JSON.stringify({
-        locationId: GHL_LOCATION_ID,
-        phone: payload.phone,
-        address1: payload.address,
-        source: 'helpfulhomebuyersusa.com',
-        tags: ['website-lead', payload.sourceCity ?? ''].filter(Boolean),
-        customFields: [
-          { key: 'property_condition', field_value: payload.condition },
-          { key: 'source_city', field_value: payload.sourceCity ?? '' },
-          { key: 'source_url', field_value: payload.sourceUrl ?? '' },
-          { key: 'utm_source', field_value: payload.utmSource ?? '' },
-          { key: 'utm_medium', field_value: payload.utmMedium ?? '' },
-          { key: 'utm_campaign', field_value: payload.utmCampaign ?? '' },
-        ],
-      }),
+      body: JSON.stringify(contactBody),
       signal: controller.signal,
     })
 
