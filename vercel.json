@@ -1,0 +1,27 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/content",
+      "schedule": "0 6 * * 1"
+    },
+    {
+      "path": "/api/cron/sitemap",
+      "schedule": "0 7 * * 1"
+    },
+    {
+      "path": "/api/cron/audit",
+      "schedule": "0 0 * * 0"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/admin(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ]
+}
