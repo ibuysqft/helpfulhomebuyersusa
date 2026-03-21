@@ -1,8 +1,6 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
-
   async redirects() {
     return [
       { source: '/cash-offer', destination: '/property-information', permanent: true },
