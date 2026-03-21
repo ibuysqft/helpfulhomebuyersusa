@@ -1,3 +1,6 @@
+const GHL_API_URL = 'https://services.leadconnectorhq.com'
+const GHL_LOCATION_ID = process.env.GHL_LOCATION_ID ?? 'Jy8irfJWPVtq3vycsvx4'
+
 interface GHLPayload {
   address: string
   phone: string
@@ -16,34 +19,37 @@ interface GHLResult {
 }
 
 export async function sendToGHL(payload: GHLPayload): Promise<GHLResult> {
-  const webhookUrl = process.env.GHL_WEBHOOK_URL
-  if (!webhookUrl) {
-    console.warn('GHL_WEBHOOK_URL not set — skipping GHL push')
-    return { success: false, error: 'GHL_WEBHOOK_URL not configured' }
+  const apiKey = process.env.GHL_API_KEY
+  if (!apiKey) {
+    console.warn('GHL_API_KEY not set — skipping GHL push')
+    return { success: false, error: 'GHL_API_KEY not configured' }
   }
 
   try {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 8000)
 
-    const res = await fetch(webhookUrl, {
+    const res = await fetch(`${GHL_API_URL}/contacts/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+        Version: '2021-07-28',
+      },
       body: JSON.stringify({
-        firstName: '',
-        lastName: '',
+        locationId: GHL_LOCATION_ID,
         phone: payload.phone,
         address1: payload.address,
-        customField: {
-          property_condition: payload.condition,
-          source_city: payload.sourceCity ?? '',
-          source_url: payload.sourceUrl ?? '',
-          utm_source: payload.utmSource ?? '',
-          utm_medium: payload.utmMedium ?? '',
-          utm_campaign: payload.utmCampaign ?? '',
-        },
         source: 'helpfulhomebuyersusa.com',
-        tags: ['website-lead', payload.sourceCity ?? 'unknown-city'].filter(Boolean),
+        tags: ['website-lead', payload.sourceCity ?? ''].filter(Boolean),
+        customFields: [
+          { key: 'property_condition', field_value: payload.condition },
+          { key: 'source_city', field_value: payload.sourceCity ?? '' },
+          { key: 'source_url', field_value: payload.sourceUrl ?? '' },
+          { key: 'utm_source', field_value: payload.utmSource ?? '' },
+          { key: 'utm_medium', field_value: payload.utmMedium ?? '' },
+          { key: 'utm_campaign', field_value: payload.utmCampaign ?? '' },
+        ],
       }),
       signal: controller.signal,
     })
@@ -56,10 +62,10 @@ export async function sendToGHL(payload: GHLPayload): Promise<GHLResult> {
     }
 
     const data = await res.json().catch(() => ({}))
-    return { success: true, contactId: data?.id ?? data?.contactId }
+    return { success: true, contactId: data?.contact?.id ?? data?.id }
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error'
-    console.error('GHL webhook failed:', msg)
+    console.error('GHL API failed:', msg)
     return { success: false, error: msg }
   }
 }
