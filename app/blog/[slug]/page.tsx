@@ -23,7 +23,8 @@ export async function generateStaticParams() {
     .from('blog_posts')
     .select('slug')
     .eq('status', 'published')
-  return (data ?? []).map(p => ({ slug: p.slug }))
+  const slugs = (data ?? []).map(p => ({ slug: p.slug }))
+  return slugs.length > 0 ? slugs : [{ slug: '_placeholder' }]
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
