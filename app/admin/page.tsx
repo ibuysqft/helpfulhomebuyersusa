@@ -1,8 +1,6 @@
 import { redirect } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
-export const dynamic = 'force-dynamic'
-
 interface ActionState {
   id: string
   action: 'publish' | 'reject'

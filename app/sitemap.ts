@@ -5,8 +5,6 @@ import { situations } from '@/data/situations'
 import { situationCityMatrix } from '@/data/situation-city-matrix'
 import { supabase } from '@/lib/supabase'
 
-export const dynamic = 'force-dynamic'
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url
 
