@@ -1,13 +1,17 @@
 import { MetadataRoute } from 'next'
 import { siteConfig } from '@/config/site'
-import { cities } from '@/data/cities'
-import { situations } from '@/data/situations'
+import { getStateConfig } from '@/lib/state-context'
+import { getCitiesForState } from '@/lib/state-data'
+import { getSituations } from '@/data/situations'
 import { situationCityMatrix } from '@/data/situation-city-matrix'
 import { supabase } from '@/lib/supabase'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url
-  const stateAbbr = siteConfig.stateAbbr.toLowerCase()
+  const stateConfig = getStateConfig()
+  const stateAbbr = stateConfig.abbr.toLowerCase()
+  const cities = getCitiesForState(stateConfig.slug)
+  const situations = getSituations(stateConfig.slug)
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },

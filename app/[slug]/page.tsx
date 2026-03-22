@@ -11,9 +11,9 @@ import { TrustBar } from '@/components/trust-bar'
 import { HowItWorks } from '@/components/how-it-works'
 import { siteConfig } from '@/config/site'
 import { getSituations } from '@/data/situations'
-import { cities } from '@/data/cities'
 import { getHomepageFaqs } from '@/data/faqs'
 import { getStateConfig } from '@/lib/state-context'
+import { getCitiesForState } from '@/lib/state-data'
 import { situationCityMatrix } from '@/data/situation-city-matrix'
 
 const iconMap: Record<string, LucideIcon> = {
@@ -23,6 +23,7 @@ const iconMap: Record<string, LucideIcon> = {
 const stateConfig = getStateConfig()
 const situations = getSituations(stateConfig.slug)
 const homepageFaqs = getHomepageFaqs(stateConfig)
+const cities = getCitiesForState(stateConfig.slug)
 
 interface Props { params: Promise<{ slug: string }> }
 
