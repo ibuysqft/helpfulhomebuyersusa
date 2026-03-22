@@ -1,8 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Zap } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
+import { ExitIntentModal } from '@/components/exit-intent-modal'
 import { siteConfig } from '@/config/site'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -53,6 +56,7 @@ const CONDITIONS = [
 ] as const
 
 const TOTAL_STEPS = 6
+const DRAFT_KEY = 'hhb_funnel_draft'
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -142,27 +146,68 @@ const EMPTY_FUNNEL: FunnelData = {
 }
 
 export default function PropertyInformationPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [step, setStep] = useState(1)
+  const [slideDir, setSlideDir] = useState<'right' | 'left'>('right')
   const [data, setData] = useState<FunnelData>(EMPTY_FUNNEL)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Restore draft from localStorage and URL param on mount
+  useEffect(() => {
+    const addressParam = searchParams.get('address')
+
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY)
+      const draft = raw ? (JSON.parse(raw) as Partial<Pick<FunnelData, 'address' | 'condition'>>) : {}
+      setData(prev => ({
+        ...prev,
+        address: addressParam ?? draft.address ?? prev.address,
+        condition: draft.condition ?? prev.condition,
+      }))
+    } catch {
+      // ignore malformed draft or storage errors
+      if (addressParam) {
+        setData(prev => ({ ...prev, address: addressParam }))
+      }
+    }
+  }, [searchParams])
+
+  function persistDraft(patch: Partial<Pick<FunnelData, 'address' | 'condition'>>) {
+    try {
+      const existing = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? '{}') as Partial<Pick<FunnelData, 'address' | 'condition'>>
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...existing, ...patch }))
+    } catch {
+      // ignore storage errors
+    }
+  }
+
   function set<K extends keyof FunnelData>(key: K, value: FunnelData[K]) {
     setData(prev => ({ ...prev, [key]: value }))
+    if (key === 'address' || key === 'condition') {
+      persistDraft({ [key]: value as string })
+    }
   }
 
   function advance() {
+    setSlideDir('right')
     setStep(s => s + 1)
   }
 
   function back() {
     setError('')
+    setSlideDir('left')
     setStep(s => Math.max(1, s - 1))
   }
 
   function selectAndAdvance<K extends keyof FunnelData>(key: K, value: FunnelData[K]) {
+    setSlideDir('right')
     setData(prev => ({ ...prev, [key]: value }))
+    if (key === 'condition') {
+      persistDraft({ condition: value as string })
+    }
     setStep(s => s + 1)
   }
 
@@ -200,7 +245,9 @@ export default function PropertyInformationPage() {
         return
       }
 
-      setSubmitted(true)
+      // Clear draft on successful submit then redirect
+      try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ }
+      router.push('/thank-you')
     } catch {
       setError('Network error. Please call us directly.')
     } finally {
@@ -208,7 +255,11 @@ export default function PropertyInformationPage() {
     }
   }
 
-  // ── Thank-you screen ──────────────────────────────────────────────────────
+  const slideClass = slideDir === 'right'
+    ? 'animate-in slide-in-from-right-4 duration-200'
+    : 'animate-in slide-in-from-left-4 duration-200'
+
+  // ── Thank-you screen (fallback) ────────────────────────────────────────────
 
   if (submitted) {
     return (
@@ -256,196 +307,203 @@ export default function PropertyInformationPage() {
   return (
     <>
       <Header />
+      <ExitIntentModal />
       <main className="min-h-screen bg-slate-900 px-4 py-12">
         <div className="max-w-lg mx-auto">
 
           {/* Header text */}
           <div className="text-center mb-8">
-            <div className="inline-block bg-amber-400 text-slate-900 text-xs font-bold px-3 py-1 rounded-full mb-4">
-              ⚡ Offer in 24 Hours
+            <div className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-900 text-xs font-bold px-3 py-1 rounded-full mb-4">
+              <Zap size={12} aria-hidden={true} />
+              Offer in 24 Hours
             </div>
             <h1 className="text-2xl font-bold text-white">Get Your Cash Offer</h1>
           </div>
 
-          <div className="bg-slate-800 rounded-2xl p-6 md:p-8">
+          <div className="bg-slate-900/80 backdrop-blur-sm border border-white/[0.06] rounded-2xl p-6 md:p-8 shadow-2xl shadow-black/40">
             <ProgressBar step={step} />
 
-            {/* Step 1 — Situation */}
-            {step === 1 && (
-              <div>
-                <h2 className="text-white text-xl font-bold mb-1">What best describes your situation?</h2>
-                <p className="text-slate-400 text-sm mb-5">Select the option that fits best</p>
-                <div className="space-y-2.5">
-                  {SITUATIONS.map(s => (
-                    <RadioTile
-                      key={s.value}
-                      label={s.label}
-                      icon={s.icon}
-                      selected={data.situation === s.value}
-                      onClick={() => selectAndAdvance('situation', s.value)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Animated step wrapper — key triggers remount on step change */}
+            <div key={step} className={slideClass}>
 
-            {/* Step 2 — Property Type */}
-            {step === 2 && (
-              <div>
-                <h2 className="text-white text-xl font-bold mb-1">What type of property is it?</h2>
-                <p className="text-slate-400 text-sm mb-5">Select your property type</p>
-                <div className="space-y-2.5">
-                  {PROPERTY_TYPES.map(pt => (
-                    <RadioTile
-                      key={pt.value}
-                      label={pt.label}
-                      icon={pt.icon}
-                      selected={data.property_type === pt.value}
-                      onClick={() => selectAndAdvance('property_type', pt.value)}
-                    />
-                  ))}
-                </div>
-                <BackButton onClick={back} />
-              </div>
-            )}
-
-            {/* Step 3 — Timeline */}
-            {step === 3 && (
-              <div>
-                <h2 className="text-white text-xl font-bold mb-1">How quickly do you need to sell?</h2>
-                <p className="text-slate-400 text-sm mb-5">No commitment — just helps us prepare</p>
-                <div className="space-y-2.5">
-                  {TIMELINES.map(tl => (
-                    <RadioTile
-                      key={tl.value}
-                      label={tl.label}
-                      sublabel={tl.sublabel}
-                      selected={data.timeline === tl.value}
-                      onClick={() => selectAndAdvance('timeline', tl.value)}
-                    />
-                  ))}
-                </div>
-                <BackButton onClick={back} />
-              </div>
-            )}
-
-            {/* Step 4 — Condition */}
-            {step === 4 && (
-              <div>
-                <h2 className="text-white text-xl font-bold mb-1">What condition is the property in?</h2>
-                <p className="text-slate-400 text-sm mb-5">We buy in any condition — no repairs needed</p>
-                <div className="space-y-2.5">
-                  {CONDITIONS.map(c => (
-                    <RadioTile
-                      key={c.value}
-                      label={c.label}
-                      sublabel={c.sublabel}
-                      selected={data.condition === c.value}
-                      onClick={() => selectAndAdvance('condition', c.value)}
-                    />
-                  ))}
-                </div>
-                <BackButton onClick={back} />
-              </div>
-            )}
-
-            {/* Step 5 — Address */}
-            {step === 5 && (
-              <div>
-                <h2 className="text-white text-xl font-bold mb-1">What&apos;s the property address?</h2>
-                <p className="text-slate-400 text-sm mb-5">We use this to look up your property details</p>
-                <input
-                  type="text"
-                  value={data.address}
-                  onChange={e => set('address', e.target.value)}
-                  placeholder="123 Main St, Fairfax, VA"
-                  className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:border-amber-500 transition-colors mb-4"
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (data.address.trim()) advance()
-                    else setError('Please enter the property address.')
-                  }}
-                  className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-3.5 rounded-xl transition-colors"
-                >
-                  Continue →
-                </button>
-                {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
-                <BackButton onClick={back} />
-              </div>
-            )}
-
-            {/* Step 6 — Contact Info */}
-            {step === 6 && (
-              <div>
-                <div className="inline-block bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-full mb-3">
-                  You qualify for a cash offer!
-                </div>
-                <h2 className="text-white text-xl font-bold mb-1">Where should we send your offer?</h2>
-                <p className="text-slate-400 text-sm mb-5">We&apos;ll call you within 24 hours</p>
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  {/* Honeypot */}
-                  <input type="text" name="website" tabIndex={-1} aria-hidden className="hidden" />
-                  <div>
-                    <label htmlFor="funnel-name" className="block text-slate-300 text-sm font-medium mb-1.5">
-                      Full Name <span className="text-amber-400">*</span>
-                    </label>
-                    <input
-                      id="funnel-name"
-                      type="text"
-                      value={data.name}
-                      onChange={e => set('name', e.target.value)}
-                      placeholder="Jane Smith"
-                      required
-                      className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:border-amber-500 transition-colors"
-                    />
+              {/* Step 1 — Situation */}
+              {step === 1 && (
+                <div>
+                  <h2 className="text-white text-xl font-bold mb-1">What best describes your situation?</h2>
+                  <p className="text-slate-400 text-sm mb-5">Select the option that fits best</p>
+                  <div className="space-y-2.5">
+                    {SITUATIONS.map(s => (
+                      <RadioTile
+                        key={s.value}
+                        label={s.label}
+                        icon={s.icon}
+                        selected={data.situation === s.value}
+                        onClick={() => selectAndAdvance('situation', s.value)}
+                      />
+                    ))}
                   </div>
-                  <div>
-                    <label htmlFor="funnel-phone" className="block text-slate-300 text-sm font-medium mb-1.5">
-                      Phone Number <span className="text-amber-400">*</span>
-                    </label>
-                    <input
-                      id="funnel-phone"
-                      type="tel"
-                      value={data.phone}
-                      onChange={e => set('phone', e.target.value)}
-                      placeholder="(703) 555-0100"
-                      required
-                      className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="funnel-email" className="block text-slate-300 text-sm font-medium mb-1.5">
-                      Email <span className="text-slate-500 font-normal">(optional)</span>
-                    </label>
-                    <input
-                      id="funnel-email"
-                      type="email"
-                      value={data.email}
-                      onChange={e => set('email', e.target.value)}
-                      placeholder="jane@example.com"
-                      className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
+                </div>
+              )}
 
-                  {error && <p className="text-red-400 text-sm">{error}</p>}
+              {/* Step 2 — Property Type */}
+              {step === 2 && (
+                <div>
+                  <h2 className="text-white text-xl font-bold mb-1">What type of property is it?</h2>
+                  <p className="text-slate-400 text-sm mb-5">Select your property type</p>
+                  <div className="space-y-2.5">
+                    {PROPERTY_TYPES.map(pt => (
+                      <RadioTile
+                        key={pt.value}
+                        label={pt.label}
+                        icon={pt.icon}
+                        selected={data.property_type === pt.value}
+                        onClick={() => selectAndAdvance('property_type', pt.value)}
+                      />
+                    ))}
+                  </div>
+                  <BackButton onClick={back} />
+                </div>
+              )}
 
+              {/* Step 3 — Timeline */}
+              {step === 3 && (
+                <div>
+                  <h2 className="text-white text-xl font-bold mb-1">How quickly do you need to sell?</h2>
+                  <p className="text-slate-400 text-sm mb-5">No commitment — just helps us prepare</p>
+                  <div className="space-y-2.5">
+                    {TIMELINES.map(tl => (
+                      <RadioTile
+                        key={tl.value}
+                        label={tl.label}
+                        sublabel={tl.sublabel}
+                        selected={data.timeline === tl.value}
+                        onClick={() => selectAndAdvance('timeline', tl.value)}
+                      />
+                    ))}
+                  </div>
+                  <BackButton onClick={back} />
+                </div>
+              )}
+
+              {/* Step 4 — Condition */}
+              {step === 4 && (
+                <div>
+                  <h2 className="text-white text-xl font-bold mb-1">What condition is the property in?</h2>
+                  <p className="text-slate-400 text-sm mb-5">We buy in any condition — no repairs needed</p>
+                  <div className="space-y-2.5">
+                    {CONDITIONS.map(c => (
+                      <RadioTile
+                        key={c.value}
+                        label={c.label}
+                        sublabel={c.sublabel}
+                        selected={data.condition === c.value}
+                        onClick={() => selectAndAdvance('condition', c.value)}
+                      />
+                    ))}
+                  </div>
+                  <BackButton onClick={back} />
+                </div>
+              )}
+
+              {/* Step 5 — Address */}
+              {step === 5 && (
+                <div>
+                  <h2 className="text-white text-xl font-bold mb-1">What&apos;s the property address?</h2>
+                  <p className="text-slate-400 text-sm mb-5">We use this to look up your property details</p>
+                  <input
+                    type="text"
+                    value={data.address}
+                    onChange={e => set('address', e.target.value)}
+                    placeholder="123 Main St, Fairfax, VA"
+                    className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:border-amber-500 transition-colors mb-4"
+                    autoFocus
+                  />
                   <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-amber-500 hover:bg-amber-400 disabled:opacity-60 text-slate-900 font-bold py-4 rounded-xl transition-colors text-base mt-2"
+                    type="button"
+                    onClick={() => {
+                      if (data.address.trim()) advance()
+                      else setError('Please enter the property address.')
+                    }}
+                    className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-3.5 rounded-xl transition-colors"
                   >
-                    {loading ? 'Submitting…' : 'Get My Cash Offer →'}
+                    Continue →
                   </button>
-                  <p className="text-slate-500 text-xs text-center">
-                    No obligation. No fees. We&apos;ll call within 24 hours.
-                  </p>
-                </form>
-                <BackButton onClick={back} />
-              </div>
-            )}
+                  {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+                  <BackButton onClick={back} />
+                </div>
+              )}
+
+              {/* Step 6 — Contact Info */}
+              {step === 6 && (
+                <div>
+                  <div className="inline-block bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-full mb-3">
+                    You qualify for a cash offer!
+                  </div>
+                  <h2 className="text-white text-xl font-bold mb-1">Where should we send your offer?</h2>
+                  <p className="text-slate-400 text-sm mb-5">We&apos;ll call you within 24 hours</p>
+                  <form onSubmit={handleSubmit} className="space-y-3">
+                    {/* Honeypot */}
+                    <input type="text" name="website" tabIndex={-1} aria-hidden className="hidden" />
+                    <div>
+                      <label htmlFor="funnel-name" className="block text-slate-300 text-sm font-medium mb-1.5">
+                        Full Name <span className="text-amber-400">*</span>
+                      </label>
+                      <input
+                        id="funnel-name"
+                        type="text"
+                        value={data.name}
+                        onChange={e => set('name', e.target.value)}
+                        placeholder="Jane Smith"
+                        required
+                        className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:border-amber-500 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="funnel-phone" className="block text-slate-300 text-sm font-medium mb-1.5">
+                        Phone Number <span className="text-amber-400">*</span>
+                      </label>
+                      <input
+                        id="funnel-phone"
+                        type="tel"
+                        value={data.phone}
+                        onChange={e => set('phone', e.target.value)}
+                        placeholder="(703) 555-0100"
+                        required
+                        className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:border-amber-500 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="funnel-email" className="block text-slate-300 text-sm font-medium mb-1.5">
+                        Email <span className="text-slate-500 font-normal">(optional)</span>
+                      </label>
+                      <input
+                        id="funnel-email"
+                        type="email"
+                        value={data.email}
+                        onChange={e => set('email', e.target.value)}
+                        placeholder="jane@example.com"
+                        className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:border-amber-500 transition-colors"
+                      />
+                    </div>
+
+                    {error && <p className="text-red-400 text-sm">{error}</p>}
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-amber-500 hover:bg-amber-400 disabled:opacity-60 text-slate-900 font-bold py-4 rounded-xl transition-colors text-base mt-2"
+                    >
+                      {loading ? 'Submitting…' : 'Get My Cash Offer →'}
+                    </button>
+                    <p className="text-slate-500 text-xs text-center">
+                      No obligation. No fees. We&apos;ll call within 24 hours.
+                    </p>
+                  </form>
+                  <BackButton onClick={back} />
+                </div>
+              )}
+
+            </div>{/* end animated step wrapper */}
           </div>
 
           <p className="text-center text-slate-500 text-sm mt-6">

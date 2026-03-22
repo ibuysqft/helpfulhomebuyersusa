@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Phone } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { LeadForm } from '@/components/lead-form'
@@ -26,7 +27,7 @@ export default function ContactPage() {
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <span className="text-amber-400 text-xl">📞</span>
+                  <Phone size={20} aria-hidden={true} className="text-amber-400 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="text-white font-semibold">Phone / Text</p>
                     <a

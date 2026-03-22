@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { supabase } from '@/lib/supabase'
 
 interface ActionState {
@@ -25,6 +26,13 @@ async function handlePublishAction(formData: FormData) {
 }
 
 export default async function AdminPage() {
+  const cookieStore = await cookies()
+  const adminToken = cookieStore.get('admin_token')
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? ''
+  if (!adminToken || adminToken.value !== Buffer.from(ADMIN_PASSWORD).toString('base64')) {
+    redirect('/admin/login')
+  }
+
   const { data: drafts } = await supabase
     .from('blog_posts')
     .select('id, title, slug, meta_description, word_count, city_tags, draft_created_at')

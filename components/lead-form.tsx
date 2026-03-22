@@ -46,29 +46,47 @@ export function LeadForm({ city }: LeadFormProps) {
   const cityLabel = city ?? 'Virginia'
 
   return (
-    <div className="bg-slate-800 rounded-xl p-6 max-w-md mx-auto w-full">
-      <div className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-        <span className="inline-flex w-2 h-2 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
+    <div
+      className="bg-white rounded-xl p-6 shadow-xl max-w-md mx-auto w-full border"
+      style={{ borderColor: 'var(--color-border)' }}
+    >
+      {/* Live indicator */}
+      <div className="flex items-center gap-2 text-xs mb-3" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
+        <span className="inline-flex w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" aria-hidden="true" />
         <span>47 Virginia homeowners got an offer this month</span>
       </div>
-      <h2 className="text-white font-bold text-lg mb-1">Get Your Free Cash Offer</h2>
-      <p className="text-slate-400 text-sm mb-4">No obligation · Closes in 7 days · $0 fees</p>
+
+      <h2
+        className="font-bold text-lg mb-1"
+        style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text)' }}
+      >
+        Get Your Free Cash Offer
+      </h2>
+      <p className="text-sm mb-4" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
+        No obligation &middot; Closes in 7 days &middot; $0 fees
+      </p>
+
+      {/* Progress */}
       <div className="flex gap-2 mb-6">
         {[1, 2, 3].map(n => (
           <div
             key={n}
-            className={`h-1.5 flex-1 rounded-full transition-colors ${n <= step ? 'bg-amber-500' : 'bg-slate-600'}`}
+            className="h-1.5 flex-1 rounded-full transition-colors"
+            style={{ background: n <= step ? 'var(--color-primary)' : 'var(--color-border)' }}
           />
         ))}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Honeypot — hidden from humans */}
+        {/* Honeypot */}
         <input type="text" name="website" tabIndex={-1} aria-hidden className="hidden" />
 
         {step === 1 && (
           <div>
-            <label className="block text-white font-medium mb-2">
+            <label
+              className="block font-medium mb-2 text-sm"
+              style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)' }}
+            >
               Property address in {cityLabel}?
             </label>
             <input
@@ -77,15 +95,23 @@ export function LeadForm({ city }: LeadFormProps) {
               onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
               placeholder="123 Main St, Fairfax, VA"
               required
-              className="w-full bg-slate-700 border border-slate-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500"
+              className="w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 min-h-[44px]"
+              style={{
+                borderColor: 'var(--color-border)',
+                color: 'var(--color-text)',
+                fontFamily: 'var(--font-body)',
+              }}
             />
           </div>
         )}
 
         {step === 2 && (
           <div>
-            <label className="block text-white font-medium mb-2">
-              What's the condition of the property?
+            <label
+              className="block font-medium mb-2 text-sm"
+              style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)' }}
+            >
+              What&apos;s the condition of the property?
             </label>
             <div className="grid grid-cols-2 gap-2">
               {CONDITIONS.map(c => (
@@ -93,11 +119,13 @@ export function LeadForm({ city }: LeadFormProps) {
                   key={c}
                   type="button"
                   onClick={() => { setForm(f => ({ ...f, condition: c })); setStep(3) }}
-                  className={`py-3 rounded-lg border text-sm font-medium transition-colors ${
-                    form.condition === c
-                      ? 'bg-amber-500 border-amber-500 text-slate-900'
-                      : 'border-slate-600 text-white hover:border-amber-500'
-                  }`}
+                  className="py-3 rounded-lg border text-sm font-medium transition-colors min-h-[44px]"
+                  style={{
+                    background: form.condition === c ? 'var(--color-primary)' : 'transparent',
+                    borderColor: form.condition === c ? 'var(--color-primary)' : 'var(--color-border)',
+                    color: form.condition === c ? 'white' : 'var(--color-text)',
+                    fontFamily: 'var(--font-body)',
+                  }}
                 >
                   {c}
                 </button>
@@ -108,7 +136,10 @@ export function LeadForm({ city }: LeadFormProps) {
 
         {step === 3 && (
           <div>
-            <label className="block text-white font-medium mb-2">
+            <label
+              className="block font-medium mb-2 text-sm"
+              style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)' }}
+            >
               Best phone number for your cash offer?
             </label>
             <input
@@ -117,30 +148,45 @@ export function LeadForm({ city }: LeadFormProps) {
               onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
               placeholder="(703) 555-0100"
               required
-              className="w-full bg-slate-700 border border-slate-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500"
+              className="w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 min-h-[44px]"
+              style={{
+                borderColor: 'var(--color-border)',
+                color: 'var(--color-text)',
+                fontFamily: 'var(--font-body)',
+              }}
             />
           </div>
         )}
 
-        {error && <p className="text-red-400 text-sm">{error}</p>}
+        {error && <p className="text-red-600 text-sm">{error}</p>}
 
         {step !== 2 && (
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-500 hover:bg-amber-400 disabled:opacity-60 text-slate-900 font-bold py-3 rounded-lg transition-colors"
+            className="w-full text-white font-bold py-3 rounded-lg transition-opacity hover:opacity-90 disabled:opacity-60 min-h-[44px]"
+            style={{ background: 'var(--color-cta)', fontFamily: 'var(--font-body)' }}
           >
             {loading ? 'Submitting...' : step < 3 ? 'Continue →' : 'Get My Cash Offer'}
           </button>
         )}
 
-        <div className="flex justify-center gap-4 text-slate-500 text-xs">
-          <span>🔒 100% Private</span>
-          <span>✓ No Obligation</span>
-          <span>⚡ 24-Hr Response</span>
+        <div
+          className="flex justify-center gap-4 text-xs"
+          style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+        >
+          <span>100% Private</span>
+          <span>No Obligation</span>
+          <span>24-Hr Response</span>
         </div>
-        <p className="text-slate-400 text-xs text-center">
-          No obligation. No spam. Call us directly: <a href="tel:+17039401159" className="text-amber-400">(703) 940-1159</a>
+        <p
+          className="text-xs text-center"
+          style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+        >
+          No obligation. No spam. Call us directly:{' '}
+          <a href="tel:+17039401159" style={{ color: 'var(--color-cta)' }}>
+            (703) 940-1159
+          </a>
         </p>
       </form>
     </div>

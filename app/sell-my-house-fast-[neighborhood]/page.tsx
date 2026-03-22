@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { CheckCircle2 } from 'lucide-react'
-import { cities } from '@/data/cities'
+import { neighborhoods } from '@/data/neighborhoods'
 import { LeadForm } from '@/components/lead-form'
 import { FaqSection } from '@/components/faq-section'
 import { Header } from '@/components/layout/header'
@@ -13,31 +13,29 @@ import { homepageFaqs } from '@/data/faqs'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
-interface Props { params: Promise<{ city: string }> }
+export const revalidate = 86400
+
+interface Props { params: Promise<{ neighborhood: string }> }
 
 export async function generateStaticParams() {
-  return cities.map(c => ({ city: c.slug }))
+  return neighborhoods.map(n => ({ neighborhood: n.slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { city: citySlug } = await params
-  const city = cities.find(c => c.slug === citySlug)
-  if (!city) return {}
+  const { neighborhood: slug } = await params
+  const neighborhood = neighborhoods.find(n => n.slug === slug)
+  if (!neighborhood) return {}
   return {
-    title: `Sell My House Fast ${city.name} VA | Cash Offer in 24 Hours`,
-    description: `We buy houses for cash in ${city.name}, ${city.county}, Virginia. No repairs, no fees, close in 7 days. Get your fair cash offer today.`,
-    alternates: { canonical: `${siteConfig.url}/sell-my-house-fast-${citySlug}-va` },
+    title: `Sell My House Fast in ${neighborhood.name}, ${neighborhood.city} VA | Cash Home Buyers`,
+    description: `We buy houses for cash in ${neighborhood.name}, ${neighborhood.city}, Virginia. No repairs, no fees, close in 7 days. Get your fair cash offer today.`,
+    alternates: { canonical: `${siteConfig.url}/sell-my-house-fast-${slug}` },
   }
 }
 
-export default async function CityPage({ params }: Props) {
-  const { city: citySlug } = await params
-  const city = cities.find(c => c.slug === citySlug)
-  if (!city) notFound()
-
-  const nearbyLinks = (city.nearbySlug ?? [])
-    .map(s => cities.find(c => c.slug === s))
-    .filter((c): c is NonNullable<typeof c> => Boolean(c))
+export default async function NeighborhoodPage({ params }: Props) {
+  const { neighborhood: slug } = await params
+  const neighborhood = neighborhoods.find(n => n.slug === slug)
+  if (!neighborhood) notFound()
 
   const localSchema = {
     '@context': 'https://schema.org',
@@ -45,7 +43,7 @@ export default async function CityPage({ params }: Props) {
     name: siteConfig.name,
     telephone: siteConfig.phone,
     url: siteConfig.url,
-    areaServed: [city.name, city.county],
+    areaServed: [neighborhood.name, neighborhood.city, neighborhood.region],
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: ratingsConfig.ratingValue,
@@ -53,16 +51,10 @@ export default async function CityPage({ params }: Props) {
     },
   }
 
-  const cityFaqs = city.faqs
-    ? city.faqs.map(({ q, a }) => ({ question: q, answer: a }))
-    : null
-
-  const activeFaqs = cityFaqs ?? homepageFaqs
-
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: activeFaqs.slice(0, 5).map(({ question, answer }) => ({
+    mainEntity: homepageFaqs.slice(0, 5).map(({ question, answer }) => ({
       '@type': 'Question',
       name: question,
       acceptedAnswer: { '@type': 'Answer', text: answer },
@@ -79,15 +71,18 @@ export default async function CityPage({ params }: Props) {
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                Sell My House Fast in <span className="text-amber-400">{city.name}, VA</span>
+                We Buy Houses in <span className="text-amber-400">{neighborhood.name}, {neighborhood.city}, Virginia</span>
               </h1>
               <p className="text-xl text-slate-300">
-                We buy houses for cash in {city.name}, {city.county}, Virginia.
+                {neighborhood.description}
+              </p>
+              <p className="text-lg text-slate-300">
+                We are direct cash home buyers serving {neighborhood.name} and all of {neighborhood.city}, VA.
                 Fair offer in 24 hours. Close in as little as 7 days. No repairs required.
               </p>
               <ul className="space-y-2 text-slate-300">
                 {[
-                  `Serving all of ${city.county}`,
+                  `Serving ${neighborhood.name} and surrounding ${neighborhood.city} neighborhoods`,
                   'Buy as-is — any condition',
                   'We pay all closing costs',
                   'No agents, no commissions',
@@ -102,7 +97,7 @@ export default async function CityPage({ params }: Props) {
                 Call {siteConfig.phoneDisplay}
               </a>
             </div>
-            <LeadForm city={city.name} />
+            <LeadForm city={`${neighborhood.name}, ${neighborhood.city}`} />
           </div>
         </section>
 
@@ -110,51 +105,56 @@ export default async function CityPage({ params }: Props) {
 
         <section className="py-16 px-4 bg-slate-800">
           <div className="max-w-3xl mx-auto prose prose-invert prose-lg">
-            <h2>Cash Home Buyers in {city.name}, Virginia</h2>
+            <h2>Cash Home Buyers in {neighborhood.name}, {neighborhood.city}, Virginia</h2>
             <p>
-              If you need to sell your house fast in {city.name}, {city.county}, we make it simple.
-              We are direct cash home buyers — not agents, not investors who shop your house to others.
-              When we make an offer, we're the ones buying.
+              If you need to sell your house fast in {neighborhood.name}, we make it simple.
+              We are direct cash buyers — not agents, not investors who shop your home to others.
+              When we make an offer on your {neighborhood.name} property, we are the ones buying.
             </p>
             <p>
-              We've helped homeowners throughout {city.county} sell quickly — whether they're facing
+              We have helped homeowners throughout {neighborhood.city} sell quickly — whether they are facing
               foreclosure, dealing with an inherited property, going through a divorce, or simply need
-              to move fast. Whatever your situation, we can help.
+              to move fast. Whatever your situation in {neighborhood.name}, we can help.
             </p>
-            <h3>Why Sell to Us vs. Listing With an Agent in {city.name}?</h3>
+            <h3>Why Sell to Us vs. Listing With an Agent in {neighborhood.name}?</h3>
             <ul>
               <li><strong>Speed:</strong> We close in 7–21 days. Traditional listings take 60–90 days.</li>
               <li><strong>Certainty:</strong> No contingencies, no financing falling through.</li>
               <li><strong>Cost:</strong> No 3–6% agent commission. We pay all closing costs.</li>
               <li><strong>Convenience:</strong> No showings, no repairs, no staging.</li>
             </ul>
+            <p>
+              Serving {neighborhood.name} as part of our broader{' '}
+              <Link href={`/sell-my-house-fast-${neighborhood.citySlug}-va`}>
+                {neighborhood.city}, VA
+              </Link>{' '}
+              service area.
+            </p>
           </div>
         </section>
 
         <HowItWorks />
-        <FaqSection faqs={activeFaqs} title={`FAQ: Selling Your House Fast in ${city.name}`} />
+        <FaqSection faqs={homepageFaqs} title={`FAQ: Selling Your House Fast in ${neighborhood.name}`} />
 
-        {nearbyLinks.length > 0 && (
-          <section className="py-12 px-4 bg-slate-900">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-xl font-bold text-white mb-6 text-center">We Also Buy Houses Near {city.name}</h2>
-              <div className="flex flex-wrap gap-3 justify-center">
-                {nearbyLinks.map(nearby => (
-                  <Link
-                    key={nearby.slug}
-                    href={`/sell-my-house-fast-${nearby.slug}-va`}
-                    className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                  >
-                    {nearby.name}, VA →
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        <section className="py-12 px-4 bg-slate-900">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-xl font-bold text-white mb-4">
+              We Buy Houses Across All of {neighborhood.city}
+            </h2>
+            <p className="text-slate-400 mb-6">
+              {neighborhood.name} is just one of many {neighborhood.city} neighborhoods we serve.
+            </p>
+            <Link
+              href={`/sell-my-house-fast-${neighborhood.citySlug}-va`}
+              className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-lg transition-colors"
+            >
+              See All {neighborhood.city} Cash Offers →
+            </Link>
+          </div>
+        </section>
 
         <section className="py-16 px-4 bg-amber-500 text-center">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Get Your {city.name} Cash Offer Today</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Get Your {neighborhood.name} Cash Offer Today</h2>
           <p className="text-slate-800 mb-6">No obligation. We'll have an offer for you within 24 hours.</p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/property-information" className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 py-4 rounded-lg transition-colors">

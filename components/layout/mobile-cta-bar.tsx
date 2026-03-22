@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Phone, Zap } from 'lucide-react'
 import { siteConfig } from '@/config/site'
 
 export function MobileCTABar() {
@@ -8,14 +9,14 @@ export function MobileCTABar() {
         href={`tel:${siteConfig.phone}`}
         className="flex flex-1 items-center justify-center gap-2 bg-slate-800 text-white font-bold text-sm border-r border-slate-700"
       >
-        <span aria-hidden="true">📞</span>
+        <Phone size={16} aria-hidden={true} />
         Call Now
       </a>
       <Link
         href="/property-information"
         className="flex flex-1 items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm transition-colors"
       >
-        <span aria-hidden="true">⚡</span>
+        <Zap size={16} aria-hidden={true} />
         Get My Offer
       </Link>
     </div>

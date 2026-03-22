@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { CheckCircle2 } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { LeadForm } from '@/components/lead-form'
@@ -91,7 +92,8 @@ export default async function SlugPage({ params }: Props) {
                     'No agents, no commissions',
                   ].map(item => (
                     <li key={item} className="flex items-center gap-2">
-                      <span className="text-amber-400 font-bold">✓</span> {item}
+                      <CheckCircle2 size={16} aria-hidden={true} className="text-amber-400 flex-shrink-0" />
+                    {item}
                     </li>
                   ))}
                 </ul>
@@ -198,7 +200,8 @@ export default async function SlugPage({ params }: Props) {
                     'We pay all closing costs',
                   ].map(item => (
                     <li key={item} className="flex items-center gap-2">
-                      <span className="text-amber-400 font-bold">✓</span> {item}
+                      <CheckCircle2 size={16} aria-hidden={true} className="text-amber-400 flex-shrink-0" />
+                    {item}
                     </li>
                   ))}
                 </ul>
