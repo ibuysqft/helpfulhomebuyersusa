@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { LeadForm } from '@/components/lead-form'
@@ -9,10 +10,19 @@ import { FaqSection } from '@/components/faq-section'
 import { TrustBar } from '@/components/trust-bar'
 import { HowItWorks } from '@/components/how-it-works'
 import { siteConfig } from '@/config/site'
-import { situations } from '@/data/situations'
+import { getSituations } from '@/data/situations'
 import { cities } from '@/data/cities'
-import { homepageFaqs } from '@/data/faqs'
+import { getHomepageFaqs } from '@/data/faqs'
+import { getStateConfig } from '@/lib/state-context'
 import { situationCityMatrix } from '@/data/situation-city-matrix'
+
+const iconMap: Record<string, LucideIcon> = {
+  Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard
+}
+
+const stateConfig = getStateConfig()
+const situations = getSituations(stateConfig.slug)
+const homepageFaqs = getHomepageFaqs(stateConfig)
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -39,15 +49,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const situation = getSituationBySlug(slug)
   if (situation) {
     return {
-      title: `${situation.label} | Cash Home Buyers Virginia`,
-      description: `${situation.description} We buy houses for cash in Virginia — any condition, close in 7 days.`,
+      title: `${situation.label} | Cash Home Buyers ${siteConfig.stateName}`,
+      description: `${situation.description} We buy houses for cash in ${siteConfig.stateName} — any condition, close in 7 days.`,
       alternates: { canonical: `${siteConfig.url}/${slug}` },
     }
   }
   const entry = getMatrixEntry(slug)
   if (entry) {
     return {
-      title: `${entry.situationLabel} in ${entry.cityName}, VA | Cash Offer`,
+      title: `${entry.situationLabel} in ${entry.cityName}, ${siteConfig.stateAbbr} | Cash Offer`,
       description: `We help homeowners in ${entry.cityName}, ${entry.county} who are ${entry.situationLabel.toLowerCase()}. Cash offer in 24 hours. Close in 7 days.`,
       alternates: { canonical: `${siteConfig.url}/${slug}` },
     }
@@ -62,13 +72,14 @@ export default async function SlugPage({ params }: Props) {
   const situation = getSituationBySlug(slug)
   if (situation) {
     const relatedCities = cities.slice(0, 10)
+    const IconComponent = iconMap[situation.icon] ?? Home
     const localSchema = {
       '@context': 'https://schema.org',
       '@type': 'LocalBusiness',
       name: siteConfig.name,
       telephone: siteConfig.phone,
       url: siteConfig.url,
-      areaServed: 'Virginia',
+      areaServed: siteConfig.stateName,
     }
     return (
       <>
@@ -78,7 +89,9 @@ export default async function SlugPage({ params }: Props) {
           <section className="bg-slate-900 py-20 px-4">
             <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
-                <div className="text-5xl">{situation.icon}</div>
+                <div className="text-amber-400">
+                  <IconComponent size={40} aria-hidden={true} />
+                </div>
                 <h1 className="text-4xl md:text-5xl font-bold leading-tight">
                   {situation.label} <span className="text-amber-400">We Can Help</span>
                 </h1>
@@ -116,7 +129,7 @@ export default async function SlugPage({ params }: Props) {
           <section className="py-12 px-4 bg-slate-900">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-xl font-bold text-white mb-6 text-center">
-                We Serve All of Virginia
+                We Serve All of {siteConfig.stateName}
               </h2>
               <div className="flex flex-wrap gap-3 justify-center">
                 {relatedCities.map(city => (
@@ -125,7 +138,7 @@ export default async function SlugPage({ params }: Props) {
                     href={`/${situation.slug}-${city.slug}`}
                     className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
                   >
-                    {city.name}, VA →
+                    {city.name}, {siteConfig.stateAbbr} →
                   </Link>
                 ))}
               </div>
@@ -165,6 +178,7 @@ export default async function SlugPage({ params }: Props) {
     const situation2 = situations.find(s => s.slug === entry.situationSlug)
     if (!city || !situation2) notFound()
 
+    const IconComponent2 = iconMap[situation2.icon] ?? Home
     const localSchema = {
       '@context': 'https://schema.org',
       '@type': 'LocalBusiness',
@@ -182,10 +196,12 @@ export default async function SlugPage({ params }: Props) {
           <section className="bg-slate-900 py-20 px-4">
             <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
-                <div className="text-5xl">{situation2.icon}</div>
+                <div className="text-amber-400">
+                  <IconComponent2 size={40} aria-hidden={true} />
+                </div>
                 <h1 className="text-4xl md:text-5xl font-bold leading-tight">
                   {situation2.label} in{' '}
-                  <span className="text-amber-400">{city.name}, VA</span>
+                  <span className="text-amber-400">{city.name}, {siteConfig.stateAbbr}</span>
                 </h1>
                 <p className="text-xl text-slate-300">
                   We buy houses for cash in {city.name}, {city.county} —{' '}
