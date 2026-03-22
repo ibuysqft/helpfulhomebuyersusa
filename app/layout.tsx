@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { siteConfig } from '@/config/site'
+import { ratingsConfig } from '@/config/ratings'
 import { MobileCTABar } from '@/components/layout/mobile-cta-bar'
 import { DesktopStickyCTA } from '@/components/layout/desktop-sticky-cta'
 
@@ -38,13 +39,21 @@ export const metadata: Metadata = {
 
 const orgSchema = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
+  '@type': ['LocalBusiness', 'RealEstateAgent'],
   name: siteConfig.name,
   telephone: siteConfig.phone,
   url: siteConfig.url,
   description: 'We buy houses for cash in Virginia. Fair cash offer in 24 hours.',
   areaServed: { '@type': 'State', name: 'Virginia' },
   '@id': siteConfig.url,
+  priceRange: 'Free',
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: ratingsConfig.ratingValue,
+    reviewCount: ratingsConfig.reviewCount,
+    bestRating: '5',
+    worstRating: '1',
+  },
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -8,6 +8,11 @@ import { HowItWorks } from '@/components/how-it-works'
 import { Testimonials } from '@/components/testimonials'
 import { SituationCards } from '@/components/situation-cards'
 import { FaqSection } from '@/components/faq-section'
+import { CredibilityBar } from '@/components/credibility-bar'
+import { StatsCounter } from '@/components/stats-counter'
+import { ComparisonTable } from '@/components/comparison-table'
+import { ClosingCalculator } from '@/components/closing-calculator'
+import { ReturnVisitorBanner } from '@/components/return-visitor-banner'
 import { siteConfig } from '@/config/site'
 import { ratingsConfig } from '@/config/ratings'
 import { homepageFaqs } from '@/data/faqs'
@@ -30,13 +35,26 @@ export default function HomePage() {
     })),
   }
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+    ],
+  }
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <Header />
+      <ReturnVisitorBanner />
       <main className="pb-16 md:pb-0">
 
         {/* Hero */}
@@ -120,6 +138,12 @@ export default function HomePage() {
         {/* Trust bar */}
         <TrustBar />
 
+        {/* Credibility badges */}
+        <CredibilityBar />
+
+        {/* Animated stats */}
+        <StatsCounter />
+
         {/* Situation cards */}
         <SituationCards />
 
@@ -157,6 +181,12 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Comparison table */}
+        <ComparisonTable />
+
+        {/* Closing calculator */}
+        <ClosingCalculator />
 
         {/* FAQ */}
         <FaqSection faqs={homepageFaqs} title="Frequently Asked Questions" />

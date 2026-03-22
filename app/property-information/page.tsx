@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Zap } from 'lucide-react'
 import { Header } from '@/components/layout/header'
@@ -145,7 +145,7 @@ const EMPTY_FUNNEL: FunnelData = {
   email: '',
 }
 
-export default function PropertyInformationPage() {
+function PropertyInformationPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [step, setStep] = useState(1)
@@ -516,6 +516,14 @@ export default function PropertyInformationPage() {
       </main>
       <Footer />
     </>
+  )
+}
+
+export default function PropertyInformationPage() {
+  return (
+    <Suspense fallback={null}>
+      <PropertyInformationPageInner />
+    </Suspense>
   )
 }
 

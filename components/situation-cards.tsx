@@ -1,5 +1,11 @@
 import Link from 'next/link'
+import { Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { situations } from '@/data/situations'
+
+const iconMap: Record<string, LucideIcon> = {
+  Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard
+}
 
 export function SituationCards() {
   return (
@@ -18,24 +24,29 @@ export function SituationCards() {
           Whatever your reason for selling, we have a solution.
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {situations.map(({ slug, label, icon, description }) => (
-            <Link
-              key={slug}
-              href={`/${slug}`}
-              className="bg-white/10 hover:bg-white/20 hover:-translate-y-1 rounded-xl p-4 transition-all duration-200 group border border-white/20 min-h-[44px]"
-            >
-              <div className="text-3xl mb-2" aria-hidden="true">{icon}</div>
-              <h3
-                className="text-white font-semibold text-sm mb-1 group-hover:text-blue-100 transition-colors"
-                style={{ fontFamily: 'var(--font-heading)' }}
+          {situations.map(({ slug, label, icon, description }) => {
+            const IconComponent = iconMap[icon] ?? Home
+            return (
+              <Link
+                key={slug}
+                href={`/${slug}`}
+                className="bg-white/10 hover:bg-white/20 hover:-translate-y-1 rounded-xl p-4 transition-all duration-200 group border border-white/20 min-h-[44px]"
               >
-                {label}
-              </h3>
-              <p className="text-blue-100/80 text-xs leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
-                {description}
-              </p>
-            </Link>
-          ))}
+                <div className="mb-3 text-amber-400">
+                  <IconComponent size={28} aria-hidden={true} />
+                </div>
+                <h3
+                  className="text-white font-semibold text-sm mb-1 group-hover:text-blue-100 transition-colors"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  {label}
+                </h3>
+                <p className="text-blue-100/80 text-xs leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
+                  {description}
+                </p>
+              </Link>
+            )
+          })}
         </div>
       </div>
     </section>
