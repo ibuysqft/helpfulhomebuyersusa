@@ -22,11 +22,10 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: `${siteConfig.name} | Sell My House Fast in Virginia`,
+    default: `${siteConfig.name} | Sell My House Fast in ${siteConfig.stateName}`,
     template: `%s | ${siteConfig.name}`,
   },
-  description:
-    'We buy houses for cash across Virginia. Fair offer in 24 hours. Close in 7 days. No repairs, no fees, no agents.',
+  description: `We buy houses for cash across ${siteConfig.stateName}. Fair offer in 24 hours. Close in 7 days. No repairs, no fees, no agents.`,
   metadataBase: new URL(siteConfig.url),
   openGraph: {
     type: 'website',
@@ -43,10 +42,12 @@ const orgSchema = {
   name: siteConfig.name,
   telephone: siteConfig.phone,
   url: siteConfig.url,
-  description: 'We buy houses for cash in Virginia. Fair cash offer in 24 hours.',
-  areaServed: { '@type': 'State', name: 'Virginia' },
+  description: `We buy houses for cash in ${siteConfig.stateName}. Fair cash offer in 24 hours.`,
+  areaServed: { '@type': 'State', name: siteConfig.stateName },
+  addressRegion: siteConfig.stateAbbr,
   '@id': siteConfig.url,
   priceRange: 'Free',
+  sameAs: ['https://helpfulhomebuyersusa.com'],
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: ratingsConfig.ratingValue,

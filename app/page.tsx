@@ -15,16 +15,17 @@ import { ClosingCalculator } from '@/components/closing-calculator'
 import { ReturnVisitorBanner } from '@/components/return-visitor-banner'
 import { siteConfig } from '@/config/site'
 import { ratingsConfig } from '@/config/ratings'
-import { homepageFaqs } from '@/data/faqs'
+import { getHomepageFaqs } from '@/data/faqs'
+import { getStateConfig } from '@/lib/state-context'
 
 export const metadata: Metadata = {
-  title: 'Sell My House Fast Virginia | Cash Offer in 24 Hours',
-  description:
-    'We buy houses for cash across Virginia. Get a fair cash offer in 24 hours. Close in as little as 7 days. No repairs, no commissions, no hassle.',
+  title: `Sell My House Fast ${siteConfig.stateName} | Cash Offer in 24 Hours`,
+  description: `We buy houses for cash across ${siteConfig.stateName}. Get a fair cash offer in 24 hours. Close in as little as 7 days. No repairs, no commissions, no hassle.`,
   alternates: { canonical: siteConfig.url },
 }
 
 export default function HomePage() {
+  const homepageFaqs = getHomepageFaqs(getStateConfig())
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -80,7 +81,7 @@ export default function HomePage() {
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
                 Sell Your House Fast in{' '}
-                <span style={{ color: '#FCD34D' }}>Virginia</span>
+                <span style={{ color: '#FCD34D' }}>{siteConfig.stateName}</span>
               </h1>
 
               {/* Subheadline */}
@@ -88,7 +89,7 @@ export default function HomePage() {
                 className="text-lg text-blue-100"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                We buy houses for cash anywhere in Virginia. Skip the repairs, skip the agents,
+                We buy houses for cash anywhere in {siteConfig.stateName}. Skip the repairs, skip the agents,
                 and close on your schedule — in as little as 7 days.
               </p>
 
@@ -166,7 +167,7 @@ export default function HomePage() {
               className="mb-8"
               style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
             >
-              We buy houses across all major Virginia markets and surrounding areas.
+              We buy houses across all major {siteConfig.stateName} markets and surrounding areas.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               {siteConfig.markets.map(market => (

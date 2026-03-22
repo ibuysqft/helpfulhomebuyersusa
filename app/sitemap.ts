@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url
+  const stateAbbr = siteConfig.stateAbbr.toLowerCase()
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
@@ -17,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const cityPages: MetadataRoute.Sitemap = cities.map(city => ({
-    url: `${base}/sell-my-house-fast-${city.slug}-va`,
+    url: `${base}/sell-my-house-fast-${city.slug}-${stateAbbr}`,
     lastModified: new Date(),
     changeFrequency: 'monthly',
     priority: 0.9,

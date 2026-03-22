@@ -70,7 +70,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-slate-800 text-center py-4 text-slate-500 text-xs">
-        &copy; {year} Helpful Homebuyers USA &mdash; Licensed in Virginia &mdash; We are direct cash buyers, not real estate agents.
+        &copy; {year} Paramount Legacy Properties &mdash; Licensed in Virginia &mdash; We are direct cash buyers, not real estate agents.
       </div>
     </footer>
   )

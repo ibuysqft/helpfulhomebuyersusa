@@ -73,7 +73,7 @@ export function HowItWorks() {
           className="text-center mb-12 max-w-xl mx-auto"
           style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
         >
-          Three simple steps to sell your Virginia home for cash — no repairs, no agents, no stress.
+          Three simple steps to sell your {process.env.NEXT_PUBLIC_STATE ?? 'Virginia'} home for cash — no repairs, no agents, no stress.
         </p>
         <div ref={sectionRef} className="grid md:grid-cols-3 gap-8">
           {steps.map(({ n, title, desc, icon, delay }) => (
