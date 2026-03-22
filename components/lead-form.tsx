@@ -47,6 +47,12 @@ export function LeadForm({ city }: LeadFormProps) {
 
   return (
     <div className="bg-slate-800 rounded-xl p-6 max-w-md mx-auto w-full">
+      <div className="flex items-center gap-2 text-xs text-slate-400 mb-3">
+        <span className="inline-flex w-2 h-2 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
+        <span>47 Virginia homeowners got an offer this month</span>
+      </div>
+      <h2 className="text-white font-bold text-lg mb-1">Get Your Free Cash Offer</h2>
+      <p className="text-slate-400 text-sm mb-4">No obligation · Closes in 7 days · $0 fees</p>
       <div className="flex gap-2 mb-6">
         {[1, 2, 3].map(n => (
           <div
@@ -128,6 +134,11 @@ export function LeadForm({ city }: LeadFormProps) {
           </button>
         )}
 
+        <div className="flex justify-center gap-4 text-slate-500 text-xs">
+          <span>🔒 100% Private</span>
+          <span>✓ No Obligation</span>
+          <span>⚡ 24-Hr Response</span>
+        </div>
         <p className="text-slate-400 text-xs text-center">
           No obligation. No spam. Call us directly: <a href="tel:+17039401159" className="text-amber-400">(703) 940-1159</a>
         </p>

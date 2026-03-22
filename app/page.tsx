@@ -37,7 +37,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <Header />
-      <main>
+      <main className="pb-16 md:pb-0">
         {/* Hero */}
         <section className="bg-slate-900 py-20 px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -68,7 +68,7 @@ export default function HomePage() {
               </ul>
               <a
                 href={`tel:${siteConfig.phone}`}
-                className="inline-block bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                className="inline-block bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-3 rounded-lg font-semibold transition-colors"
               >
                 Call {siteConfig.phoneDisplay}
               </a>

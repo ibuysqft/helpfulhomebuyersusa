@@ -27,11 +27,22 @@ export function Testimonials() {
         <div className="grid md:grid-cols-3 gap-6">
           {testimonials.map(({ name, location, text, rating }) => (
             <div key={name} className="bg-slate-800 rounded-xl p-6">
-              <div className="text-amber-400 mb-3">{'★'.repeat(rating)}</div>
-              <p className="text-slate-300 text-sm leading-relaxed mb-4">"{text}"</p>
-              <div>
-                <p className="text-white font-semibold text-sm">{name}</p>
-                <p className="text-slate-500 text-xs">{location}</p>
+              <div className="flex items-center gap-1 mb-3">
+                <span className="text-amber-400 text-sm">{'★'.repeat(rating)}</span>
+                <span className="ml-2 text-xs text-slate-400 border border-slate-600 rounded px-1.5 py-0.5">Google</span>
+              </div>
+              <p className="text-slate-300 text-sm leading-relaxed mb-4">&ldquo;{text}&rdquo;</p>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-amber-500/20 text-amber-400 font-bold text-sm flex items-center justify-center flex-shrink-0">
+                  {name.charAt(0)}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1">
+                    <p className="text-white font-semibold text-sm">{name}</p>
+                    <span className="text-green-400 text-xs">✓</span>
+                  </div>
+                  <p className="text-slate-500 text-xs">{location}</p>
+                </div>
               </div>
             </div>
           ))}

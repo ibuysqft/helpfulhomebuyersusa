@@ -12,7 +12,7 @@ export function SituationCards() {
             <Link
               key={slug}
               href={`/${slug}`}
-              className="bg-slate-700 hover:bg-slate-600 rounded-xl p-4 transition-colors group"
+              className="bg-slate-700 hover:bg-slate-600 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-950/50 rounded-xl p-4 transition-all duration-200 group"
             >
               <div className="text-3xl mb-2">{icon}</div>
               <h3 className="text-white font-semibold text-sm mb-1 group-hover:text-amber-400 transition-colors">{label}</h3>
