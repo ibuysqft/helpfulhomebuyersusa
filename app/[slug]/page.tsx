@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckCircle2, Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard } from 'lucide-react'
+import { CheckCircle2, Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard, TrendingDown, Heart, Shield, Gavel } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
@@ -11,13 +11,13 @@ import { TrustBar } from '@/components/trust-bar'
 import { HowItWorks } from '@/components/how-it-works'
 import { siteConfig } from '@/config/site'
 import { getSituations } from '@/data/situations'
-import { getHomepageFaqs } from '@/data/faqs'
+import { getHomepageFaqs, getSituationFaqs } from '@/data/faqs'
 import { getStateConfig } from '@/lib/state-context'
 import { getCitiesForState } from '@/lib/state-data'
 import { situationCityMatrix } from '@/data/situation-city-matrix'
 
 const iconMap: Record<string, LucideIcon> = {
-  Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard
+  Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard, TrendingDown, Heart, Shield, Gavel
 }
 
 const stateConfig = getStateConfig()
@@ -98,13 +98,13 @@ export default async function SlugPage({ params }: Props) {
                 </h1>
                 <p className="text-xl text-slate-300">{situation.description}</p>
                 <ul className="space-y-2 text-slate-300">
-                  {[
+                  {(situation.bullets ?? [
                     'Cash offer within 24 hours',
                     'Close in 7 days or on your schedule',
                     'Buy as-is — no repairs required',
                     'We pay all closing costs',
                     'No agents, no commissions',
-                  ].map(item => (
+                  ]).map(item => (
                     <li key={item} className="flex items-center gap-2">
                       <CheckCircle2 size={16} aria-hidden={true} className="text-amber-400 flex-shrink-0" />
                     {item}
@@ -124,7 +124,10 @@ export default async function SlugPage({ params }: Props) {
 
           <TrustBar />
           <HowItWorks />
-          <FaqSection faqs={homepageFaqs} title="Frequently Asked Questions" />
+          <FaqSection
+            faqs={getSituationFaqs(situation.key, stateConfig) ?? homepageFaqs}
+            title="Frequently Asked Questions"
+          />
 
           {/* Related city links */}
           <section className="py-12 px-4 bg-slate-900">
