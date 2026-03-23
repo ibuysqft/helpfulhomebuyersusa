@@ -141,11 +141,12 @@ function Badge({
 function StepRunComps({
   onResult,
 }: {
-  onResult: (data: CompResponse) => void;
+  onResult: (data: CompResponse, email: string) => void;
 }) {
   const [address, setAddress] = useState("");
   const [sqft, setSqft] = useState("");
   const [condition, setCondition] = useState("fair");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -175,7 +176,7 @@ function StepRunComps({
       }
 
       const data: CompResponse = await res.json();
-      onResult(data);
+      onResult(data, email.trim());
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to pull comps"
@@ -201,6 +202,19 @@ function StepRunComps({
               placeholder="117 S 9th St, Suffolk, VA 23434"
               className="w-full rounded-lg border border-zinc-600 bg-zinc-800 px-4 py-3 text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
               required
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-zinc-300">
+              Your Email <span className="text-zinc-500">(optional — receive results)</span>
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full rounded-lg border border-zinc-600 bg-zinc-800 px-4 py-3 text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
@@ -883,12 +897,30 @@ function StepOffer({
 export default function CompsPage() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<CompResponse | null>(null);
+  const [userEmail, setUserEmail] = useState("");
   const [confirmedArv, setConfirmedArv] = useState(0);
   const [spreadInfo, setSpreadInfo] = useState({ pct: 0, amount: 0 });
 
-  const handleResult = (result: CompResponse) => {
+  const handleResult = (result: CompResponse, email: string) => {
     setData(result);
+    setUserEmail(email);
     setStep(2);
+    // Fire usage log + optional user results email (non-blocking)
+    fetch("/api/comps-notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userEmail: email,
+        address: result.subject.address,
+        sqft: result.subject.sqft,
+        condition: result.subject.condition,
+        arv: result.arv,
+        pairedComps: result.paired_comps,
+        allCompsCount: result.all_comps.length,
+        repairs: 0,
+        maxOffer: 0,
+      }),
+    }).catch(() => {/* silent — never block the UI */});
   };
 
   const handleConfirm = (adjustedArv: number) => {
