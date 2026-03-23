@@ -54,8 +54,17 @@ export default async function CityPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: siteConfig.name,
+    legalName: 'Paramount Legacy Properties LLC',
     telephone: siteConfig.phone,
     url: siteConfig.url,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '10369 Democracy Ln',
+      addressLocality: 'Fairfax',
+      addressRegion: 'VA',
+      postalCode: '22030',
+      addressCountry: 'US',
+    },
     areaServed: [city.name, city.county],
   }
 

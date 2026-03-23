@@ -1,11 +1,16 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import Script from 'next/script'
 import './globals.css'
 import { siteConfig } from '@/config/site'
 import { ratingsConfig } from '@/config/ratings'
 import { MobileCTABar } from '@/components/layout/mobile-cta-bar'
 import { DesktopStickyCTA } from '@/components/layout/desktop-sticky-cta'
 import { LanguageProvider } from '@/contexts/language-context'
+import { TrackingPixels } from '@/components/tracking-pixels'
+import { WhatsAppButton } from '@/components/layout/whatsapp-button'
 
 const inter = Inter({
   variable: '--font-inter',
@@ -41,20 +46,65 @@ const orgSchema = {
   '@context': 'https://schema.org',
   '@type': ['LocalBusiness', 'RealEstateAgent'],
   name: siteConfig.name,
+  legalName: 'Paramount Legacy Properties LLC',
   telephone: siteConfig.phone,
   url: siteConfig.url,
   description: `We buy houses for cash in ${siteConfig.stateName}. Fair cash offer in 24 hours.`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '10369 Democracy Ln',
+    addressLocality: 'Fairfax',
+    addressRegion: 'VA',
+    postalCode: '22030',
+    addressCountry: 'US',
+  },
   areaServed: { '@type': 'State', name: siteConfig.stateName },
   addressRegion: siteConfig.stateAbbr,
   '@id': siteConfig.url,
   priceRange: 'Free',
-  sameAs: ['https://helpfulhomebuyersusa.com'],
+  sameAs: [
+    'https://helpfulhomebuyersvirginia.com',
+    'https://helpfulhomebuyerstexas.com',
+    'https://helpfulhomebuyersflorida.com',
+    'https://helpfulhomebuyersgeorgia.com',
+    'https://helpfulhomebuyersohio.com',
+    'https://helpfulhomebuyersnorthcarolina.com',
+    'https://helpfulhomebuyerssouthcarolina.com',
+    'https://helpfulhomebuyersillinois.com',
+    'https://helpfulhomebuyersmichigan.com',
+    'https://helpfulhomebuyersnewyork.com',
+    'https://helpfulhomebuyersnewjersey.com',
+    'https://helpfulhomebuyerscalifornia.com',
+    'https://helpfulhomebuyersarizona.com',
+    'https://helpfulhomebuyerscolorado.com',
+    'https://helpfulhomebuyersconnecticut.com',
+    'https://www.facebook.com/helpfulhomebuyersusa',
+    'https://www.instagram.com/helpfulhomebuyersusa',
+    'https://twitter.com/helpfulhomebuyersva',
+    'https://www.linkedin.com/company/helpful-home-buyers-usa',
+    'https://www.youtube.com/@helpfulhomebuyersusa',
+  ],
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: ratingsConfig.ratingValue,
     reviewCount: ratingsConfig.reviewCount,
     bestRating: '5',
     worstRating: '1',
+  },
+}
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Helpful Home Buyers USA',
+  url: 'https://helpfulhomebuyersusa.com',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://helpfulhomebuyersusa.com/blog?q={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
   },
 }
 
@@ -69,11 +119,27 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         <LanguageProvider>
           {children}
           <MobileCTABar />
           <DesktopStickyCTA />
+          <WhatsAppButton />
         </LanguageProvider>
+        <TrackingPixels />
+        <Analytics />
+        <SpeedInsights />
+        {process.env.NEXT_PUBLIC_GHL_LOCATION_ID && (
+          <Script
+            src="https://widgets.leadconnectorhq.com/loader.js"
+            data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
+            data-widget-id={process.env.NEXT_PUBLIC_GHL_LOCATION_ID}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   )
