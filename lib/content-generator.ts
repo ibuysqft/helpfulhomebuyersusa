@@ -22,20 +22,25 @@ export async function generateBlogPost(keyword: string, cityTags: string[]): Pro
 Write a comprehensive, SEO-optimized blog post targeting the keyword: "${keyword}"
 
 Requirements:
-- Title: Compelling H1 that includes the keyword naturally
+- Title format: "[Keyword-rich topic] | Helpful Home Buyers USA" — MUST include a location (city/Virginia) or situation keyword
 - Length: 900-1100 words
 - Format: Markdown with ## headers, bullet points where helpful
+- Place an H2 containing the primary keyword within the first 300 words
 - Include: The process of selling to a cash buyer, benefits, common situations, local Virginia context
+- Include at least one internal link to a relevant situation page (e.g. /foreclosure-help-virginia, /probate-help-virginia, /divorce-help-virginia, /inherited-help-virginia, /fire-damage-help-virginia, /tired-landlord-help-virginia, /behind-payments-help-virginia, /tax-lien-help-virginia)
 - Tone: Helpful, trustworthy, direct — like a knowledgeable friend, not a salesperson
 - CTA at end: Call (703) 940-1159 or get a free offer at helpfulhomebuyersusa.com
 - Do NOT mention competitor companies
 - Virginia-specific content only (no California references)
+- Meta description: under 155 characters, must include "(703) 940-1159"
 
 Return ONLY valid JSON in this exact format:
 {
-  "title": "the article title",
+  "title": "the article title | Helpful Home Buyers USA",
   "slug": "url-friendly-slug",
-  "metaDescription": "150-160 char meta description with keyword",
+  "metaDescription": "Under 155 chars. Include (703) 940-1159.",
+  "primary_keyword": "the exact target keyword",
+  "internal_link_suggestion": "/situation-page-slug",
   "content": "full markdown content here",
   "cityTags": ["city1", "city2"]
 }`

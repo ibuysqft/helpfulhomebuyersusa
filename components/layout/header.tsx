@@ -4,8 +4,33 @@ import { siteConfig } from '@/config/site'
 import { useState } from 'react'
 import { useLanguage } from '@/contexts/language-context'
 
+const situationLinks = [
+  { href: '/foreclosure-help-virginia', label: 'Facing Foreclosure' },
+  { href: '/probate-help-virginia', label: 'Probate / Estate Sale' },
+  { href: '/tax-lien-help-virginia', label: 'Behind on Property Taxes' },
+  { href: '/divorce-help-virginia', label: 'Going Through Divorce' },
+  { href: '/inherited-help-virginia', label: 'Inherited a House' },
+  { href: '/fire-damage-help-virginia', label: 'Fire or Water Damage' },
+  { href: '/tired-landlord-help-virginia', label: 'Tired Landlord' },
+  { href: '/behind-payments-help-virginia', label: 'Behind on Payments' },
+]
+
+const areaLinks = [
+  { href: '/sell-my-house-fast-richmond-va', label: 'Richmond' },
+  { href: '/sell-my-house-fast-norfolk-va', label: 'Norfolk' },
+  { href: '/sell-my-house-fast-virginia-beach-va', label: 'Virginia Beach' },
+  { href: '/sell-my-house-fast-chesapeake-va', label: 'Chesapeake' },
+  { href: '/sell-my-house-fast-arlington-va', label: 'Arlington' },
+  { href: '/sell-my-house-fast-alexandria-va', label: 'Alexandria' },
+  { href: '/sell-my-house-fast-roanoke-va', label: 'Roanoke' },
+  { href: '/sell-my-house-fast-newport-news-va', label: 'Newport News' },
+  { href: '/states', label: 'View All States →' },
+]
+
 export function Header() {
   const [open, setOpen] = useState(false)
+  const [situationsOpen, setSituationsOpen] = useState(false)
+  const [areasOpen, setAreasOpen] = useState(false)
   const { locale, setLocale, t } = useLanguage()
 
   return (
@@ -33,8 +58,42 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-6 text-sm" style={{ fontFamily: 'var(--font-body)' }}>
           <Link href="/about" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_about')}</Link>
           <Link href="/#how-it-works" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_how_it_works')}</Link>
+
+          {/* Situations dropdown */}
+          <div className="relative" onMouseEnter={() => setSituationsOpen(true)} onMouseLeave={() => setSituationsOpen(false)}>
+            <button className="text-slate-600 hover:text-blue-600 transition-colors flex items-center gap-1">
+              Situations
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            {situationsOpen && (
+              <div className="absolute top-full left-0 mt-1 w-56 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1">
+                {situationLinks.map(link => (
+                  <Link key={link.href} href={link.href} className="block px-4 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Areas We Serve dropdown */}
+          <div className="relative" onMouseEnter={() => setAreasOpen(true)} onMouseLeave={() => setAreasOpen(false)}>
+            <button className="text-slate-600 hover:text-blue-600 transition-colors flex items-center gap-1">
+              Areas We Serve
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            {areasOpen && (
+              <div className="absolute top-full left-0 mt-1 w-52 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1">
+                {areaLinks.map(link => (
+                  <Link key={link.href} href={link.href} className="block px-4 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
           <Link href="/#reviews" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_reviews')}</Link>
-          <Link href="/states" className="text-slate-600 hover:text-blue-600 transition-colors">States</Link>
           <Link href="/contact" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_contact')}</Link>
           <Link href="/referral-partners" className="text-slate-600 hover:text-blue-600 transition-colors">Referrals</Link>
 
@@ -91,7 +150,27 @@ export function Header() {
           <Link href="/about" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>{t('nav_about')}</Link>
           <Link href="/#how-it-works" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>{t('nav_how_it_works')}</Link>
           <Link href="/#reviews" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>{t('nav_reviews')}</Link>
-          <Link href="/states" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>States</Link>
+
+          {/* Mobile: Situations */}
+          <div>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Situations</p>
+            <div className="flex flex-col gap-1 pl-2">
+              {situationLinks.map(link => (
+                <Link key={link.href} href={link.href} className="text-slate-600 hover:text-blue-600 py-0.5 text-sm" onClick={() => setOpen(false)}>{link.label}</Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile: Areas We Serve */}
+          <div>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Areas We Serve</p>
+            <div className="flex flex-col gap-1 pl-2">
+              {areaLinks.map(link => (
+                <Link key={link.href} href={link.href} className="text-slate-600 hover:text-blue-600 py-0.5 text-sm" onClick={() => setOpen(false)}>{link.label}</Link>
+              ))}
+            </div>
+          </div>
+
           <Link href="/contact" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>{t('nav_contact')}</Link>
           <Link href="/referral-partners" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>Referral Partners</Link>
           <button

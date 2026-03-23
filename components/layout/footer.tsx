@@ -143,6 +143,9 @@ export function Footer() {
             <li><Link href="/instant-offer" className="hover:text-white transition-colors">Instant Offer</Link></li>
             <li><Link href="/net-proceeds-calculator" className="hover:text-white transition-colors">Net Proceeds Calc</Link></li>
             <li><Link href="/whats-my-house-worth" className="hover:text-white transition-colors">What&apos;s My House Worth</Link></li>
+            <li><Link href="/reviews" className="hover:text-white transition-colors">Reviews</Link></li>
+            <li><Link href="/sell-my-house-fast-vs-listing-with-agent" className="hover:text-white transition-colors">Cash Buyer vs Agent</Link></li>
+            <li><Link href="/as-is-home-buyers-virginia" className="hover:text-white transition-colors">Sell As-Is in Virginia</Link></li>
             <li><Link href="/states" className="hover:text-white transition-colors" style={{ color: '#D4AF37' }}>All States →</Link></li>
           </ul>
         </div>

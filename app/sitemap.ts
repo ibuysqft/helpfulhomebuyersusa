@@ -25,6 +25,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/whats-my-house-worth`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/referral-partners`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/newsletter`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/reviews`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/sell-my-house-fast-vs-listing-with-agent`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/as-is-home-buyers-virginia`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
   ]
 
   const cityPages: MetadataRoute.Sitemap = cities.map(city => ({
