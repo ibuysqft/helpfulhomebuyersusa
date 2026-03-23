@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckCircle2, Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard, TrendingDown, Heart, Shield, Gavel } from 'lucide-react'
+import { CheckCircle2, Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard, TrendingDown, Heart, Shield, Gavel, AlertTriangle, Trash2, HardHat, Droplets, Landmark, Building, BookOpen, Bell, Sunrise, Wrench, MapPin, Stethoscope, Star, Briefcase, Package, ArrowDown, RefreshCw, DollarSign, PiggyBank, Ban, HandCoins } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
@@ -17,7 +17,11 @@ import { getCitiesForState } from '@/lib/state-data'
 import { situationCityMatrix } from '@/data/situation-city-matrix'
 
 const iconMap: Record<string, LucideIcon> = {
-  Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard, TrendingDown, Heart, Shield, Gavel
+  Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard,
+  TrendingDown, Heart, Shield, Gavel,
+  AlertTriangle, Trash2, HardHat, Droplets, Landmark, Building,
+  BookOpen, Bell, Sunrise, Wrench, MapPin, Stethoscope, Star,
+  Briefcase, Package, ArrowDown, RefreshCw, DollarSign, PiggyBank, Ban, HandCoins
 }
 
 const stateConfig = getStateConfig()
