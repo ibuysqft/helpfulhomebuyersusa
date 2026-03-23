@@ -498,6 +498,10 @@ function PropertyInformationPageInner() {
                     <p className="text-slate-500 text-xs text-center">
                       No obligation. No fees. We&apos;ll call within 24 hours.
                     </p>
+                    <p className="text-slate-600 text-xs text-center leading-relaxed mt-1">
+                      By submitting, you consent to receive calls and SMS messages (including automated messages) from Helpful Home Buyers USA at the number provided. Msg &amp; data rates may apply. Reply STOP to opt out. Calls may be recorded for quality assurance, research, and educational purposes.{' '}
+                      <a href="/privacy-policy" className="underline hover:text-slate-400">Privacy Policy</a>.
+                    </p>
                   </form>
                   <BackButton onClick={back} />
                 </div>

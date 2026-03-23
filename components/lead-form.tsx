@@ -188,6 +188,13 @@ export function LeadForm({ city }: LeadFormProps) {
             (703) 940-1159
           </a>
         </p>
+        <p
+          className="text-xs text-center leading-relaxed"
+          style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+        >
+          By submitting, you consent to receive calls and SMS messages (including automated messages) from Helpful Home Buyers USA at the number provided. Msg &amp; data rates may apply. Reply STOP to opt out at any time. Calls may be recorded for quality assurance, research, and educational purposes.{' '}
+          <a href="/privacy-policy" style={{ color: 'var(--color-cta)' }}>Privacy Policy</a>.
+        </p>
       </form>
     </div>
   )
