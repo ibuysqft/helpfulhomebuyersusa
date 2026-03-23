@@ -10,7 +10,6 @@ import { MobileCTABar } from '@/components/layout/mobile-cta-bar'
 import { DesktopStickyCTA } from '@/components/layout/desktop-sticky-cta'
 import { LanguageProvider } from '@/contexts/language-context'
 import { TrackingPixels } from '@/components/tracking-pixels'
-import { WhatsAppButton } from '@/components/layout/whatsapp-button'
 
 const inter = Inter({
   variable: '--font-inter',
@@ -129,7 +128,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           {children}
           <MobileCTABar />
           <DesktopStickyCTA />
-          <WhatsAppButton />
         </LanguageProvider>
         <TrackingPixels />
         <Analytics />

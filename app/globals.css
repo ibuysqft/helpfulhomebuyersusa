@@ -71,3 +71,9 @@ a, button { transition: all 150ms ease-out; }
 .cta-pulse {
   animation: ctaPulse 2s ease-in-out infinite;
 }
+
+/* Ensure GHL chat widget stays on top */
+[data-widget-id] iframe,
+.leadconnector-chat-widget {
+  z-index: 99999 !important;
+}
