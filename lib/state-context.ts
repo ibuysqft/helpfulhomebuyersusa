@@ -10,6 +10,7 @@ export interface StateConfig {
 }
 
 const stateMarkets: Record<string, string[]> = {
+  national: ['Northern Virginia', 'Texas', 'Florida', 'Georgia', 'Ohio', 'North Carolina', 'South Carolina', 'Illinois', 'Michigan', 'New York', 'New Jersey', 'California', 'Arizona', 'Colorado', 'Connecticut'],
   virginia: ['Northern Virginia', 'Richmond VA', 'Hampton Roads VA'],
   texas: ['Dallas-Fort Worth', 'Houston', 'San Antonio', 'Austin'],
   florida: ['Miami', 'Orlando', 'Tampa Bay', 'Jacksonville'],
@@ -28,12 +29,13 @@ const stateMarkets: Record<string, string[]> = {
 }
 
 export function getStateConfig(): StateConfig {
-  const slug = process.env.NEXT_PUBLIC_STATE_SLUG ?? 'virginia'
+  const slug = process.env.NEXT_PUBLIC_STATE_SLUG ?? 'national'
+  const isNational = process.env.NEXT_PUBLIC_IS_NATIONAL === 'true' || slug === 'national'
   return {
-    name: process.env.NEXT_PUBLIC_STATE ?? 'Virginia',
-    abbr: process.env.NEXT_PUBLIC_STATE_ABBR ?? 'VA',
+    name: process.env.NEXT_PUBLIC_STATE ?? 'the United States',
+    abbr: process.env.NEXT_PUBLIC_STATE_ABBR ?? 'US',
     slug,
-    isNational: process.env.NEXT_PUBLIC_IS_NATIONAL === 'true',
+    isNational,
     markets: stateMarkets[slug] ?? ['Major Metropolitan Areas'],
     phone: process.env.NEXT_PUBLIC_PHONE ?? '+17039401159',
     phoneDisplay: process.env.NEXT_PUBLIC_PHONE_DISPLAY ?? '(703) 940-1159',

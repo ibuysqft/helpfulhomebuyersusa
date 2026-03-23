@@ -428,6 +428,45 @@ export const situationDefs = [
       'Deed transfers at closing — you walk away free and clear',
     ],
   },
+  {
+    key: 'deed-in-lieu',
+    label: 'Considering a Deed-in-Lieu of Foreclosure?',
+    icon: 'FileText',
+    description: 'A deed-in-lieu lets you hand the property back to the lender to avoid foreclosure — but a cash sale often leaves you with more. We\'ll show you both options.',
+    bullets: [
+      'Avoids a full foreclosure on your credit record',
+      'We can often close faster than a deed-in-lieu approval',
+      'Cash sale may put money in your pocket — deed-in-lieu won\'t',
+      'We work alongside your servicer\'s loss mitigation team',
+      'Free consultation — no obligation to proceed',
+    ],
+  },
+  {
+    key: 'loan-modification',
+    label: 'Loan Modification Not Working Out?',
+    icon: 'RefreshCw',
+    description: 'If your lender denied or stalled your loan modification, a cash sale may be your fastest path to relief. We can close before your next missed payment.',
+    bullets: [
+      'No waiting months for lender approval',
+      'Cash offer within 24 hours — close in 7 days',
+      'Stops foreclosure clock while loan mod is in limbo',
+      'Works alongside an active modification request',
+      'We pay all closing costs — zero out-of-pocket',
+    ],
+  },
+  {
+    key: 'forbearance',
+    label: 'Forbearance Ending? Lump Sum Due?',
+    icon: 'CreditCard',
+    description: 'When forbearance ends, lenders often demand the full missed amount at once. A cash sale lets you pay it off at closing and walk away clean.',
+    bullets: [
+      'Pay off your forbearance balance from sale proceeds',
+      'No lump-sum payment out of pocket',
+      'Close before your forbearance deadline',
+      'Cash offer within 24 hours',
+      'We handle all payoff coordination with your servicer',
+    ],
+  },
 ] as const
 
 export type SituationKey = typeof situationDefs[number]['key']
@@ -439,5 +478,5 @@ export function getSituations(stateSlug: string) {
   }))
 }
 
-/** Virginia backward-compat default */
-export const situations = getSituations('virginia')
+/** National backward-compat default */
+export const situations = getSituations('national')

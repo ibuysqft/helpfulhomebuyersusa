@@ -80,9 +80,11 @@ const orgSchema = {
     'https://helpfulhomebuyersconnecticut.com',
     'https://www.facebook.com/helpfulhomebuyersusa',
     'https://www.instagram.com/helpfulhomebuyersusa',
-    'https://twitter.com/helpfulhomebuyersva',
+    'https://twitter.com/HelpfulHomeBuyers',
     'https://www.linkedin.com/company/helpful-home-buyers-usa',
-    'https://www.youtube.com/@helpfulhomebuyersusa',
+    'https://www.youtube.com/@HelpfulHomeBuyersUSA',
+    'https://www.pinterest.com/anchorofferchatgpt',
+    'https://www.reddit.com/user/HelpfulHomeBuyersVA',
   ],
   aggregateRating: {
     '@type': 'AggregateRating',

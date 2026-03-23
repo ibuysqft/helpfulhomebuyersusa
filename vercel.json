@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    { "source": "/hecm-reverse-mortgage", "destination": "/hecm-short-sale-help-national", "permanent": true },
+    { "source": "/short-sale", "destination": "/short-sale-help-national", "permanent": true },
+    { "source": "/deed-in-lieu", "destination": "/deed-in-lieu-help-national", "permanent": true },
+    { "source": "/loan-modification", "destination": "/loan-modification-help-national", "permanent": true },
+    { "source": "/forbearance", "destination": "/forbearance-help-national", "permanent": true }
+  ],
   "crons": [
     {
       "path": "/api/cron/content",

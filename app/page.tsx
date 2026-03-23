@@ -13,19 +13,118 @@ import { StatsCounter } from '@/components/stats-counter'
 import { ComparisonTable } from '@/components/comparison-table'
 import { ClosingCalculator } from '@/components/closing-calculator'
 import { ReturnVisitorBanner } from '@/components/return-visitor-banner'
+import { NationalHero } from '@/components/national-hero'
+import { StateSelector } from '@/components/state-selector'
+import { NewsletterSignup } from '@/components/newsletter-signup'
 import { siteConfig } from '@/config/site'
 import { ratingsConfig } from '@/config/ratings'
 import { getHomepageFaqs } from '@/data/faqs'
 import { getStateConfig } from '@/lib/state-context'
 
-export const metadata: Metadata = {
-  title: `Sell My House Fast ${siteConfig.stateName} | Cash Offer in 24 Hours`,
-  description: `We buy houses for cash across ${siteConfig.stateName}. Get a fair cash offer in 24 hours. Close in as little as 7 days. No repairs, no commissions, no hassle.`,
-  alternates: { canonical: siteConfig.url },
-}
+export const metadata: Metadata = siteConfig.isNational
+  ? {
+      title: 'We Buy Houses for Cash — Anywhere in the USA | Helpful Home Buyers USA',
+      description:
+        'National cash home buying network. Get a fair cash offer in 24 hours. Close in 7 days. No repairs, no agents, no fees. Operating in 15 states.',
+      alternates: { canonical: siteConfig.url },
+    }
+  : {
+      title: `Sell My House Fast ${siteConfig.stateName} | Cash Offer in 24 Hours`,
+      description: `We buy houses for cash across ${siteConfig.stateName}. Get a fair cash offer in 24 hours. Close in as little as 7 days. No repairs, no commissions, no hassle.`,
+      alternates: { canonical: siteConfig.url },
+    }
+
+const nationalFaqs = [
+  {
+    question: 'How does the Helpful Home Buyers national network work?',
+    answer:
+      'We are a network of local cash buyers operating across 15 states. When you submit your property, we connect you with your local Helpful Home Buyers team who will provide a fair, no-obligation cash offer within 24 hours.',
+  },
+  {
+    question: 'How fast can you close?',
+    answer:
+      'We can close in as few as 7 days once you accept our offer. We work on your schedule — if you need more time, we can accommodate that too.',
+  },
+  {
+    question: 'Do you charge any fees or commissions?',
+    answer:
+      'Never. We pay all closing costs. There are zero commissions, zero agent fees, and zero hidden charges. The offer we make is what you receive at closing.',
+  },
+  {
+    question: 'Do I need to make repairs before selling?',
+    answer:
+      'No. We buy houses as-is in any condition. Fire damage, foundation issues, code violations, outdated systems — it doesn\'t matter. We handle everything after closing.',
+  },
+  {
+    question: 'Which states do you currently operate in?',
+    answer:
+      'We are currently active in Virginia with active expansion into Texas, Florida, Georgia, Ohio, North Carolina, South Carolina, Illinois, Michigan, New York, New Jersey, California, Arizona, Colorado, and Connecticut.',
+  },
+]
 
 export default function HomePage() {
-  const homepageFaqs = getHomepageFaqs(getStateConfig())
+  const stateConfig = getStateConfig()
+
+  // National homepage
+  if (stateConfig.isNational) {
+    return (
+      <>
+        <Header />
+        <main>
+          <NationalHero />
+          <TrustBar />
+          <CredibilityBar />
+          <StatsCounter />
+          <StateSelector />
+          {/* Newsletter — national */}
+          <section style={{ background: '#0D1A2E' }} className="py-16 px-4">
+            <div className="max-w-2xl mx-auto text-center">
+              <NewsletterSignup variant="national" />
+            </div>
+          </section>
+          <SituationCards />
+          <HowItWorks />
+          <Testimonials />
+          <FaqSection faqs={nationalFaqs} title="Frequently Asked Questions" />
+          <section className="py-16 px-4 text-center" style={{ background: '#0F1E3C' }}>
+            <h2
+              className="text-3xl md:text-4xl font-semibold text-white mb-4"
+              style={{ fontFamily: 'var(--font-heading)' }}
+            >
+              Ready to Get Your Cash Offer?
+            </h2>
+            <p
+              className="mb-8 max-w-md mx-auto"
+              style={{ color: '#94A3B8', fontFamily: 'var(--font-body)' }}
+            >
+              No obligation. We&apos;ll have a fair offer within 24 hours.
+            </p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link
+                href="/property-information"
+                className="font-bold px-8 py-4 rounded-xl text-slate-900 min-h-[52px] flex items-center gap-2 transition-opacity hover:opacity-90"
+                style={{ background: '#D4AF37', fontFamily: 'var(--font-body)' }}
+              >
+                Get My Cash Offer
+              </Link>
+              <a
+                href={`tel:${siteConfig.phone}`}
+                className="font-bold px-8 py-4 rounded-xl text-white min-h-[52px] flex items-center gap-2 transition-colors hover:bg-white/10"
+                style={{ border: '2px solid rgba(255,255,255,0.2)', fontFamily: 'var(--font-body)' }}
+              >
+                Call {siteConfig.phoneDisplay}
+              </a>
+            </div>
+          </section>
+          <FunnelEntry />
+        </main>
+        <Footer />
+      </>
+    )
+  }
+
+  // State-specific homepage
+  const homepageFaqs = getHomepageFaqs(stateConfig)
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -129,6 +228,18 @@ export default function HomePage() {
                 </svg>
                 Call {siteConfig.phoneDisplay}
               </a>
+
+              {/* SMS Keyword CTA */}
+              <p
+                className="text-sm text-blue-200 mt-1"
+                style={{ fontFamily: 'var(--font-body)' }}
+              >
+                Or text <strong className="text-white font-semibold">&ldquo;OFFER&rdquo;</strong> to{' '}
+                <a href="sms:+17039401159" className="text-white font-semibold hover:underline">
+                  (703) 940-1159
+                </a>{' '}
+                for an instant reply &mdash; we respond in minutes.
+              </p>
             </div>
 
             {/* Right: form card */}
@@ -183,14 +294,149 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Quiz CTA banner */}
+        <section className="py-10 px-4" style={{ background: '#0F1E3C' }}>
+          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#93C5FD', fontFamily: 'var(--font-body)' }}>
+                Not sure which option is right for you?
+              </p>
+              <p className="text-xl font-semibold text-white" style={{ fontFamily: 'var(--font-heading)' }}>
+                Take our 60-second quiz and get a personalized recommendation.
+              </p>
+            </div>
+            <Link
+              href="/quiz"
+              className="flex-shrink-0 font-bold px-6 py-3 rounded-xl text-white min-h-[44px] flex items-center gap-2 transition-opacity hover:opacity-90 whitespace-nowrap"
+              style={{ background: 'var(--color-cta)', fontFamily: 'var(--font-body)' }}
+            >
+              Take the Quiz →
+            </Link>
+          </div>
+        </section>
+
+        {/* Case studies promo */}
+        <section className="py-12 px-4" style={{ background: '#fff' }}>
+          <div className="max-w-4xl mx-auto">
+            <div
+              className="rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center gap-8"
+              style={{
+                background: 'linear-gradient(135deg, #0F1E3C 0%, #1E3A5F 100%)',
+                border: '1px solid rgba(37, 99, 235, 0.3)',
+              }}
+            >
+              <div className="flex-1 text-center md:text-left">
+                <p
+                  className="text-xs font-bold uppercase tracking-widest mb-2"
+                  style={{ color: '#93C5FD', fontFamily: 'var(--font-body)' }}
+                >
+                  Real Stories
+                </p>
+                <h2
+                  className="text-2xl md:text-3xl font-semibold text-white mb-2"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  See What We've Done for Our Sellers
+                </h2>
+                <p
+                  className="text-sm md:text-base"
+                  style={{ color: '#94A3B8', fontFamily: 'var(--font-body)' }}
+                >
+                  Foreclosure, probate, divorce, inherited homes, tax liens — real timelines and real numbers from people in the same situation you're in now.
+                </p>
+              </div>
+              <Link
+                href="/case-studies"
+                className="flex-shrink-0 font-bold px-6 py-3 rounded-xl text-slate-900 min-h-[44px] flex items-center gap-2 transition-opacity hover:opacity-90"
+                style={{ background: '#FCD34D', fontFamily: 'var(--font-body)' }}
+              >
+                Read Case Studies
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Comparison table */}
         <ComparisonTable />
 
         {/* Closing calculator */}
         <ClosingCalculator />
 
+        {/* Net proceeds calculator CTA */}
+        <section className="py-12 px-4" style={{ background: '#0A0F1A' }}>
+          <div className="max-w-4xl mx-auto">
+            <div
+              className="rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center gap-8"
+              style={{
+                background: 'linear-gradient(135deg, #052e16 0%, #0F1E3C 60%, #1E3A5F 100%)',
+                border: '1px solid rgba(74, 222, 128, 0.2)',
+              }}
+            >
+              {/* Icon */}
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0"
+                style={{ background: 'rgba(74, 222, 128, 0.12)', border: '1px solid rgba(74,222,128,0.25)' }}
+                aria-hidden="true"
+              >
+                <svg className="w-8 h-8" fill="none" stroke="#4ADE80" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+
+              {/* Copy */}
+              <div className="flex-1 text-center md:text-left">
+                <p
+                  className="text-xs font-bold uppercase tracking-widest mb-2"
+                  style={{ color: '#4ADE80', fontFamily: 'var(--font-body)' }}
+                >
+                  Free Tool
+                </p>
+                <h2
+                  className="text-2xl md:text-3xl font-semibold text-white mb-2"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  Net Proceeds Calculator
+                </h2>
+                <p
+                  className="text-sm md:text-base"
+                  style={{ color: '#94A3B8', fontFamily: 'var(--font-body)' }}
+                >
+                  See exactly what you&apos;d walk away with — cash offer vs. listing with an agent.
+                  Every fee, commission, and carrying cost included.
+                </p>
+              </div>
+
+              {/* CTA */}
+              <Link
+                href="/net-proceeds-calculator"
+                className="flex-shrink-0 font-bold px-6 py-3 rounded-xl text-white min-h-[44px] flex items-center gap-2 transition-opacity hover:opacity-90"
+                style={{ background: '#16A34A', fontFamily: 'var(--font-body)' }}
+              >
+                Calculate My Net
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
         <FaqSection faqs={homepageFaqs} title="Frequently Asked Questions" />
+
+        {/* Newsletter — state */}
+        <section style={{ background: '#0D1A2E' }} className="py-16 px-4">
+          <div className="max-w-2xl mx-auto">
+            <NewsletterSignup
+              variant="state"
+              stateSlug={siteConfig.stateSlug}
+              stateName={siteConfig.stateName}
+            />
+          </div>
+        </section>
 
         {/* Bottom CTA */}
         <section
@@ -211,8 +457,15 @@ export default function HomePage() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link
+              href="/instant-offer"
+              className="cta-pulse text-slate-900 font-bold px-8 py-4 rounded-lg min-h-[44px] flex items-center gap-2 transition-opacity hover:opacity-90"
+              style={{ background: '#FCD34D', fontFamily: 'var(--font-body)' }}
+            >
+              ⚡ Get Instant Offer Estimate
+            </Link>
+            <Link
               href="/property-information"
-              className="cta-pulse text-white font-bold px-8 py-4 rounded-lg min-h-[44px] flex items-center transition-opacity hover:opacity-90"
+              className="text-white font-bold px-8 py-4 rounded-lg min-h-[44px] flex items-center transition-opacity hover:opacity-90"
               style={{ background: 'var(--color-cta)', fontFamily: 'var(--font-body)' }}
             >
               Get My Cash Offer
