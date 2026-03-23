@@ -1,15 +1,10 @@
-import type { Metadata } from 'next'
+'use client'
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { Phone } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { siteConfig } from '@/config/site'
-
-export const metadata: Metadata = {
-  title: 'Thank You | We Received Your Request',
-  description: 'Thank you for contacting us. We will be in touch within 24 hours with your cash offer.',
-  robots: { index: false, follow: false },
-}
 
 const steps = [
   {
@@ -30,6 +25,22 @@ const steps = [
 ]
 
 export default function ThankYouPage() {
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        ;(window as any).fbq('track', 'Lead')
+        ;(window as any).fbq('track', 'Contact')
+      }
+    } catch {}
+    try {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        ;(window as any).gtag('event', 'conversion', {
+          send_to: process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID,
+        })
+      }
+    } catch {}
+  }, [])
+
   return (
     <>
       <Header />

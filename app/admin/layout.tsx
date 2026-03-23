@@ -9,6 +9,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <a href="/admin" className="text-slate-300 hover:text-white">
             Drafts
           </a>
+          <a href="/admin/failed-leads" className="text-slate-300 hover:text-white">
+            Failed Leads
+          </a>
         </nav>
       </header>
       <main className="p-6">{children}</main>

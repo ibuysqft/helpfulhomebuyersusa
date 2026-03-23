@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/language-context'
 import { siteConfig } from '@/config/site'
+import { usePixelEvents } from '@/components/hooks/use-pixel-events'
 
 interface LeadFormProps {
   city?: string
@@ -11,6 +12,7 @@ interface LeadFormProps {
 export function LeadForm({ city }: LeadFormProps) {
   const router = useRouter()
   const { t } = useLanguage()
+  const { trackLead } = usePixelEvents()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -42,6 +44,9 @@ export function LeadForm({ city }: LeadFormProps) {
         setError(data.error ?? 'Something went wrong')
         return
       }
+
+      // Fire conversion event — non-blocking, never affects UX
+      try { trackLead({ value: 1500, currency: 'USD' }) } catch {}
 
       router.push('/thank-you')
     } catch {

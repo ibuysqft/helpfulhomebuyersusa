@@ -1,7 +1,79 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { after } from 'next/server'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { supabase } from '@/lib/supabase'
 import { sendToGHL } from '@/lib/ghl'
+
+// Required env vars: RETELL_API_KEY, GHL_API_KEY, GHL_LOCATION_ID
+
+/**
+ * Trigger Retell outbound call to lead (non-blocking).
+ * Uses Shelby outbound agent (agent_40da2f733e42df807a89c669d6) from +17036915670.
+ */
+const triggerOutboundCall = async (phone: string, contactId: string, sourceUrl: string) => {
+  try {
+    const retellApiKey = process.env.RETELL_API_KEY
+    const agentId = 'agent_40da2f733e42df807a89c669d6' // Shelby outbound
+
+    await fetch('https://api.retellai.com/v2/create-phone-call', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${retellApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from_number: '+17036915670',
+        to_number: phone,
+        agent_id: agentId,
+        retell_llm_dynamic_variables: {
+          contact_id: contactId,
+          source_url: sourceUrl,
+          lead_phone: phone,
+        },
+      }),
+    })
+  } catch (err) {
+    console.error('[retell-outbound] trigger failed:', err)
+    // Non-blocking — don't throw, lead is already saved
+  }
+}
+
+/**
+ * Assign GHL contact to a pipeline opportunity based on source URL.
+ * Pipelines: Pre-Foreclosure (default), Bankruptcy, Probate.
+ * Required env vars: GHL_API_KEY, GHL_LOCATION_ID
+ */
+const assignToPipeline = async (contactId: string, sourceUrl: string) => {
+  // Determine pipeline based on source URL
+  let pipelineId = 'OxuePj0tZVptQQb6tVLg' // Default: Pre-Foreclosure
+
+  if (sourceUrl?.includes('bankruptcy') || sourceUrl?.includes('chapter')) {
+    pipelineId = 'CnYoJ4xAAjhM4MfYk0Po' // Bankruptcy
+  } else if (sourceUrl?.includes('probate') || sourceUrl?.includes('estate') || sourceUrl?.includes('inherited')) {
+    pipelineId = 'OsChWDlo8VZVOb6ENFl9' // Probate
+  }
+
+  try {
+    await fetch('https://services.leadconnectorhq.com/opportunities/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GHL_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Version': '2021-07-28',
+      },
+      body: JSON.stringify({
+        pipelineId,
+        locationId: process.env.GHL_LOCATION_ID,
+        contactId,
+        name: `Lead from ${sourceUrl || 'website'}`,
+        pipelineStageId: null, // First stage
+        status: 'open',
+      }),
+    })
+  } catch (err) {
+    console.error('[ghl-pipeline] assignment failed:', err)
+  }
+}
 
 const VALID_CONDITIONS = [
   'Good',
@@ -102,6 +174,32 @@ export async function POST(req: NextRequest) {
     .eq('phone', phone.trim())
     .order('created_at', { ascending: false })
     .limit(1)
+
+  // Trigger outbound call + pipeline assignment + server-side conversions post-response (non-blocking)
+  // Runs even if GHL failed, as long as Supabase save succeeded
+  const contactId = ghlResult.contactId ?? ''
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+  after(async () => {
+    await triggerOutboundCall(phone.trim(), contactId, referer)
+    if (contactId) {
+      await assignToPipeline(contactId, referer)
+    }
+    // Server-side Meta Conversions API — bypasses ad blockers
+    try {
+      await fetch(`${siteUrl}/api/conversions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_name: 'Lead',
+          email: email?.trim(),
+          phone: phone.trim(),
+          value: 1500,
+        }),
+      })
+    } catch (err) {
+      console.error('[lead-route] conversions API call failed:', err)
+    }
+  })
 
   return NextResponse.json({ success: true })
 }

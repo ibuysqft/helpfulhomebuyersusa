@@ -15,10 +15,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
+    { url: `${base}/instant-offer`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
     { url: `${base}/property-information`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/net-proceeds-calculator`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/quiz`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/whats-my-house-worth`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/referral-partners`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/newsletter`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   ]
 
   const cityPages: MetadataRoute.Sitemap = cities.map(city => ({
@@ -54,5 +60,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...staticPages, ...cityPages, ...situationPages, ...matrixPages, ...blogPages]
+  const { data: caseStudies } = await supabase
+    .from('case_studies')
+    .select('slug, created_at')
+    .eq('published', true)
+
+  const caseStudyPages: MetadataRoute.Sitemap = [
+    { url: `${base}/case-studies`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    ...(caseStudies ?? []).map(cs => ({
+      url: `${base}/case-studies/${cs.slug}`,
+      lastModified: cs.created_at ? new Date(cs.created_at) : new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
+  ]
+
+  return [...staticPages, ...cityPages, ...situationPages, ...matrixPages, ...blogPages, ...caseStudyPages]
 }

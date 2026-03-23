@@ -91,6 +91,26 @@ export default async function SlugPage({ params }: Props) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localSchema) }} />
         <Header />
         <main>
+          {(slug.includes('foreclosure') || slug.includes('pre-foreclosure') || slug.includes('tax')) && (
+            <div className="max-w-3xl mx-auto mt-6 px-4">
+              <div style={{ background: '#1a2744', borderLeft: '4px solid #D4AF37' }} className="p-4 rounded-r-lg">
+                <p className="text-slate-300 text-sm">
+                  <strong className="text-white">Facing foreclosure or debt issues?</strong>{' '}
+                  Our partner site{' '}
+                  <a
+                    href="https://myresolutionpath.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                    style={{ color: '#D4AF37' }}
+                  >
+                    MyResolutionPath.com
+                  </a>{' '}
+                  specializes in debt resolution, loan modification, and foreclosure prevention — even if you want to keep your home.
+                </p>
+              </div>
+            </div>
+          )}
           <section className="bg-slate-900 py-20 px-4">
             <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
@@ -201,6 +221,26 @@ export default async function SlugPage({ params }: Props) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localSchema) }} />
         <Header />
         <main>
+          {(entry.situationSlug.includes('foreclosure') || entry.situationSlug.includes('pre-foreclosure') || entry.situationSlug.includes('tax')) && (
+            <div className="max-w-3xl mx-auto mt-6 px-4">
+              <div style={{ background: '#1a2744', borderLeft: '4px solid #D4AF37' }} className="p-4 rounded-r-lg">
+                <p className="text-slate-300 text-sm">
+                  <strong className="text-white">Facing foreclosure or debt issues?</strong>{' '}
+                  Our partner site{' '}
+                  <a
+                    href="https://myresolutionpath.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                    style={{ color: '#D4AF37' }}
+                  >
+                    MyResolutionPath.com
+                  </a>{' '}
+                  specializes in debt resolution, loan modification, and foreclosure prevention — even if you want to keep your home.
+                </p>
+              </div>
+            </div>
+          )}
           <section className="bg-slate-900 py-20 px-4">
             <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">

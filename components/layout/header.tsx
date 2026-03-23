@@ -34,7 +34,9 @@ export function Header() {
           <Link href="/about" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_about')}</Link>
           <Link href="/#how-it-works" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_how_it_works')}</Link>
           <Link href="/#reviews" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_reviews')}</Link>
+          <Link href="/states" className="text-slate-600 hover:text-blue-600 transition-colors">States</Link>
           <Link href="/contact" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_contact')}</Link>
+          <Link href="/referral-partners" className="text-slate-600 hover:text-blue-600 transition-colors">Referrals</Link>
 
           {/* Language toggle */}
           <button
@@ -89,7 +91,9 @@ export function Header() {
           <Link href="/about" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>{t('nav_about')}</Link>
           <Link href="/#how-it-works" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>{t('nav_how_it_works')}</Link>
           <Link href="/#reviews" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>{t('nav_reviews')}</Link>
+          <Link href="/states" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>States</Link>
           <Link href="/contact" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>{t('nav_contact')}</Link>
+          <Link href="/referral-partners" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>Referral Partners</Link>
           <button
             onClick={() => { setLocale(locale === 'en' ? 'es' : 'en'); setOpen(false) }}
             className="text-left text-sm font-semibold py-1"
