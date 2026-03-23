@@ -23,11 +23,14 @@ Write a comprehensive, SEO-optimized blog post targeting the keyword: "${keyword
 
 Requirements:
 - Title format: "[Keyword-rich topic] | Helpful Home Buyers USA" — MUST include a location (city/Virginia) or situation keyword
-- Length: 900-1100 words
+- Length: 1200-1500 words
 - Format: Markdown with ## headers, bullet points where helpful
+- H1 (the title) and the first paragraph MUST naturally contain the exact target keyword: "${keyword}"
 - Place an H2 containing the primary keyword within the first 300 words
+- Include a "## Key Takeaways" section near the top (after the intro, before the main body) with 4-6 bullet points summarizing the most important points for the reader
 - Include: The process of selling to a cash buyer, benefits, common situations, local Virginia context
-- Include at least one internal link to a relevant situation page (e.g. /foreclosure-help-virginia, /probate-help-virginia, /divorce-help-virginia, /inherited-help-virginia, /fire-damage-help-virginia, /tired-landlord-help-virginia, /behind-payments-help-virginia, /tax-lien-help-virginia)
+- Include at least 2 internal links to relevant situation pages from this list: /foreclosure-help-virginia, /probate-help-virginia, /divorce-help-virginia, /inherited-help-virginia, /fire-damage-help-virginia, /tired-landlord-help-virginia, /behind-payments-help-virginia, /tax-lien-help-virginia, /as-is-home-buyers-virginia
+- Include a "## Frequently Asked Questions" section near the end with 3-5 Q&A pairs formatted as ### Question followed by the answer paragraph. Use natural language questions a real seller would ask.
 - Tone: Helpful, trustworthy, direct — like a knowledgeable friend, not a salesperson
 - CTA at end: Call (703) 940-1159 or get a free offer at helpfulhomebuyersusa.com
 - Do NOT mention competitor companies
@@ -47,7 +50,7 @@ Return ONLY valid JSON in this exact format:
 
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 2048,
+    max_tokens: 3500,
     messages: [{ role: 'user', content: prompt }],
   })
 
