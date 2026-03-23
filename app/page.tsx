@@ -143,6 +143,46 @@ export default function HomePage() {
     ],
   }
 
+  const howToSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Sell Your House Fast for Cash',
+    step: [
+      {
+        '@type': 'HowToStep',
+        name: 'Request Your Cash Offer',
+        text: 'Fill out our short form or call (703) 940-1159 with your property details.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Receive Your Fair Cash Offer',
+        text: 'We analyze your property and deliver a no-obligation cash offer within 24 hours.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Pick Your Closing Date',
+        text: 'You choose the closing date — as fast as 7 days or whenever works for you.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Get Paid at Closing',
+        text: 'Sign documents, hand over keys, and receive cash at closing — no fees, no repairs required.',
+      },
+    ],
+  }
+
+  const aggregateRatingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Helpful Home Buyers USA',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.9',
+      reviewCount: '47',
+      bestRating: '5',
+    },
+  }
+
   return (
     <>
       <script
@@ -152,6 +192,14 @@ export default function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRatingSchema) }}
       />
       <Header />
       <ReturnVisitorBanner />
