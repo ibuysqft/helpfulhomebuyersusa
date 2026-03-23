@@ -5,6 +5,7 @@ import { siteConfig } from '@/config/site'
 import { ratingsConfig } from '@/config/ratings'
 import { MobileCTABar } from '@/components/layout/mobile-cta-bar'
 import { DesktopStickyCTA } from '@/components/layout/desktop-sticky-cta'
+import { LanguageProvider } from '@/contexts/language-context'
 
 const inter = Inter({
   variable: '--font-inter',
@@ -68,9 +69,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />
-        {children}
-        <MobileCTABar />
-        <DesktopStickyCTA />
+        <LanguageProvider>
+          {children}
+          <MobileCTABar />
+          <DesktopStickyCTA />
+        </LanguageProvider>
       </body>
     </html>
   )

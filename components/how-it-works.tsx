@@ -1,10 +1,13 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
+import { useLanguage } from '@/contexts/language-context'
+import { siteConfig } from '@/config/site'
 
 export function HowItWorks() {
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLDivElement>(null)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const el = sectionRef.current
@@ -27,8 +30,8 @@ export function HowItWorks() {
   const steps = [
     {
       n: '1',
-      title: 'Tell Us About Your Property',
-      desc: 'Fill out our short form or call us. Takes 2 minutes. No obligation.',
+      title: t('hiw_step1_title'),
+      desc: t('hiw_step1_desc'),
       delay: 0,
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -38,8 +41,8 @@ export function HowItWorks() {
     },
     {
       n: '2',
-      title: 'Receive Your Cash Offer',
-      desc: "We'll present a fair, no-obligation cash offer within 24 hours.",
+      title: t('hiw_step2_title'),
+      desc: t('hiw_step2_desc'),
       delay: 150,
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -49,8 +52,8 @@ export function HowItWorks() {
     },
     {
       n: '3',
-      title: 'Close On Your Schedule',
-      desc: 'Pick your closing date. We handle all paperwork. You get cash.',
+      title: t('hiw_step3_title'),
+      desc: t('hiw_step3_desc'),
       delay: 300,
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -67,13 +70,13 @@ export function HowItWorks() {
           className="text-2xl md:text-3xl font-semibold mb-3 text-center"
           style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text)' }}
         >
-          How It Works
+          {t('hiw_title')}
         </h2>
         <p
           className="text-center mb-12 max-w-xl mx-auto"
           style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
         >
-          Three simple steps to sell your {process.env.NEXT_PUBLIC_STATE ?? 'Virginia'} home for cash — no repairs, no agents, no stress.
+          {t('hiw_subtitle_prefix')} {siteConfig.stateName} {t('hiw_subtitle_suffix')}
         </p>
         <div ref={sectionRef} className="grid md:grid-cols-3 gap-8">
           {steps.map(({ n, title, desc, icon, delay }) => (
@@ -97,7 +100,7 @@ export function HowItWorks() {
                 className="text-xs font-semibold uppercase tracking-widest mb-2"
                 style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-body)' }}
               >
-                Step {n}
+                {t('hiw_step')} {n}
               </div>
               <h3
                 className="font-semibold mb-2 text-base"

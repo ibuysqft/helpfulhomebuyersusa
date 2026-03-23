@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-
-const CONDITIONS = ['Good', 'Fair', 'Poor', 'Very Poor'] as const
+import { useLanguage } from '@/contexts/language-context'
+import { siteConfig } from '@/config/site'
 
 interface LeadFormProps {
   city?: string
@@ -10,10 +10,18 @@ interface LeadFormProps {
 
 export function LeadForm({ city }: LeadFormProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [form, setForm] = useState({ address: '', phone: '', condition: '' })
+
+  const CONDITIONS = [
+    t('form_condition_good'),
+    t('form_condition_fair'),
+    t('form_condition_poor'),
+    t('form_condition_very_poor'),
+  ] as const
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,13 +45,13 @@ export function LeadForm({ city }: LeadFormProps) {
 
       router.push('/thank-you')
     } catch {
-      setError('Network error. Please call us directly.')
+      setError(t('form_error_network'))
     } finally {
       setLoading(false)
     }
   }
 
-  const cityLabel = city ?? 'Virginia'
+  const cityLabel = city ?? siteConfig.stateName
 
   return (
     <div
@@ -53,17 +61,17 @@ export function LeadForm({ city }: LeadFormProps) {
       {/* Live indicator */}
       <div className="flex items-center gap-2 text-xs mb-3" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
         <span className="inline-flex w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" aria-hidden="true" />
-        <span>47 Virginia homeowners got an offer this month</span>
+        <span>47 {t('form_live')}</span>
       </div>
 
       <h2
         className="font-bold text-lg mb-1"
         style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text)' }}
       >
-        Get Your Free Cash Offer
+        {t('form_title')}
       </h2>
       <p className="text-sm mb-4" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-        No obligation &middot; Closes in 7 days &middot; $0 fees
+        {t('form_subtitle')}
       </p>
 
       {/* Progress */}
@@ -87,13 +95,13 @@ export function LeadForm({ city }: LeadFormProps) {
               className="block font-medium mb-2 text-sm"
               style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)' }}
             >
-              Property address in {cityLabel}?
+              {t('form_address_label')} in {cityLabel}?
             </label>
             <input
               type="text"
               value={form.address}
               onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
-              placeholder="123 Main St, Fairfax, VA"
+              placeholder={t('form_address_placeholder')}
               required
               className="w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 min-h-[44px]"
               style={{
@@ -111,7 +119,7 @@ export function LeadForm({ city }: LeadFormProps) {
               className="block font-medium mb-2 text-sm"
               style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)' }}
             >
-              What&apos;s the condition of the property?
+              {t('form_condition_label')}
             </label>
             <div className="grid grid-cols-2 gap-2">
               {CONDITIONS.map(c => (
@@ -140,13 +148,13 @@ export function LeadForm({ city }: LeadFormProps) {
               className="block font-medium mb-2 text-sm"
               style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)' }}
             >
-              Best phone number for your cash offer?
+              {t('form_phone_label')}
             </label>
             <input
               type="tel"
               value={form.phone}
               onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-              placeholder="(703) 555-0100"
+              placeholder={t('form_phone_placeholder')}
               required
               className="w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 min-h-[44px]"
               style={{
@@ -167,7 +175,7 @@ export function LeadForm({ city }: LeadFormProps) {
             className="w-full text-white font-bold py-3 rounded-lg transition-opacity hover:opacity-90 disabled:opacity-60 min-h-[44px]"
             style={{ background: 'var(--color-cta)', fontFamily: 'var(--font-body)' }}
           >
-            {loading ? 'Submitting...' : step < 3 ? 'Continue →' : 'Get My Cash Offer'}
+            {loading ? t('form_submitting') : step < 3 ? t('form_continue') : t('form_submit')}
           </button>
         )}
 
@@ -175,25 +183,25 @@ export function LeadForm({ city }: LeadFormProps) {
           className="flex justify-center gap-4 text-xs"
           style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
         >
-          <span>100% Private</span>
-          <span>No Obligation</span>
-          <span>24-Hr Response</span>
+          <span>{t('form_private')}</span>
+          <span>{t('form_no_obligation')}</span>
+          <span>{t('form_24hr')}</span>
         </div>
         <p
           className="text-xs text-center"
           style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
         >
-          No obligation. No spam. Call us directly:{' '}
-          <a href="tel:+17039401159" style={{ color: 'var(--color-cta)' }}>
-            (703) 940-1159
+          {t('form_no_spam')}{' '}
+          <a href={`tel:${siteConfig.phone}`} style={{ color: 'var(--color-cta)' }}>
+            {siteConfig.phoneDisplay}
           </a>
         </p>
         <p
           className="text-xs text-center leading-relaxed"
           style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
         >
-          By submitting, you consent to receive calls and SMS messages (including automated messages) from Helpful Home Buyers USA at the number provided. Msg &amp; data rates may apply. Reply STOP to opt out at any time. Calls may be recorded for quality assurance, research, and educational purposes.{' '}
-          <a href="/privacy-policy" style={{ color: 'var(--color-cta)' }}>Privacy Policy</a>.
+          {t('form_consent')}{' '}
+          <a href="/privacy-policy" style={{ color: 'var(--color-cta)' }}>{t('form_privacy_policy')}</a>.
         </p>
       </form>
     </div>
