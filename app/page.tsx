@@ -16,6 +16,7 @@ import { ReturnVisitorBanner } from '@/components/return-visitor-banner'
 import { NationalHero } from '@/components/national-hero'
 import { StateSelector } from '@/components/state-selector'
 import { NewsletterSignup } from '@/components/newsletter-signup'
+import { CompsSection } from '@/components/sections/comps-section'
 import { siteConfig } from '@/config/site'
 import { ratingsConfig } from '@/config/ratings'
 import { getHomepageFaqs } from '@/data/faqs'
@@ -84,6 +85,7 @@ export default function HomePage() {
           </section>
           <SituationCards />
           <HowItWorks />
+          <CompsSection />
           <Testimonials />
           <FaqSection faqs={nationalFaqs} title="Frequently Asked Questions" />
           <section className="py-16 px-4 text-center" style={{ background: '#0F1E3C' }}>
@@ -309,6 +311,9 @@ export default function HomePage() {
 
         {/* How it works */}
         <HowItWorks />
+
+        {/* Free comps tool */}
+        <CompsSection />
 
         {/* Testimonials */}
         <Testimonials />

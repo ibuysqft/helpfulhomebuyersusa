@@ -93,6 +93,7 @@ export function Header() {
             )}
           </div>
 
+          <Link href="/comps" className="text-slate-600 hover:text-blue-600 transition-colors font-medium">Free Comps</Link>
           <Link href="/#reviews" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_reviews')}</Link>
           <Link href="/contact" className="text-slate-600 hover:text-blue-600 transition-colors">{t('nav_contact')}</Link>
           <Link href="/referral-partners" className="text-slate-600 hover:text-blue-600 transition-colors">Referrals</Link>
@@ -171,6 +172,7 @@ export function Header() {
             </div>
           </div>
 
+          <Link href="/comps" className="text-blue-600 font-semibold py-1" onClick={() => setOpen(false)}>🏠 Free Comps Tool</Link>
           <Link href="/contact" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>{t('nav_contact')}</Link>
           <Link href="/referral-partners" className="text-slate-600 hover:text-blue-600 py-1" onClick={() => setOpen(false)}>Referral Partners</Link>
           <button
