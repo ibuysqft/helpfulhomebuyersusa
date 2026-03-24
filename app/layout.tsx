@@ -132,11 +132,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <TrackingPixels />
         <Analytics />
         <SpeedInsights />
-        {process.env.NEXT_PUBLIC_GHL_LOCATION_ID && (
+        {process.env.NEXT_PUBLIC_GHL_WIDGET_ID && (
           <Script
             src="https://widgets.leadconnectorhq.com/loader.js"
             data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
-            data-widget-id={process.env.NEXT_PUBLIC_GHL_LOCATION_ID}
+            data-widget-id={process.env.NEXT_PUBLIC_GHL_WIDGET_ID}
             strategy="afterInteractive"
           />
         )}
