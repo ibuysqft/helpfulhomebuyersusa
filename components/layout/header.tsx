@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { siteConfig } from '@/config/site'
 import { useState } from 'react'
 import { useLanguage } from '@/contexts/language-context'
+import { trackPhoneCallClick } from '@/lib/gtag'
 
 const situationLinks = [
   { href: '/foreclosure-help-virginia', label: 'Facing Foreclosure' },
@@ -120,6 +121,7 @@ export function Header() {
         {/* Phone visible at sm, hidden on md+ */}
         <a
           href={`tel:${siteConfig.phone}`}
+          onClick={() => { try { trackPhoneCallClick() } catch {} }}
           className="font-semibold text-sm hidden sm:flex items-center gap-1 md:hidden min-h-[44px]"
           style={{ color: 'var(--color-cta)', fontFamily: 'var(--font-body)' }}
         >
@@ -184,6 +186,7 @@ export function Header() {
           </button>
           <a
             href={`tel:${siteConfig.phone}`}
+            onClick={() => { try { trackPhoneCallClick() } catch {} }}
             className="font-bold min-h-[44px] flex items-center"
             style={{ color: 'var(--color-cta)' }}
           >

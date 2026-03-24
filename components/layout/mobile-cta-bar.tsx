@@ -1,12 +1,15 @@
+'use client'
 import Link from 'next/link'
 import { Phone, MessageSquare, Zap } from 'lucide-react'
 import { siteConfig } from '@/config/site'
+import { trackPhoneCallClick } from '@/lib/gtag'
 
 export function MobileCTABar() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden flex h-16 shadow-lg shadow-slate-950/60">
       <a
         href={`tel:${siteConfig.phone}`}
+        onClick={() => { try { trackPhoneCallClick() } catch {} }}
         className="flex flex-1 items-center justify-center gap-1.5 bg-slate-800 text-white font-bold text-sm border-r border-slate-700"
       >
         <Phone size={16} aria-hidden={true} />

@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { trackCompsToolSubmit } from '@/lib/gtag'
 
 interface CompRecord {
   address: string
@@ -57,6 +58,7 @@ export function CompsSection() {
         throw new Error(body?.detail || `Error ${res.status}`)
       }
       setResult(await res.json())
+      try { trackCompsToolSubmit() } catch {}
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {

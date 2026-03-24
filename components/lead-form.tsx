@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/language-context'
 import { siteConfig } from '@/config/site'
 import { usePixelEvents } from '@/components/hooks/use-pixel-events'
+import { trackContactFormSubmit } from '@/lib/gtag'
 
 interface LeadFormProps {
   city?: string
@@ -45,8 +46,9 @@ export function LeadForm({ city }: LeadFormProps) {
         return
       }
 
-      // Fire conversion event — non-blocking, never affects UX
+      // Fire conversion events — non-blocking, never affects UX
       try { trackLead({ value: 1500, currency: 'USD' }) } catch {}
+      try { trackContactFormSubmit() } catch {}
 
       router.push('/thank-you')
     } catch {
