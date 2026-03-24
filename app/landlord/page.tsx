@@ -33,16 +33,41 @@ const FAQ_ITEMS = [
   },
 ]
 
+const SERVICE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Tired Landlord Cash Home Buying — Virginia',
+  description:
+    'We buy Virginia rental properties from tired landlords — tenants in place, any condition.',
+  provider: {
+    '@type': 'RealEstateAgent',
+    name: 'Helpful Homebuyers USA',
+    url: 'https://www.helpfulhomebuyersusa.com',
+  },
+  areaServed: {
+    '@type': 'State',
+    name: 'Virginia',
+  },
+  serviceType: 'Cash Home Buying',
+  url: 'https://www.helpfulhomebuyersusa.com/landlord',
+}
+
 export default function LandlordPage() {
   return (
-    <DistressedLandingPage
-      persona="Landlord"
-      headline="Done Being a Landlord?"
-      subheadline="Sell your rental property as-is. We buy with tenants in place. No evictions required."
-      empathyText="Problem tenants, maintenance headaches, vacancy stress, late-night emergency calls — we get it. We've bought hundreds of rental properties from landlords who were ready to move on. You don't have to evict anyone, fix anything, or deal with a single showing."
-      heroCtaText="Get My Cash Offer →"
-      trustPoints={TRUST_POINTS}
-      faqItems={FAQ_ITEMS}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSONLD) }}
+      />
+      <DistressedLandingPage
+        persona="Landlord"
+        headline="Done Being a Landlord?"
+        subheadline="Sell your rental property as-is. We buy with tenants in place. No evictions required."
+        empathyText="Problem tenants, maintenance headaches, vacancy stress, late-night emergency calls — we get it. We've bought hundreds of rental properties from landlords who were ready to move on. You don't have to evict anyone, fix anything, or deal with a single showing."
+        heroCtaText="Get My Cash Offer →"
+        trustPoints={TRUST_POINTS}
+        faqItems={FAQ_ITEMS}
+      />
+    </>
   )
 }

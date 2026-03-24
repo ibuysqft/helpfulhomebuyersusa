@@ -39,7 +39,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       title: post.title,
       description: post.meta_description,
+      url: `${siteConfig.url}/blog/${slug}`,
+      siteName: siteConfig.name,
       publishedTime: post.published_at,
+      modifiedTime: post.updated_at ?? post.published_at,
     },
   }
 }
@@ -55,7 +58,7 @@ export default async function BlogPostPage({ params }: Props) {
     headline: post.title,
     description: post.meta_description,
     datePublished: post.published_at,
-    dateModified: post.published_at,
+    dateModified: post.updated_at ?? post.published_at,
     author: {
       '@type': 'Organization',
       name: siteConfig.name,

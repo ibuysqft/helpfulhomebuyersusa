@@ -6,10 +6,18 @@ import { supabase } from '@/lib/supabase'
 import { siteConfig } from '@/config/site'
 
 export const metadata: Metadata = {
-  title: 'Blog | Virginia Home Selling Tips & Resources',
+  title: 'Real Estate Tips & Guides | Helpful Homebuyers USA Blog',
   description:
-    'Tips for selling your home fast in Virginia. Learn about cash sales, the as-is process, foreclosure help, and more.',
+    'Expert guides on selling your house fast, understanding cash offers, foreclosure help, probate sales, and more for Virginia homeowners.',
   alternates: { canonical: `${siteConfig.url}/blog` },
+  openGraph: {
+    type: 'website',
+    title: 'Real Estate Tips & Guides | Helpful Homebuyers USA Blog',
+    description:
+      'Expert guides on selling your house fast, understanding cash offers, foreclosure help, probate sales, and more for Virginia homeowners.',
+    url: `${siteConfig.url}/blog`,
+    siteName: siteConfig.name,
+  },
 }
 
 export default async function BlogPage() {
@@ -20,8 +28,36 @@ export default async function BlogPage() {
     .order('published_at', { ascending: false })
     .limit(50)
 
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Real Estate Tips & Guides | Helpful Homebuyers USA Blog',
+    description:
+      'Expert guides on selling your house fast, understanding cash offers, foreclosure help, probate sales, and more for Virginia homeowners.',
+    url: `${siteConfig.url}/blog`,
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+      url: siteConfig.url,
+    },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement:
+        posts?.map((post, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          url: `${siteConfig.url}/blog/${post.slug}`,
+          name: post.title,
+        })) ?? [],
+    },
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
       <Header />
       <main>
         <section className="bg-slate-900 py-16 px-4">

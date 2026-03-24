@@ -78,8 +78,8 @@ export default async function CountyPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://helpfulhomebuyersusa.com' },
-      { '@type': 'ListItem', position: 2, name: 'Virginia', item: 'https://helpfulhomebuyersusa.com/virginia' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+      { '@type': 'ListItem', position: 2, name: 'Virginia', item: `${siteConfig.url}/sell-my-house-fast-virginia` },
       { '@type': 'ListItem', position: 3, name: `Sell My House Fast in ${county.name} County` },
     ],
   }

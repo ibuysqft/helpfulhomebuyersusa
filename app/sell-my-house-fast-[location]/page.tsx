@@ -78,6 +78,16 @@ export default async function CityPage({ params }: Props) {
     })),
   }
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+      { '@type': 'ListItem', position: 2, name: `Sell My House Fast ${stateConfig.name}`, item: `${siteConfig.url}/sell-my-house-fast-${stateConfig.slug}` },
+      { '@type': 'ListItem', position: 3, name: `Sell My House Fast ${city.name} ${stateConfig.abbr}` },
+    ],
+  }
+
   const nearbyCount = 6
   const cityIndex = cities.findIndex(c => c.slug === citySlug)
   const nearbyCities = [
@@ -89,6 +99,7 @@ export default async function CityPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Header />
       <main>
         <section className="bg-slate-900 py-20 px-4">

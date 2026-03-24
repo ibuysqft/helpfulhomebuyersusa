@@ -33,16 +33,41 @@ const FAQ_ITEMS = [
   },
 ]
 
+const SERVICE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Inherited Property Cash Home Buying — Virginia',
+  description:
+    'We buy inherited houses in Virginia in any condition — no repairs, no agents, no hassle.',
+  provider: {
+    '@type': 'RealEstateAgent',
+    name: 'Helpful Homebuyers USA',
+    url: 'https://www.helpfulhomebuyersusa.com',
+  },
+  areaServed: {
+    '@type': 'State',
+    name: 'Virginia',
+  },
+  serviceType: 'Cash Home Buying',
+  url: 'https://www.helpfulhomebuyersusa.com/inherited',
+}
+
 export default function InheritedPage() {
   return (
-    <DistressedLandingPage
-      persona="Inherited"
-      headline="Inherited a Property? We Make It Simple."
-      subheadline="Sell a loved one's home fast. No repairs, no cleanup, cash offer in 24 hours."
-      empathyText="Dealing with an inherited property while grieving is overwhelming. The last thing you need is contractors, open houses, and months of uncertainty. We've helped hundreds of families close quickly, with no judgment and no hassle — so you can focus on what matters."
-      heroCtaText="Get My Cash Offer →"
-      trustPoints={TRUST_POINTS}
-      faqItems={FAQ_ITEMS}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSONLD) }}
+      />
+      <DistressedLandingPage
+        persona="Inherited"
+        headline="Inherited a Property? We Make It Simple."
+        subheadline="Sell a loved one's home fast. No repairs, no cleanup, cash offer in 24 hours."
+        empathyText="Dealing with an inherited property while grieving is overwhelming. The last thing you need is contractors, open houses, and months of uncertainty. We've helped hundreds of families close quickly, with no judgment and no hassle — so you can focus on what matters."
+        heroCtaText="Get My Cash Offer →"
+        trustPoints={TRUST_POINTS}
+        faqItems={FAQ_ITEMS}
+      />
+    </>
   )
 }

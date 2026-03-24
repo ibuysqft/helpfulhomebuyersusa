@@ -33,16 +33,41 @@ const FAQ_ITEMS = [
   },
 ]
 
+const SERVICE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Damaged Property Cash Home Buying — Virginia',
+  description:
+    'We buy fire and water damaged homes in Virginia as-is. No repairs needed.',
+  provider: {
+    '@type': 'RealEstateAgent',
+    name: 'Helpful Homebuyers USA',
+    url: 'https://www.helpfulhomebuyersusa.com',
+  },
+  areaServed: {
+    '@type': 'State',
+    name: 'Virginia',
+  },
+  serviceType: 'Cash Home Buying',
+  url: 'https://www.helpfulhomebuyersusa.com/damaged',
+}
+
 export default function DamagedPage() {
   return (
-    <DistressedLandingPage
-      persona="Damaged"
-      headline="We Buy Damaged Houses As-Is."
-      subheadline="Fire damage, mold, foundation issues — any condition. Cash offer in 24 hours."
-      empathyText="Most buyers won't touch a damaged property. We specialize in exactly these situations. No repairs, no cleanup, no judgment — just a fair cash offer based on what the property is worth today. We take on the risk and the work so you don't have to."
-      heroCtaText="Get My Cash Offer →"
-      trustPoints={TRUST_POINTS}
-      faqItems={FAQ_ITEMS}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSONLD) }}
+      />
+      <DistressedLandingPage
+        persona="Damaged"
+        headline="We Buy Damaged Houses As-Is."
+        subheadline="Fire damage, mold, foundation issues — any condition. Cash offer in 24 hours."
+        empathyText="Most buyers won't touch a damaged property. We specialize in exactly these situations. No repairs, no cleanup, no judgment — just a fair cash offer based on what the property is worth today. We take on the risk and the work so you don't have to."
+        heroCtaText="Get My Cash Offer →"
+        trustPoints={TRUST_POINTS}
+        faqItems={FAQ_ITEMS}
+      />
+    </>
   )
 }

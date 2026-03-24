@@ -86,9 +86,18 @@ export default async function SlugPage({ params }: Props) {
       url: siteConfig.url,
       areaServed: siteConfig.stateName,
     }
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+        { '@type': 'ListItem', position: 2, name: situation.label },
+      ],
+    }
     return (
       <>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
         <Header />
         <main>
           {(slug.includes('foreclosure') || slug.includes('pre-foreclosure') || slug.includes('tax')) && (
@@ -215,10 +224,20 @@ export default async function SlugPage({ params }: Props) {
       url: siteConfig.url,
       areaServed: [city.name, city.county],
     }
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+        { '@type': 'ListItem', position: 2, name: situation2.label, item: `${siteConfig.url}/${situation2.slug}` },
+        { '@type': 'ListItem', position: 3, name: `${situation2.label} in ${city.name}, ${siteConfig.stateAbbr}` },
+      ],
+    }
 
     return (
       <>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
         <Header />
         <main>
           {(entry.situationSlug.includes('foreclosure') || entry.situationSlug.includes('pre-foreclosure') || entry.situationSlug.includes('tax')) && (

@@ -33,16 +33,41 @@ const FAQ_ITEMS = [
   },
 ]
 
+const SERVICE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Foreclosure Cash Home Buying — Virginia',
+  description:
+    'We buy houses facing foreclosure in Virginia fast — stop the auction, avoid credit damage, close in days.',
+  provider: {
+    '@type': 'RealEstateAgent',
+    name: 'Helpful Homebuyers USA',
+    url: 'https://www.helpfulhomebuyersusa.com',
+  },
+  areaServed: {
+    '@type': 'State',
+    name: 'Virginia',
+  },
+  serviceType: 'Cash Home Buying',
+  url: 'https://www.helpfulhomebuyersusa.com/foreclosure',
+}
+
 export default function ForeclosurePage() {
   return (
-    <DistressedLandingPage
-      persona="Foreclosure"
-      headline="Facing Foreclosure? We Can Help."
-      subheadline="Get a cash offer before your foreclosure date. No judgment, no fees."
-      empathyText="We've helped over 200 homeowners facing foreclosure sell their home fast and protect their credit. You don't have to lose everything to the bank. One phone call can change the entire outcome — and we're here to answer it."
-      heroCtaText="Get My Cash Offer →"
-      trustPoints={TRUST_POINTS}
-      faqItems={FAQ_ITEMS}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSONLD) }}
+      />
+      <DistressedLandingPage
+        persona="Foreclosure"
+        headline="Facing Foreclosure? We Can Help."
+        subheadline="Get a cash offer before your foreclosure date. No judgment, no fees."
+        empathyText="We've helped over 200 homeowners facing foreclosure sell their home fast and protect their credit. You don't have to lose everything to the bank. One phone call can change the entire outcome — and we're here to answer it."
+        heroCtaText="Get My Cash Offer →"
+        trustPoints={TRUST_POINTS}
+        faqItems={FAQ_ITEMS}
+      />
+    </>
   )
 }

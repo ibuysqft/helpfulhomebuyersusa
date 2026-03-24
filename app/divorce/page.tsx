@@ -33,16 +33,41 @@ const FAQ_ITEMS = [
   },
 ]
 
+const SERVICE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Divorce Cash Home Buying — Virginia',
+  description:
+    'Fast, discreet cash sale for Virginia homes going through divorce — one offer, split the proceeds.',
+  provider: {
+    '@type': 'RealEstateAgent',
+    name: 'Helpful Homebuyers USA',
+    url: 'https://www.helpfulhomebuyersusa.com',
+  },
+  areaServed: {
+    '@type': 'State',
+    name: 'Virginia',
+  },
+  serviceType: 'Cash Home Buying',
+  url: 'https://www.helpfulhomebuyersusa.com/divorce',
+}
+
 export default function DivorscePage() {
   return (
-    <DistressedLandingPage
-      persona="Divorce"
-      headline="Need to Sell During Divorce?"
-      subheadline="Fast, simple, clean. Cash offer within 24 hours. Close when you're ready."
-      empathyText="Dividing a shared home is one of the hardest parts of divorce. We make the property side simple so you can focus on moving forward. No showings, no repairs, no months of uncertainty — just a fair offer and a clean closing on your timeline."
-      heroCtaText="Get My Cash Offer →"
-      trustPoints={TRUST_POINTS}
-      faqItems={FAQ_ITEMS}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSONLD) }}
+      />
+      <DistressedLandingPage
+        persona="Divorce"
+        headline="Need to Sell During Divorce?"
+        subheadline="Fast, simple, clean. Cash offer within 24 hours. Close when you're ready."
+        empathyText="Dividing a shared home is one of the hardest parts of divorce. We make the property side simple so you can focus on moving forward. No showings, no repairs, no months of uncertainty — just a fair offer and a clean closing on your timeline."
+        heroCtaText="Get My Cash Offer →"
+        trustPoints={TRUST_POINTS}
+        faqItems={FAQ_ITEMS}
+      />
+    </>
   )
 }

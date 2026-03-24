@@ -70,10 +70,21 @@ export default async function NeighborhoodPage({ params }: Props) {
     })),
   }
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+      { '@type': 'ListItem', position: 2, name: `Sell My House Fast ${neighborhood.city} VA`, item: `${siteConfig.url}/sell-my-house-fast-${neighborhood.citySlug}-va` },
+      { '@type': 'ListItem', position: 3, name: `Sell My House Fast ${neighborhood.name}, ${neighborhood.city} VA` },
+    ],
+  }
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Header />
       <main>
         <section className="bg-slate-900 py-20 px-4">
