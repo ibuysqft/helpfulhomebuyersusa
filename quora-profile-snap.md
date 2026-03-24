@@ -1,0 +1,165 @@
+- generic [ref=e1]:
+  - iframe [ref=e2]:
+    
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - link "Skip to content" [ref=e14] [cursor=pointer]:
+          - /url: ""
+        - link "Using Gmail with screen readers" [ref=e15] [cursor=pointer]:
+          - /url: ""
+      - heading [level=1] [ref=e17]:
+        - banner [ref=e18]:
+          - generic [ref=e19]:
+            - generic [ref=e20]:
+              - button "Main menu" [expanded] [ref=e21] [cursor=pointer]:
+                - img [ref=e22]
+              - link "Gmail" [ref=e26] [cursor=pointer]:
+                - /url: "#inbox"
+                - img [ref=e27]
+            - generic [ref=e28]:
+              - search [ref=e30]:
+                - heading "Search" [level=2] [ref=e31]
+                - combobox "Ask Gmail" [ref=e33]: from:namecheap verification
+                - button "Advanced search options" [ref=e34] [cursor=pointer]:
+                  - img [ref=e35]
+                - button "Clear search" [ref=e37] [cursor=pointer]:
+                  - img [ref=e38]
+                - button "Search mail" [disabled] [ref=e41] [cursor=pointer]:
+                  - img [ref=e42]
+              - generic [ref=e44]:
+                - button [ref=e45] [cursor=pointer]:
+                  - img [ref=e46]
+                - button "Settings" [ref=e48] [cursor=pointer]:
+                  - img [ref=e49]
+            - generic [ref=e53]:
+              - button "Google apps" [ref=e57] [cursor=pointer]:
+                - img [ref=e58]
+              - 'button "Google Account: Jeffrey Bord (sellitmarin@gmail.com)" [ref=e63] [cursor=pointer]':
+                - img [ref=e65]
+                - img [ref=e71]
+      - alert [ref=e74]
+    - generic [ref=e77]:
+      - navigation [ref=e78]:
+        - button "Compose" [ref=e81] [cursor=pointer]
+        - generic [ref=e87]:
+          - generic "Labels" [ref=e89]:
+            - heading "Labels" [level=2] [ref=e90]
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - generic [ref=e94]:
+                  - generic [ref=e99]:
+                    - link "Inbox 31076 unread" [ref=e101] [cursor=pointer]:
+                      - /url: https://mail.google.com/mail/u/0/#inbox
+                      - text: Inbox
+                    - generic [ref=e102]: 31,076
+                  - link "Starred" [ref=e109] [cursor=pointer]:
+                    - /url: https://mail.google.com/mail/u/0/#starred
+                  - link "Snoozed" [ref=e116] [cursor=pointer]:
+                    - /url: https://mail.google.com/mail/u/0/#snoozed
+                  - link "Sent" [ref=e123] [cursor=pointer]:
+                    - /url: https://mail.google.com/mail/u/0/#sent
+                  - generic [ref=e128]:
+                    - link "Drafts 323 unread" [ref=e130] [cursor=pointer]:
+                      - /url: https://mail.google.com/mail/u/0/#drafts
+                      - text: Drafts
+                    - generic [ref=e131]: "323"
+                - generic [ref=e138]:
+                  - link "Purchases 60 unread has menu" [ref=e140] [cursor=pointer]:
+                    - /url: https://mail.google.com/mail/u/0/#category/purchases
+                    - text: Purchases
+                  - generic [ref=e141]: "60"
+              - button "More labels" [ref=e143] [cursor=pointer]:
+                - generic [ref=e144]: More
+          - generic [ref=e147]:
+            - heading "Labels" [ref=e148]
+            - button "Create new label" [ref=e149] [cursor=pointer]
+          - generic "Labels" [ref=e151]:
+            - heading "Labels" [level=2] [ref=e152]
+            - generic [ref=e153]:
+              - generic [ref=e156]:
+                - generic [ref=e159]:
+                  - 'link "Collapse label: Atchuta" [ref=e160] [cursor=pointer]'
+                  - generic [ref=e162]:
+                    - link "Atchuta 1 unread expanded has menu" [ref=e164] [cursor=pointer]:
+                      - /url: https://mail.google.com/mail/u/0/#label/Atchuta
+                      - text: Atchuta
+                    - generic [ref=e165]: "1"
+                - link "downloaded to gdrive has menu" [ref=e172] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/Atchuta/downloaded+to+gdrive
+                  - text: downloaded to gdrive
+                - link "Boomerang has menu" [ref=e179] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/Boomerang
+                  - text: Boomerang
+                - generic [ref=e182]:
+                  - 'link "Collapse label: Boomerang-Outbox" [ref=e183] [cursor=pointer]'
+                  - link "Boomerang-Outbox expanded has menu" [ref=e187] [cursor=pointer]:
+                    - /url: https://mail.google.com/mail/u/0/#label/Boomerang-Outbox
+                    - text: Boomerang-Outbox
+                - link "Cancelled has menu" [ref=e194] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/Boomerang-Outbox/Cancelled
+                  - text: Cancelled
+                - link "Boomerang-Returned has menu" [ref=e201] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/Boomerang-Returned
+                  - text: Boomerang-Returned
+                - link "CedarFx Trading Account has menu" [ref=e208] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/CedarFx+Trading+Account
+                  - text: CedarFx Trading Account
+                - link "Corporation has menu" [ref=e215] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/Corporation
+                  - text: Corporation
+                - link "EXP has menu" [ref=e222] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/EXP
+                  - text: EXP
+                - link "EZ REI Closings - David Olds has menu" [ref=e229] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/EZ+REI+Closings+-+David+Olds
+                  - text: EZ REI Closings - David Olds
+                - link "Jeffrey@buenolaw.net has menu" [ref=e236] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/Jeffrey@buenolaw.net
+                  - text: Jeffrey@buenolaw.net
+                - link "Kbsjeff@gmail.Com has menu" [ref=e243] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/Kbsjeff@gmail.Com
+                  - text: Kbsjeff@gmail.Com
+                - link "Mendodistilling@gmail.com has menu" [ref=e250] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/Mendodistilling@gmail.com
+                  - text: Mendodistilling@gmail.com
+                - generic [ref=e255]:
+                  - link "RND 2 unread has menu" [ref=e257] [cursor=pointer]:
+                    - /url: https://mail.google.com/mail/u/0/#label/RND
+                    - text: RND
+                  - generic [ref=e258]: "2"
+                - generic [ref=e261]:
+                  - 'link "Collapse label: Sellitmarin@gmail.con" [ref=e262] [cursor=pointer]'
+                  - generic [ref=e264]:
+                    - link "Sellitmarin@gmail.con 1 unread expanded has menu" [ref=e266] [cursor=pointer]:
+                      - /url: https://mail.google.com/mail/u/0/#label/Sellitmarin@gmail.con
+                      - text: Sellitmarin@gmail.con
+                    - generic [ref=e267]: "1"
+                - generic [ref=e270]:
+                  - 'link "Collapse label: Real estate - Important" [ref=e271] [cursor=pointer]'
+                  - link "Real estate - Important expanded has menu" [ref=e275] [cursor=pointer]:
+                    - /url: https://mail.google.com/mail/u/0/#label/Sellitmarin@gmail.con/Real+estate+-+Important
+                    - text: Real estate - Important
+                - link "Multifamily has menu" [ref=e282] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/Sellitmarin@gmail.con/Real+estate+-+Important/Multifamily
+                  - text: Multifamily
+                - link "short sale has menu" [ref=e289] [cursor=pointer]:
+                  - /url: https://mail.google.com/mail/u/0/#label/short+sale
+                  - text: short sale
+              - button "More labels" [ref=e291] [cursor=pointer]:
+                - generic [ref=e292]: More
+      - generic [ref=e307]:
+        - generic [ref=e308]:
+          - generic: Loading Indicator
+        - main [ref=e338]:
+          - generic [ref=e339]:
+            - toolbar "search refinement"
+            - generic [ref=e341]:
+              - button "Most relevant" [ref=e344] [cursor=pointer]:
+                - generic [ref=e345]: Most relevant
+              - generic [ref=e352]:
+                - button "Input tools on/off (Ctrl-Shift-K)" [ref=e353] [cursor=pointer]
+                - button "Select input tool" [ref=e355] [cursor=pointer]
+          - heading "Conversations" [level=2] [ref=e358]
+          - generic [ref=e359]: ":"
+      - complementary "Side panel" [ref=e363]
