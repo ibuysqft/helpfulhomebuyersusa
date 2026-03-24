@@ -158,7 +158,7 @@ function StepRunComps({
     setError("");
 
     try {
-      const res = await fetch(`${API_BASE}/comps`, {
+      const res = await fetch("/api/comps", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -264,6 +264,12 @@ function StepRunComps({
           >
             {loading ? "Pulling Comps..." : "Pull Comps"}
           </button>
+
+          {loading && (
+            <p className="text-center text-sm text-zinc-400">
+              This can take up to 60 seconds on first run — the data server is waking up. Hang tight.
+            </p>
+          )}
         </form>
 
         {loading && <Spinner />}
