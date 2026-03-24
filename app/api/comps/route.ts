@@ -62,10 +62,12 @@ export async function POST(req: NextRequest) {
 
   if (!backendRes.ok) {
     const body = await backendRes.json().catch(() => null);
-    return NextResponse.json(
-      { detail: body?.detail || `Backend error ${backendRes.status}` },
-      { status: backendRes.status },
-    );
+    const rawDetail = body?.detail || "";
+    const isNoComps = backendRes.status === 404 || rawDetail.toLowerCase().includes("not found") || rawDetail.toLowerCase().includes("no comps");
+    const detail = isNoComps
+      ? "No comps found for this address. Try adding the full state name, a nearby ZIP code, or a different address."
+      : rawDetail || `Backend error ${backendRes.status}`;
+    return NextResponse.json({ detail }, { status: backendRes.status });
   }
 
   const data: BackendResponse = await backendRes.json();
