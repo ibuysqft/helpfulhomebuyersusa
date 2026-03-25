@@ -20,8 +20,6 @@ const stateMarketsMap: Record<string, string[]> = {
   connecticut: ['Hartford', 'Bridgeport', 'New Haven'],
 }
 
-const LIVE_STATES = new Set(['virginia'])
-
 export function StateSelector() {
   return (
     <section
@@ -55,7 +53,7 @@ export function StateSelector() {
         {/* State grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {registeredStates.map((state) => {
-            const isLive = LIVE_STATES.has(state.slug)
+            const isLive = true
             const markets = stateMarketsMap[state.slug] ?? []
             const url = `https://${state.domain}`
 
