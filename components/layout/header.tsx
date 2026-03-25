@@ -6,14 +6,14 @@ import { useLanguage } from '@/contexts/language-context'
 import { trackPhoneCallClick } from '@/lib/gtag'
 
 const situationLinks = [
-  { href: '/foreclosure-help-virginia', label: 'Facing Foreclosure' },
-  { href: '/probate-help-virginia', label: 'Probate / Estate Sale' },
-  { href: '/tax-lien-help-virginia', label: 'Behind on Property Taxes' },
-  { href: '/divorce-help-virginia', label: 'Going Through Divorce' },
-  { href: '/inherited-help-virginia', label: 'Inherited a House' },
-  { href: '/fire-damage-help-virginia', label: 'Fire or Water Damage' },
-  { href: '/tired-landlord-help-virginia', label: 'Tired Landlord' },
-  { href: '/behind-payments-help-virginia', label: 'Behind on Payments' },
+  { href: '/foreclosure', label: 'Facing Foreclosure' },
+  { href: '/probate', label: 'Probate / Estate Sale' },
+  { href: '/tax-lien', label: 'Behind on Property Taxes' },
+  { href: '/divorce', label: 'Going Through Divorce' },
+  { href: '/inherited', label: 'Inherited a House' },
+  { href: '/damaged', label: 'Fire or Water Damage' },
+  { href: '/landlord', label: 'Tired Landlord' },
+  { href: '/behind-payments', label: 'Behind on Payments' },
 ]
 
 const areaLinks = [
