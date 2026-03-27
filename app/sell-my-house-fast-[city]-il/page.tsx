@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { CheckCircle2 } from 'lucide-react'
-import { cities } from '@/data/cities'
+import { getCitiesForState } from '@/lib/state-data'
 import { LeadForm } from '@/components/lead-form'
 import { FaqSection } from '@/components/faq-section'
 import { Header } from '@/components/layout/header'
@@ -13,13 +13,14 @@ import { homepageFaqs } from '@/data/faqs'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
-const stAbbr = siteConfig.stateAbbr
-const stAbbrLower = stAbbr.toLowerCase()
-const stName = siteConfig.stateName
+const STATE_ABBR = 'IL'
+const STATE_SLUG = 'illinois'
+const cities = getCitiesForState(STATE_SLUG)
 
 interface Props { params: Promise<{ city: string }> }
 
 export async function generateStaticParams() {
+  if (siteConfig.stateAbbr !== STATE_ABBR) return []
   return cities.map(c => ({ city: c.slug }))
 }
 
@@ -28,9 +29,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = cities.find(c => c.slug === citySlug)
   if (!city) return {}
   return {
-    title: `Sell My House Fast ${city.name} ${stAbbr} | Cash Offer in 24 Hours`,
-    description: `We buy houses for cash in ${city.name}, ${city.county}, ${stName}. No repairs, no fees, close in 7 days. Get your fair cash offer today.`,
-    alternates: { canonical: `${siteConfig.url}/sell-my-house-fast-${citySlug}-${stAbbrLower}` },
+    title: `Sell My House Fast ${city.name} IL | Cash Offer in 24 Hours`,
+    description: `We buy houses for cash in ${city.name}, ${city.county}, Illinois. No repairs, no fees, close in 7 days. Get your fair cash offer today.`,
+    alternates: { canonical: `${siteConfig.url}/sell-my-house-fast-${citySlug}-il` },
   }
 }
 
@@ -39,25 +40,15 @@ export default async function CityPage({ params }: Props) {
   const city = cities.find(c => c.slug === citySlug)
   if (!city) notFound()
 
-  const nearbyLinks = (city.nearbySlug ?? [])
-    .map(s => cities.find(c => c.slug === s))
-    .filter((c): c is NonNullable<typeof c> => Boolean(c))
+  const stAbbr = siteConfig.stateAbbr
+  const stName = siteConfig.stateName
 
   const localSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: siteConfig.name,
-    legalName: 'Paramount Legacy Properties LLC',
     telephone: siteConfig.phone,
     url: siteConfig.url,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: '10369 Democracy Ln',
-      addressLocality: 'Fairfax',
-      addressRegion: stAbbr,
-      postalCode: '22030',
-      addressCountry: 'US',
-    },
     areaServed: [city.name, city.county],
     aggregateRating: {
       '@type': 'AggregateRating',
@@ -66,16 +57,10 @@ export default async function CityPage({ params }: Props) {
     },
   }
 
-  const cityFaqs = city.faqs
-    ? city.faqs.map(({ q, a }) => ({ question: q, answer: a }))
-    : null
-
-  const activeFaqs = cityFaqs ?? homepageFaqs
-
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: activeFaqs.slice(0, 5).map(({ question, answer }) => ({
+    mainEntity: homepageFaqs.slice(0, 5).map(({ question, answer }) => ({
       '@type': 'Question',
       name: question,
       acceptedAnswer: { '@type': 'Answer', text: answer },
@@ -87,7 +72,7 @@ export default async function CityPage({ params }: Props) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
-      { '@type': 'ListItem', position: 2, name: stName, item: `${siteConfig.url}/sell-my-house-fast-${siteConfig.stateSlug}` },
+      { '@type': 'ListItem', position: 2, name: stName, item: `${siteConfig.url}/sell-my-house-fast-${STATE_SLUG}` },
       { '@type': 'ListItem', position: 3, name: `Sell My House Fast in ${city.name}` },
     ],
   }
@@ -165,10 +150,10 @@ export default async function CityPage({ params }: Props) {
             <p>
               If you need to sell your house fast in {city.name}, {city.county}, we make it simple.
               We are direct cash home buyers — not agents, not investors who shop your house to others.
-              When we make an offer, we're the ones buying.
+              When we make an offer, we&apos;re the ones buying.
             </p>
             <p>
-              We've helped homeowners throughout {city.county} sell quickly — whether they're facing
+              We&apos;ve helped homeowners throughout {city.county} sell quickly — whether they&apos;re facing
               foreclosure, dealing with an inherited property, going through a divorce, or simply need
               to move fast. Whatever your situation, we can help.
             </p>
@@ -183,30 +168,11 @@ export default async function CityPage({ params }: Props) {
         </section>
 
         <HowItWorks />
-        <FaqSection faqs={activeFaqs} title={`FAQ: Selling Your House Fast in ${city.name}`} />
-
-        {nearbyLinks.length > 0 && (
-          <section className="py-12 px-4 bg-slate-900">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-xl font-bold text-white mb-6 text-center">We Also Buy Houses Near {city.name}</h2>
-              <div className="flex flex-wrap gap-3 justify-center">
-                {nearbyLinks.map(nearby => (
-                  <Link
-                    key={nearby.slug}
-                    href={`/sell-my-house-fast-${nearby.slug}-${stAbbrLower}`}
-                    className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                  >
-                    {nearby.name}, {stAbbr} →
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        <FaqSection faqs={homepageFaqs} title={`FAQ: Selling Your House Fast in ${city.name}`} />
 
         <section className="py-16 px-4 bg-amber-500 text-center">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Get Your {city.name} Cash Offer Today</h2>
-          <p className="text-slate-800 mb-6">No obligation. We'll have an offer for you within 24 hours.</p>
+          <p className="text-slate-800 mb-6">No obligation. We&apos;ll have an offer for you within 24 hours.</p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/property-information" className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 py-4 rounded-lg transition-colors">
               Get My Cash Offer
