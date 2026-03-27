@@ -66,6 +66,14 @@ function readExistingRegistry(): Record<string, Record<string, StateContent>> {
 }
 
 function writeRegistry(content: Record<string, Record<string, StateContent>>) {
+  // Read-merge-write to avoid clobbering concurrent instances
+  const onDisk = readExistingRegistry()
+  for (const [stateSlug, situations] of Object.entries(onDisk)) {
+    if (!content[stateSlug]) content[stateSlug] = {}
+    for (const [sit, val] of Object.entries(situations)) {
+      if (!content[stateSlug][sit]) content[stateSlug][sit] = val
+    }
+  }
   const body = JSON.stringify(content, null, 2)
   const src = `import type { StateContent } from './types'
 
