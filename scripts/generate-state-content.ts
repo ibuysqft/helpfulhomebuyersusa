@@ -124,7 +124,7 @@ async function generateEntry(
   }
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 1500,
+    max_tokens: 4096,
     messages: [{ role: 'user', content: prompt }],
   })
   const text = response.content[0].type === 'text' ? response.content[0].text : ''

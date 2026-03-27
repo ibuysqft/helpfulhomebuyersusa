@@ -227,6 +227,24 @@ export default function ProbatePage() {
           </div>
         </section>
       </main>
+      <section className="py-12 px-4 bg-slate-900">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-xl font-bold text-white mb-6 text-center">
+            We Buy Probate Properties in All 15 States
+          </h2>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {registeredStates.map(state => (
+              <Link
+                key={state.slug}
+                href={`/${state.slug}/probate`}
+                className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                {state.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
       <Footer />
     </>
   )
