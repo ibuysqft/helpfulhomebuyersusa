@@ -99,11 +99,20 @@ export default async function StateSituationHub({ params }: Props) {
 
   const localSchema = {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
+    '@type': 'RealEstateAgent',
     name: siteConfig.name,
     telephone: siteConfig.phone,
     url: siteConfig.url,
     areaServed: stateObj.name,
+    priceRange: '$$',
+    description: `We buy ${situationLabel.toLowerCase()} houses throughout ${stateObj.name} for cash. No repairs, no commissions, close in 7 days or on your schedule.`,
+    knowsAbout: [
+      'Cash home buying',
+      situationLabel,
+      `Selling a house in ${stateObj.name}`,
+      'As-is home sales',
+      'Fast home sales',
+    ],
   }
 
   const breadcrumbSchema = {
