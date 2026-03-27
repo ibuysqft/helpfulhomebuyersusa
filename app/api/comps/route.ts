@@ -99,6 +99,20 @@ export async function POST(req: NextRequest) {
     },
     all_comps: allComps,
     paired_comps: allComps.filter((c) => c.tier === "selected"),
+    // Apps Script shape: data.summary.arv.median + data.pairings.repairs_*
+    summary: {
+      arv: {
+        median: data.arv,
+        low: data.conservative_offer,
+        high: data.max_offer,
+        median_ppsf: data.price_per_sqft,
+      },
+    },
+    pairings: {
+      repairs_low: data.repairs_low,
+      repairs_high: data.repairs_high,
+    },
+    // Frontend shape (kept for backward compat)
     arv: {
       low: data.conservative_offer,
       high: data.max_offer,
