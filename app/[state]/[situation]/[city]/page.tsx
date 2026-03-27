@@ -107,7 +107,8 @@ const SITUATION_BULLETS: Record<TopSituation, string[]> = {
 }
 
 // Pre-render top 20 cities per state × all 10 situations
-const TOP_CITIES_PER_STATE = 20
+// Pre-render only the 3 highest-traffic cities per state; the rest are ISR (dynamicParams = true)
+const TOP_CITIES_PER_STATE = 3
 
 interface Props {
   params: Promise<{ state: string; situation: string; city: string }>
