@@ -33,6 +33,16 @@ const FAQ_ITEMS = [
   },
 ]
 
+const FAQ_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_ITEMS.map(item => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+}
+
 const SERVICE_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'Service',
@@ -58,6 +68,10 @@ export default function InheritedPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
       <DistressedLandingPage
         persona="Inherited"

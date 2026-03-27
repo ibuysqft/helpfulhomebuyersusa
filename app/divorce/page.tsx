@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { DistressedLandingPage } from '@/components/distressed-landing-page'
+import { siteConfig } from '@/config/site'
 
 export const metadata: Metadata = {
   title: 'Need to Sell During Divorce? | Helpful Home Buyers USA',
@@ -33,23 +34,33 @@ const FAQ_ITEMS = [
   },
 ]
 
+const FAQ_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_ITEMS.map(item => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+}
+
 const SERVICE_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'Divorce Cash Home Buying — Virginia',
+  name: `Divorce Cash Home Buying — ${siteConfig.stateName}`,
   description:
-    'Fast, discreet cash sale for Virginia homes going through divorce — one offer, split the proceeds.',
+    `Fast, discreet cash sale for ${siteConfig.stateName} homes going through divorce — one offer, split the proceeds.`,
   provider: {
     '@type': 'RealEstateAgent',
     name: 'Helpful Homebuyers USA',
-    url: 'https://www.helpfulhomebuyersusa.com',
+    url: siteConfig.url,
   },
   areaServed: {
     '@type': 'State',
-    name: 'Virginia',
+    name: siteConfig.stateName,
   },
   serviceType: 'Cash Home Buying',
-  url: 'https://www.helpfulhomebuyersusa.com/divorce',
+  url: `${siteConfig.url}/divorce`,
 }
 
 export default function DivorscePage() {
@@ -58,6 +69,10 @@ export default function DivorscePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
       <DistressedLandingPage
         persona="Divorce"

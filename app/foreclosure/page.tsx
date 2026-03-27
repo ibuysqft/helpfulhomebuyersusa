@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { DistressedLandingPage } from '@/components/distressed-landing-page'
+import { siteConfig } from '@/config/site'
 
 export const metadata: Metadata = {
   title: 'Facing Foreclosure? We Can Help. | Helpful Home Buyers USA',
@@ -33,23 +34,33 @@ const FAQ_ITEMS = [
   },
 ]
 
+const FAQ_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_ITEMS.map(item => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+}
+
 const SERVICE_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'Foreclosure Cash Home Buying — Virginia',
+  name: `Foreclosure Cash Home Buying — ${siteConfig.stateName}`,
   description:
-    'We buy houses facing foreclosure in Virginia fast — stop the auction, avoid credit damage, close in days.',
+    `We buy houses facing foreclosure in ${siteConfig.stateName} fast — stop the auction, avoid credit damage, close in days.`,
   provider: {
     '@type': 'RealEstateAgent',
     name: 'Helpful Homebuyers USA',
-    url: 'https://www.helpfulhomebuyersusa.com',
+    url: siteConfig.url,
   },
   areaServed: {
     '@type': 'State',
-    name: 'Virginia',
+    name: siteConfig.stateName,
   },
   serviceType: 'Cash Home Buying',
-  url: 'https://www.helpfulhomebuyersusa.com/foreclosure',
+  url: `${siteConfig.url}/foreclosure`,
 }
 
 export default function ForeclosurePage() {
@@ -58,6 +69,10 @@ export default function ForeclosurePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
       <DistressedLandingPage
         persona="Foreclosure"
