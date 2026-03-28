@@ -58,14 +58,16 @@ create table if not exists daily_send_budget (
   pause_reason  text
 );
 
--- Atomic increment to avoid race conditions
+-- Atomic increment to avoid race conditions (upserts row if missing)
 create or replace function increment_send_count(p_date date, p_field text)
 returns void language plpgsql as $$
 begin
   if p_field = 'email_sent' then
-    update daily_send_budget set email_sent = email_sent + 1 where date = p_date;
+    insert into daily_send_budget (date, email_sent) values (p_date, 1)
+    on conflict (date) do update set email_sent = daily_send_budget.email_sent + 1;
   elsif p_field = 'sms_sent' then
-    update daily_send_budget set sms_sent = sms_sent + 1 where date = p_date;
+    insert into daily_send_budget (date, sms_sent) values (p_date, 1)
+    on conflict (date) do update set sms_sent = daily_send_budget.sms_sent + 1;
   end if;
 end;
 $$;
