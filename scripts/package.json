@@ -1,0 +1,11 @@
+{
+  "name": "dealsauce-scraper",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx playwright install chromium && npx tsx scrape-dealsauce.ts"
+  },
+  "dependencies": {
+    "playwright": "1.51.1",
+    "tsx": "4.19.2"
+  }
+}
