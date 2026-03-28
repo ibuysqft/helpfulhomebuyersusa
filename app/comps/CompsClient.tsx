@@ -311,14 +311,29 @@ function RecencyBadge({ dateStr }: { dateStr: string }) {
 
 // ── Step 2: Review & Validate ────────────────────────────────────────────────
 
+type SortField = "sale_price" | "sqft" | "price_per_sqft" | "sale_date" | "distance_mi";
+type SortDir = "asc" | "desc";
+
 function StepReview({
   data,
   onConfirm,
+  userEmail,
 }: {
   data: CompResponse;
   onConfirm: (adjustedArv: number, excludedAddresses: Set<string>) => void;
+  userEmail?: string;
 }) {
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
+  const [sortField, setSortField] = useState<SortField>("sale_price");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
+
+  const handleSort = useCallback((field: SortField) => {
+    setSortField(prev => {
+      if (prev === field) { setSortDir(d => d === "asc" ? "desc" : "asc"); return field; }
+      setSortDir("asc");
+      return field;
+    });
+  }, []);
 
   const toggleComp = useCallback((address: string) => {
     setExcluded((prev) => {
@@ -371,6 +386,27 @@ function StepReview({
   // Paired comps sorted high → low for the analysis panel
   const pairedSorted = [...data.paired_comps].sort((a, b) => b.sale_price - a.sale_price);
 
+  const sortedComps = useMemo(() => {
+    return [...data.all_comps].sort((a, b) => {
+      let av: number | string = a[sortField] ?? 0;
+      let bv: number | string = b[sortField] ?? 0;
+      if (sortField === "sale_date") { av = av || ""; bv = bv || ""; }
+      const cmp = typeof av === "string" ? av.localeCompare(bv as string) : (av as number) - (bv as number);
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [data.all_comps, sortField, sortDir]);
+
+  const emailSelectedComps = useCallback(() => {
+    const sel = data.all_comps.filter(c => !excluded.has(c.address) && c.tier === "selected");
+    const lines = sel.map(c =>
+      `${c.address} | $${c.sale_price.toLocaleString()} | ${c.sqft} sqft | $${c.price_per_sqft.toFixed(0)}/sf | ${c.beds}bd/${c.baths}ba | ${c.sale_date}`
+    ).join("\n");
+    const subject = encodeURIComponent(`Comp Analysis — ${data.subject.address ?? "Property"}`);
+    const body = encodeURIComponent(`Selected Comps (${sel.length}):\n\n${lines}\n\nARV estimate based on these comps.`);
+    const to = userEmail ? encodeURIComponent(userEmail) : "";
+    window.open(`mailto:${to}?subject=${subject}&body=${body}`);
+  }, [data.all_comps, data.subject.address, excluded, userEmail]);
+
   return (
     <div className="space-y-6">
       {/* Summary bar */}
@@ -383,6 +419,12 @@ function StepReview({
           )}
         </span>
         <div className="flex items-center gap-4 text-sm">
+          <button
+            onClick={emailSelectedComps}
+            className="rounded-md bg-zinc-700 px-3 py-1.5 text-xs font-medium text-zinc-200 hover:bg-zinc-600 transition"
+          >
+            ✉ Email Selected Comps
+          </button>
           <span className={isBracketed ? "text-emerald-400" : "text-amber-400"}>
             {isBracketed ? "✓ Comps bracket subject" : "⚠ Subject not bracketed"}
           </span>
@@ -399,18 +441,22 @@ function StepReview({
                 <tr className="border-b border-zinc-700 text-left text-xs uppercase tracking-wider text-zinc-400">
                   <th className="px-3 py-3 w-8"></th>
                   <th className="px-3 py-3">Address</th>
-                  <th className="px-3 py-3 text-right">Price</th>
-                  <th className="px-3 py-3 text-right">Sqft</th>
-                  <th className="px-3 py-3 text-right">$/sf</th>
+                  {(["sale_price","sqft","price_per_sqft","sale_date","distance_mi"] as SortField[]).map((f, i) => {
+                    const labels: Record<SortField, string> = { sale_price: "Price", sqft: "Sqft", price_per_sqft: "$/sf", sale_date: "Date", distance_mi: "Dist" };
+                    const align = f === "sale_date" ? "" : "text-right";
+                    return (
+                      <th key={f} className={`px-3 py-3 ${align} cursor-pointer select-none hover:text-white`} onClick={() => handleSort(f)}>
+                        {labels[f]}{sortField === f ? (sortDir === "asc" ? " ▲" : " ▼") : ""}
+                      </th>
+                    );
+                  })}
                   <th className="px-3 py-3 text-center">Bd/Ba</th>
-                  <th className="px-3 py-3">Date</th>
-                  <th className="px-3 py-3 text-right">Dist</th>
                   <th className="px-3 py-3">Source</th>
                   <th className="px-3 py-3">Tier</th>
                 </tr>
               </thead>
               <tbody>
-                {data.all_comps.map((comp) => {
+                {sortedComps.map((comp) => {
                   const isExcluded = excluded.has(comp.address);
                   const isSelected = comp.tier === "selected";
                   const isOffMarket = comp.is_off_market;
@@ -1004,7 +1050,7 @@ export default function CompsPage() {
         {/* Steps */}
         {step === 1 && <StepRunComps onResult={handleResult} />}
         {step === 2 && data && (
-          <StepReview data={data} onConfirm={handleConfirm} />
+          <StepReview data={data} onConfirm={handleConfirm} userEmail={userEmail} />
         )}
         {step === 3 && (
           <StepOffer
