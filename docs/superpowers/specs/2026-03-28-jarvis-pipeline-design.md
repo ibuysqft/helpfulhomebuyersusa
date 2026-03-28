@@ -22,6 +22,7 @@ A custom deal pipeline dashboard and proactive AI assistant ("Jarvis") built int
 | `ghl_contact_id` | text | GHL contact reference |
 | `stage` | enum | `new`, `contacted`, `offer_sent`, `under_contract`, `closed`, `dead` |
 | `deal_class` | enum | `residential`, `commercial` |
+| `exit_strategy` | enum | `wholesale`, `short_sale`, `novation`, `subject_to`, `fix_flip`, `retail`, `null` — set during pipeline as deal is understood |
 | `ai_flag` | boolean | True if AI needs human review |
 | `ai_flag_reason` | enum | `technical_fail`, `hostile_recipient`, `off_script`, `null` |
 | `address` | text | Property address |
@@ -227,6 +228,18 @@ The schema and UI are designed to support team assignment later without a rewrit
 
 ---
 
+## Exit Strategy Handoff
+
+Exit strategy is set on the deal card during the pipeline process. When a deal reaches `under_contract` AND has `exit_strategy = short_sale`, a **"Transfer to Short Sale Operation"** button appears on the card. One click:
+1. Sets `transferred_at` timestamp on the deal
+2. Removes it from the Jarvis kanban (no longer managed here)
+3. Creates a record in the Short Sale dashboard (Plan 5, separate `/admin/short-sales` page)
+
+The short sale dashboard manages its own post-win stage flow:
+`Submitted → Lender Review → BPO Ordered → Approval Received → Closed`
+
+Other exit strategies (`wholesale`, `fix_flip`, `retail`, `novation`, `subject_to`) remain in Jarvis pipeline through to `Closed`. Future phases may add their own handoff dashboards (e.g., rehab tracker for fix_flip).
+
 ## Out of Scope (Phase 1)
 
 - Wake word / always-on voice
@@ -235,3 +248,4 @@ The schema and UI are designed to support team assignment later without a rewrit
 - Reporting / analytics dashboard
 - Email notifications (SMS only)
 - Commercial-specific pipeline stages (same pipeline for both classes in v1)
+- Short sale post-handoff dashboard (Plan 5)
