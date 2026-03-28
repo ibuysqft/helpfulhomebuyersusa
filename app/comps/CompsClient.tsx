@@ -327,6 +327,30 @@ function StepReview({
   const [sortField, setSortField] = useState<SortField>("sale_price");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
+  // ── Filter state (mirrors DealMachine Filter Comps panel) ──────────────────
+  const [showFilters, setShowFilters] = useState(false);
+  const [radiusMi, setRadiusMi] = useState(1);
+  const [sqftMin, setSqftMin] = useState(() => {
+    const s = data.subject.sqft;
+    return s > 0 ? Math.max(0, Math.floor(s * 0.75 / 50) * 50) : 0;
+  });
+  const [sqftMax, setSqftMax] = useState(() => {
+    const s = data.subject.sqft;
+    return s > 0 ? Math.ceil(s * 1.25 / 50) * 50 : 9999;
+  });
+  const [minDate, setMinDate] = useState(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 6);
+    return d.toISOString().split("T")[0];
+  });
+  const [maxDate, setMaxDate] = useState(() =>
+    new Date().toISOString().split("T")[0]
+  );
+  const [bedsMin, setBedsMin] = useState("");
+  const [bedsMax, setBedsMax] = useState("");
+  const [bathsMin, setBathsMin] = useState("");
+  const [bathsMax, setBathsMax] = useState("");
+
   const handleSort = useCallback((field: SortField) => {
     setSortField(prev => {
       if (prev === field) { setSortDir(d => d === "asc" ? "desc" : "asc"); return field; }
@@ -344,9 +368,33 @@ function StepReview({
     });
   }, []);
 
+  // Filter comps by active criteria before any exclusion/sort
+  const baseComps = useMemo(() => {
+    return data.all_comps.filter((c) => {
+      if (c.distance_mi > radiusMi) return false;
+      if (sqftMin > 0 && c.sqft > 0 && c.sqft < sqftMin) return false;
+      if (sqftMax < 9999 && c.sqft > 0 && c.sqft > sqftMax) return false;
+      if (minDate) {
+        const d = new Date(c.sale_date);
+        if (!isNaN(d.getTime()) && d < new Date(minDate)) return false;
+      }
+      if (maxDate) {
+        const d = new Date(c.sale_date);
+        if (!isNaN(d.getTime()) && d > new Date(maxDate)) return false;
+      }
+      if (bedsMin && c.beds < Number(bedsMin)) return false;
+      if (bedsMax && c.beds > Number(bedsMax)) return false;
+      if (bathsMin && c.baths < Number(bathsMin)) return false;
+      if (bathsMax && c.baths > Number(bathsMax)) return false;
+      return true;
+    });
+  }, [data.all_comps, radiusMi, sqftMin, sqftMax, minDate, maxDate, bedsMin, bedsMax, bathsMin, bathsMax]);
+
+  const filteredOutCount = data.all_comps.length - baseComps.length;
+
   const includedComps = useMemo(
-    () => data.all_comps.filter((c) => !excluded.has(c.address)),
-    [data.all_comps, excluded]
+    () => baseComps.filter((c) => !excluded.has(c.address)),
+    [baseComps, excluded]
   );
 
   const selectedComps = useMemo(
@@ -387,14 +435,14 @@ function StepReview({
   const pairedSorted = [...data.paired_comps].sort((a, b) => b.sale_price - a.sale_price);
 
   const sortedComps = useMemo(() => {
-    return [...data.all_comps].sort((a, b) => {
+    return [...baseComps].sort((a, b) => {
       let av: number | string = a[sortField] ?? 0;
       let bv: number | string = b[sortField] ?? 0;
       if (sortField === "sale_date") { av = av || ""; bv = bv || ""; }
       const cmp = typeof av === "string" ? av.localeCompare(bv as string) : (av as number) - (bv as number);
       return sortDir === "asc" ? cmp : -cmp;
     });
-  }, [data.all_comps, sortField, sortDir]);
+  }, [baseComps, sortField, sortDir]);
 
   const emailSelectedComps = useCallback(() => {
     const sel = data.all_comps.filter(c => !excluded.has(c.address) && c.tier === "selected");
@@ -407,8 +455,103 @@ function StepReview({
     window.open(`mailto:${to}?subject=${subject}&body=${body}`);
   }, [data.all_comps, data.subject.address, excluded, userEmail]);
 
+  const resetFilters = useCallback(() => {
+    setRadiusMi(1);
+    const s = data.subject.sqft;
+    setSqftMin(s > 0 ? Math.max(0, Math.floor(s * 0.75 / 50) * 50) : 0);
+    setSqftMax(s > 0 ? Math.ceil(s * 1.25 / 50) * 50 : 9999);
+    const d = new Date(); d.setMonth(d.getMonth() - 6);
+    setMinDate(d.toISOString().split("T")[0]);
+    setMaxDate(new Date().toISOString().split("T")[0]);
+    setBedsMin(""); setBedsMax(""); setBathsMin(""); setBathsMax("");
+  }, [data.subject.sqft]);
+
   return (
     <div className="space-y-6">
+      {/* Filter Comps panel */}
+      <div className="rounded-xl border border-zinc-700 bg-zinc-900">
+        <button
+          onClick={() => setShowFilters(f => !f)}
+          className="flex w-full items-center justify-between px-5 py-3 text-sm text-zinc-400 hover:text-white transition"
+        >
+          <span className="flex items-center gap-2 font-medium">
+            ⚙ Filter Comps
+            {filteredOutCount > 0 && (
+              <span className="rounded-full bg-amber-600 px-2 py-0.5 text-xs text-white">
+                {filteredOutCount} hidden
+              </span>
+            )}
+          </span>
+          <span className="text-xs">{showFilters ? "▲ collapse" : "▼ expand"}</span>
+        </button>
+        {showFilters && (
+          <div className="border-t border-zinc-700 px-5 pb-5 pt-4">
+            <div className="grid grid-cols-2 gap-x-5 gap-y-4 sm:grid-cols-3">
+              {/* Date range */}
+              <div className="col-span-2">
+                <label className="mb-1 block text-xs font-medium text-zinc-400">Date of Sale</label>
+                <div className="flex items-center gap-2">
+                  <input type="date" value={minDate} onChange={e => setMinDate(e.target.value)}
+                    className="flex-1 rounded border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-xs text-white focus:border-emerald-500 focus:outline-none" />
+                  <span className="text-zinc-500 text-xs">to</span>
+                  <input type="date" value={maxDate} onChange={e => setMaxDate(e.target.value)}
+                    className="flex-1 rounded border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-xs text-white focus:border-emerald-500 focus:outline-none" />
+                </div>
+              </div>
+              {/* Radius */}
+              <div>
+                <label className="mb-1 block text-xs font-medium text-zinc-400">Range (miles)</label>
+                <input type="number" value={radiusMi} min={0.1} max={25} step={0.5}
+                  onChange={e => setRadiusMi(Number(e.target.value))}
+                  className="w-full rounded border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-xs text-white focus:border-emerald-500 focus:outline-none" />
+              </div>
+              {/* Sqft */}
+              <div className="col-span-2">
+                <label className="mb-1 block text-xs font-medium text-zinc-400">
+                  Square Feet{data.subject.sqft > 0 && <span className="ml-1 text-zinc-500">(subject: {fmt(data.subject.sqft)})</span>}
+                </label>
+                <div className="flex items-center gap-2">
+                  <input type="number" value={sqftMin || ""} placeholder="Min" min={0}
+                    onChange={e => setSqftMin(Number(e.target.value))}
+                    className="flex-1 rounded border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-xs text-white placeholder-zinc-600 focus:border-emerald-500 focus:outline-none" />
+                  <span className="text-zinc-500 text-xs">to</span>
+                  <input type="number" value={sqftMax >= 9999 ? "" : sqftMax} placeholder="Max" min={0}
+                    onChange={e => setSqftMax(e.target.value ? Number(e.target.value) : 9999)}
+                    className="flex-1 rounded border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-xs text-white placeholder-zinc-600 focus:border-emerald-500 focus:outline-none" />
+                </div>
+              </div>
+              {/* Beds */}
+              <div>
+                <label className="mb-1 block text-xs font-medium text-zinc-400">Bedrooms</label>
+                <div className="flex items-center gap-1">
+                  <input type="number" value={bedsMin} placeholder="Min" min={0} onChange={e => setBedsMin(e.target.value)}
+                    className="w-full rounded border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-xs text-white placeholder-zinc-600 focus:border-emerald-500 focus:outline-none" />
+                  <span className="text-zinc-500 text-xs">–</span>
+                  <input type="number" value={bedsMax} placeholder="Max" min={0} onChange={e => setBedsMax(e.target.value)}
+                    className="w-full rounded border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-xs text-white placeholder-zinc-600 focus:border-emerald-500 focus:outline-none" />
+                </div>
+              </div>
+              {/* Baths */}
+              <div>
+                <label className="mb-1 block text-xs font-medium text-zinc-400">Bathrooms</label>
+                <div className="flex items-center gap-1">
+                  <input type="number" value={bathsMin} placeholder="Min" min={0} step={0.5} onChange={e => setBathsMin(e.target.value)}
+                    className="w-full rounded border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-xs text-white placeholder-zinc-600 focus:border-emerald-500 focus:outline-none" />
+                  <span className="text-zinc-500 text-xs">–</span>
+                  <input type="number" value={bathsMax} placeholder="Max" min={0} step={0.5} onChange={e => setBathsMax(e.target.value)}
+                    className="w-full rounded border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-xs text-white placeholder-zinc-600 focus:border-emerald-500 focus:outline-none" />
+                </div>
+              </div>
+              {/* Reset */}
+              <div className="col-span-2 sm:col-span-3 flex justify-end pt-1">
+                <button onClick={resetFilters} className="text-xs text-zinc-500 hover:text-zinc-300 transition">
+                  Reset to defaults
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
       {/* Summary bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-700 bg-zinc-900 px-6 py-3">
         <span className="text-zinc-300">
