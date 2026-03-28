@@ -116,6 +116,8 @@ On first load each day, Jarvis proactively opens with a prioritized briefing:
 
 Jarvis has access to the following tools:
 
+**Pipeline Management**
+
 | Tool | Description |
 |------|-------------|
 | `get_pipeline_summary` | Returns all active deals with urgency scores |
@@ -128,12 +130,71 @@ Jarvis has access to the following tools:
 | `send_sms_reminder` | Queues an SMS nudge to Jeff via GHL |
 | `query_deals` | Natural language deal search (by address, stage, class, flag) |
 
+**Deal Analysis Engine**
+
+| Tool | Description |
+|------|-------------|
+| `analyze_deal` | Master tool — runs full analysis pipeline for an address |
+| `pull_comps` | Fetches sold comps via DealMachine scraper for the subject property |
+| `rate_condition` | Uses Claude Vision to analyze listing photos → returns C1–C6 Fannie Mae rating |
+| `estimate_repairs` | Calculates repair cost from condition rating × sqft |
+| `calculate_offers` | Returns wholesale offer (ARV × 70% − repairs), MLS retail estimate, and MAO |
+| `find_cash_buyers` | Pulls DealMachine cash buyers in zip, purchased last 12 months, scored by purchase price / ARV ratio |
+| `score_deal_viability` | Returns go/no-go recommendation based on condition rating and seller desperation signals |
+
+### Deal Analysis Workflow
+
+Triggered by: *"Jarvis, analyze 117 S 9th St, Suffolk VA"*
+
+1. **Pull comps** via DealMachine scraper → calculate ARV
+2. **Fetch listing photos** → Claude Vision rates condition C1–C6
+3. **Estimate repairs** = condition tier × sqft:
+   - C1 (excellent): $0/sqft
+   - C2 (good): $5/sqft
+   - C3 (average): $12/sqft
+   - C4 (fair): $22/sqft
+   - C5 (poor): $35/sqft — **default if no photos available**
+   - C6 (distressed): $55/sqft
+4. **Calculate numbers:**
+   - Wholesale offer = ARV × 70% − repairs
+   - MLS retail estimate = ARV × 95% (market-ready assumption)
+   - MAO (max allowable offer) = ARV × 65% − repairs (conservative floor)
+5. **Viability check:**
+   - C1–C3 → skip unless desperation signals detected in GHL conversation
+   - C4–C6 → viable, proceed with offer
+6. **Find cash buyers** → DealMachine: zip code, last 12 months, scored by `purchase_price / arv` descending. Top 5 returned with contact info.
+   - **Fix & flip bonus scoring:** If buyer purchased distressed + resold within 12 months at a higher price, they are classified as a fix-and-flipper and ranked higher — these buyers understand rehab value and pay closest to ARV on wholesale deals.
+7. **Jarvis delivers report** (voice + text):
+   > *"117 S 9th St — ARV $210k, condition C5, estimated repairs $42k. Wholesale offer: $105k, MAO: $94k, MLS retail: $199k. I found 4 cash buyers in the 23434 zip — top buyer paid 82 cents on the dollar last quarter. Want me to add this to the pipeline and draft outreach to the top 3 buyers?"*
+
+### Supabase: `deal_analysis` table
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | uuid (v7) | Primary key |
+| `deal_id` | uuid | FK → deals (nullable — can analyze before deal exists) |
+| `address` | text | |
+| `arv` | numeric | Calculated from comps |
+| `condition_rating` | enum | `c1`–`c6` |
+| `condition_source` | enum | `vision`, `assumed` |
+| `sqft` | integer | |
+| `repair_estimate` | numeric | condition tier × sqft |
+| `wholesale_offer` | numeric | ARV × 70% − repairs |
+| `mls_retail_estimate` | numeric | ARV × 95% |
+| `mao` | numeric | ARV × 65% − repairs |
+| `viability` | enum | `viable`, `skip`, `watch` |
+| `cash_buyers` | jsonb | Top scored buyers from DealMachine (includes flipper classification + resale data) |
+| `comps_raw` | jsonb | Raw comps data |
+| `created_at` | timestamptz | Auto |
+
 ### Example Interactions
 
+- *"Jarvis, analyze 117 S 9th St, Suffolk VA — pull comps, give me the wholesale offer and find cash buyers"*
 - *"Jarvis, move 123 Main St to Offer Sent and remind me Friday at 10am"*
 - *"Which residential deals have been sitting longest?"*
 - *"Flag the Compton deal as hostile and snooze it 3 days"*
 - *"Give me a rundown of everything under contract"*
+- *"Who are the best cash buyers in zip 23434 from the last year?"*
 
 ### AI Model
 
