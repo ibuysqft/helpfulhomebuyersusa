@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  type-check:
+    name: TypeScript type check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+  build-check:
+    name: Next.js build check
+    runs-on: ubuntu-latest
+    needs: type-check
+    env:
+      # Provide stub values so the build doesn't fail on missing env vars.
+      # Real secrets are only needed at runtime, not build time.
+      NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co'
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder'
+      SUPABASE_SERVICE_ROLE_KEY: 'placeholder'
+      UPSTASH_REDIS_REST_URL: 'https://placeholder.upstash.io'
+      UPSTASH_REDIS_REST_TOKEN: 'placeholder'
+      RESEND_API_KEY: 'placeholder'
+      NEXT_PUBLIC_SITE_URL: 'https://helpfulhomebuyersusa.com'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build

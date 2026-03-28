@@ -27,6 +27,15 @@
           "value": "noindex"
         }
       ]
+    },
+    {
+      "source": "/mls-offers(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
     }
   ]
 }
