@@ -113,14 +113,15 @@ Requirements:
 - Do NOT mention competitor companies by name
 - Meta description: under 155 characters, include "${state.phoneDisplay}"
 
-Return ONLY valid JSON in this exact format (no markdown code fences):
-{
-  "title": "the article title | Helpful Home Buyers USA",
-  "slug": "url-friendly-slug",
-  "metaDescription": "Under 155 chars including ${state.phoneDisplay}.",
-  "content": "full markdown content here",
-  "cityTags": ["city1", "city2"]
-}`
+Return your response in this EXACT format with XML tags — do not use JSON:
+
+<title>the article title | Helpful Home Buyers USA</title>
+<slug>url-friendly-slug-no-spaces</slug>
+<meta>Under 155 chars including ${state.phoneDisplay}.</meta>
+<cities>City1,City2</cities>
+<content>
+full markdown content here (can contain any characters safely)
+</content>`
 
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
@@ -129,8 +130,21 @@ Return ONLY valid JSON in this exact format (no markdown code fences):
   })
 
   const raw = response.content[0].type === 'text' ? response.content[0].text : ''
-  const cleaned = raw.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim()
-  const parsed = JSON.parse(cleaned)
+
+  function extractTag(tag: string): string {
+    const m = raw.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`))
+    return m ? m[1].trim() : ''
+  }
+
+  const parsed = {
+    title: extractTag('title'),
+    slug: extractTag('slug'),
+    metaDescription: extractTag('meta'),
+    content: extractTag('content'),
+    cityTags: extractTag('cities').split(',').map(c => c.trim()).filter(Boolean),
+  }
+
+  if (!parsed.title || !parsed.content) throw new Error('Missing required fields in response')
 
   const wordCount = parsed.content.split(/\s+/).length
 
