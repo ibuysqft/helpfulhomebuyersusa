@@ -15,7 +15,8 @@
     { "path": "/api/cron/ranking-check",    "schedule": "0 8 * * 5" },
     { "path": "/api/cron/paid-competitor-audit", "schedule": "0 5 * * 1" },
     { "path": "/api/cron/mls-scrape",       "schedule": "0 2 * * *" },
-    { "path": "/api/cron/mls-score",        "schedule": "0 3 * * *" }
+    { "path": "/api/cron/mls-score",        "schedule": "0 3 * * *" },
+    { "path": "/api/cron/mls-outreach",     "schedule": "30 3 * * *" }
   ],
   "headers": [
     {
