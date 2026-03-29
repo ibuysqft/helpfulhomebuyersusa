@@ -30,6 +30,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <a href="/admin/scrape-targets" className="text-slate-300 hover:text-white">
             Scrape Targets
           </a>
+          <a href="/admin/mls" className="text-slate-300 hover:text-white">
+            MLS Outreach
+          </a>
         </nav>
       </header>
       <main className="p-6">{children}</main>
