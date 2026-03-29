@@ -1,7 +1,7 @@
 // lib/deals.ts
 
 import { supabase } from '@/lib/supabase'
-import type { Deal, DealStage } from '@/lib/types/deals'
+import type { AiFlagReason, Deal, DealStage } from '@/lib/types/deals'
 
 export async function getAllDeals(): Promise<Deal[]> {
   const { data, error } = await supabase
@@ -74,7 +74,7 @@ export async function snoozeDeal(id: string): Promise<void> {
 export async function setAiFlag(
   id: string,
   flag: boolean,
-  reason: string | null
+  reason: AiFlagReason | null
 ): Promise<void> {
   const { error } = await supabase
     .from('deals')

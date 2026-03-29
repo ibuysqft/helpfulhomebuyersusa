@@ -45,6 +45,7 @@ export interface Deal {
   address: string
   seller_name: string | null
   seller_phone: string | null
+  assigned_to: string | null
   snoozed_until: string | null
   last_stage_change: string
   created_at: string
