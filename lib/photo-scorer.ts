@@ -86,10 +86,10 @@ export async function scorePropertyDistress(address: string): Promise<PhotoScore
     exterior_roof: Math.min(parsed.exterior_roof ?? 0, 2),
     structural: Math.min(parsed.structural ?? 0, 2),
   }
-  const distressScore = Object.values(signals).reduce((s, v) => s + (v as number), 0)
+  const distressScore = Object.values(signals).reduce((s: number, v) => s + (typeof v === 'number' ? v : 0), 0)
   const est = parsed.repair_estimates ?? {}
-  const repairEstimateLow = Object.values(est).reduce((s, [lo]) => s + (lo ?? 0), 0)
-  const repairEstimateHigh = Object.values(est).reduce((s, [, hi]) => s + (hi ?? 0), 0)
+  const repairEstimateLow = Object.values(est).reduce((s: number, pair) => s + (pair[0] ?? 0), 0)
+  const repairEstimateHigh = Object.values(est).reduce((s: number, pair) => s + (pair[1] ?? 0), 0)
 
   return {
     distressScore,
