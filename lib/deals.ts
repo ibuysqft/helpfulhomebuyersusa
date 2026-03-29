@@ -116,6 +116,18 @@ export async function deleteTask(taskId: string): Promise<void> {
   if (error) throw new Error(`Failed to delete task: ${error.message}`)
 }
 
+export async function updateDealExitStrategy(
+  id: string,
+  exitStrategy: string | null
+): Promise<void> {
+  const { error } = await supabase
+    .from('deals')
+    .update({ exit_strategy: exitStrategy })
+    .eq('id', id)
+
+  if (error) throw new Error(`Failed to update exit strategy: ${error.message}`)
+}
+
 /** Returns deals that are urgent: overdue tasks, AI flagged, or stale 7+ days */
 export function getHotDeals(deals: Deal[]): Deal[] {
   const now = new Date()

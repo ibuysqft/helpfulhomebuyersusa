@@ -3,13 +3,14 @@
 import { revalidatePath } from 'next/cache'
 import {
   updateDealStage,
+  updateDealExitStrategy,
   snoozeDeal,
   setAiFlag,
   createTask,
   completeTask,
   deleteTask,
 } from '@/lib/deals'
-import type { DealStage, AiFlagReason } from '@/lib/types/deals'
+import type { DealStage, AiFlagReason, ExitStrategy } from '@/lib/types/deals'
 
 export async function moveDealStageAction(
   dealId: string,
@@ -49,5 +50,13 @@ export async function completeTaskAction(taskId: string): Promise<void> {
 
 export async function deleteTaskAction(taskId: string): Promise<void> {
   await deleteTask(taskId)
+  revalidatePath('/admin/pipeline')
+}
+
+export async function updateExitStrategyAction(
+  dealId: string,
+  exitStrategy: ExitStrategy
+): Promise<void> {
+  await updateDealExitStrategy(dealId, exitStrategy)
   revalidatePath('/admin/pipeline')
 }
