@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import type { MlsLead } from '@/lib/mls-types'
-import { updateMlsLeadStatusAction } from './actions'
+import { updateMlsLeadStatusAction, queueForGhlAction, forceSendLeadAction } from './actions'
 
 const fmt = (n: number | null) => (n == null ? '-' : `$${n.toLocaleString()}`)
 
@@ -11,47 +11,87 @@ const spread = (l: MlsLead) => {
   return `${Math.round(((l.list_price - l.max_offer) / l.list_price) * 100)}%`
 }
 
+const daysAgo = (iso: string) => {
+  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000)
+  if (days === 0) return 'today'
+  if (days === 1) return '1d ago'
+  return `${days}d ago`
+}
+
 const TABS = [
-  { key: 'warm', label: 'All Warm' },
+  { key: 'all', label: 'All' },
   { key: 'queued', label: 'Queued' },
+  { key: 'warm', label: 'Warm' },
   { key: 'contacted', label: 'Contacted' },
   { key: 'dead', label: 'Dead' },
 ] as const
 
 type TabKey = (typeof TABS)[number]['key']
 
+type StrategyFilter = 'ALL' | 'CASH' | 'CREATIVE'
+
 const WARM_STATUSES = new Set(['warm_cash', 'warm_creative'])
 
 const EMPTY_MESSAGES: Record<TabKey, string> = {
+  all: 'No leads in pipeline.',
   warm: 'No warm leads yet. Pipeline is running.',
-  queued: 'Nothing here.',
-  contacted: 'Nothing here.',
+  queued: 'Nothing queued.',
+  contacted: 'Nothing contacted yet.',
   dead: 'Nothing here.',
 }
 
-function filterLeads(leads: MlsLead[], tab: TabKey): MlsLead[] {
-  if (tab === 'warm') return leads.filter((l) => WARM_STATUSES.has(l.status))
-  if (tab === 'queued') return leads.filter((l) => l.status === 'queued')
-  if (tab === 'contacted') return leads.filter((l) => l.status === 'contacted')
-  return leads.filter((l) => l.status === 'dead')
-}
+function filterLeads(
+  leads: MlsLead[],
+  tab: TabKey,
+  minScore: number,
+  strategy: StrategyFilter,
+): MlsLead[] {
+  let result = leads
 
-function tabCount(leads: MlsLead[], tab: TabKey): number {
-  return filterLeads(leads, tab).length
+  if (tab === 'warm') result = result.filter((l) => WARM_STATUSES.has(l.status))
+  else if (tab === 'queued') result = result.filter((l) => l.status === 'queued')
+  else if (tab === 'contacted') result = result.filter((l) => l.status === 'contacted')
+  else if (tab === 'dead') result = result.filter((l) => l.status === 'dead')
+
+  if (minScore > 0) result = result.filter((l) => (l.distress_score ?? 0) >= minScore)
+
+  if (strategy === 'CASH') {
+    result = result.filter((l) => l.offer_strategy === 'cash' || l.status === 'warm_cash')
+  } else if (strategy === 'CREATIVE') {
+    result = result.filter((l) => l.offer_strategy === 'creative' || l.status === 'warm_creative')
+  }
+
+  return result
 }
 
 interface LeadCardProps {
   lead: MlsLead
-  onRemove: (id: string) => void
+  onOptimisticUpdate: (id: string, status: MlsLead['status']) => void
 }
 
-function LeadCard({ lead, onRemove }: LeadCardProps) {
+function LeadCard({ lead, onOptimisticUpdate }: LeadCardProps) {
   const [isPending, startTransition] = useTransition()
+  const [sendState, setSendState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle')
 
   const handleStatusChange = (status: 'dead' | 'disqualified') => {
-    onRemove(lead.id)
+    onOptimisticUpdate(lead.id, status)
     startTransition(async () => {
       await updateMlsLeadStatusAction(lead.id, status)
+    })
+  }
+
+  const handleQueue = () => {
+    onOptimisticUpdate(lead.id, 'queued')
+    startTransition(async () => {
+      await queueForGhlAction(lead.id)
+    })
+  }
+
+  const handleForceSend = () => {
+    setSendState('sending')
+    startTransition(async () => {
+      const result = await forceSendLeadAction(lead.id)
+      setSendState(result.ok ? 'done' : 'error')
     })
   }
 
@@ -61,7 +101,10 @@ function LeadCard({ lead, onRemove }: LeadCardProps) {
         .map(([k]) => k)
     : []
 
+  const descKeywords = lead.description_keywords ?? []
   const isCash = lead.status === 'warm_cash' || lead.offer_strategy === 'cash'
+  const isWarm = WARM_STATUSES.has(lead.status)
+  const isQueued = lead.status === 'queued'
 
   return (
     <div
@@ -81,7 +124,10 @@ function LeadCard({ lead, onRemove }: LeadCardProps) {
             >
               {isCash ? 'CASH' : 'CREATIVE'}
             </span>
-            <span className="text-xs text-zinc-600">Score {lead.distress_score}/10</span>
+            <span className="text-xs text-zinc-600">Score {lead.distress_score ?? '-'}/10</span>
+            <span className="text-xs px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-500 border border-zinc-800">
+              {daysAgo(lead.created_at)}
+            </span>
             {lead.source === 'agent_submission' && (
               <span className="text-xs text-blue-400">Agent submitted</span>
             )}
@@ -93,6 +139,14 @@ function LeadCard({ lead, onRemove }: LeadCardProps) {
                 {tag.replace(/_/g, ' ')}
               </span>
             ))}
+            {descKeywords.map((kw) => (
+              <span
+                key={kw}
+                className="text-xs px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-500 border border-zinc-800 italic"
+              >
+                {kw}
+              </span>
+            ))}
           </div>
           <h2 className="font-semibold text-zinc-100 truncate">{lead.address}</h2>
           <p className="text-zinc-500 text-sm mt-0.5">{lead.agent_name}</p>
@@ -100,10 +154,36 @@ function LeadCard({ lead, onRemove }: LeadCardProps) {
         <div className="text-right shrink-0">
           <div className="text-emerald-400 font-bold text-lg">{fmt(lead.max_offer)}</div>
           <div className="text-zinc-600 text-xs">max offer</div>
+          {lead.dealsauce_wholesale != null && (
+            <div className="text-zinc-500 text-xs mt-0.5">
+              DS wholesale {fmt(lead.dealsauce_wholesale)}
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-3 mt-4">
+      <div className="grid grid-cols-3 gap-3 mt-3 text-sm">
+        {lead.beds != null && (
+          <div>
+            <span className="text-zinc-600 text-xs">Beds </span>
+            <span className="text-zinc-300 font-medium">{lead.beds}</span>
+          </div>
+        )}
+        {lead.baths != null && (
+          <div>
+            <span className="text-zinc-600 text-xs">Baths </span>
+            <span className="text-zinc-300 font-medium">{lead.baths}</span>
+          </div>
+        )}
+        {lead.sqft != null && (
+          <div>
+            <span className="text-zinc-600 text-xs">Sqft </span>
+            <span className="text-zinc-300 font-medium">{lead.sqft.toLocaleString()}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-4 gap-3 mt-3">
         <div>
           <div className="text-zinc-600 text-xs">List</div>
           <div className="text-zinc-300 text-sm font-medium">{fmt(lead.list_price)}</div>
@@ -145,6 +225,30 @@ function LeadCard({ lead, onRemove }: LeadCardProps) {
           >
             Email
           </a>
+          {!isQueued && !isWarm && (
+            <button
+              onClick={handleQueue}
+              disabled={isPending}
+              className="px-3 py-1.5 bg-blue-800 hover:bg-blue-700 text-blue-200 text-xs rounded-md transition-colors disabled:cursor-not-allowed"
+            >
+              Queue for GHL
+            </button>
+          )}
+          {isWarm && (
+            <button
+              onClick={handleForceSend}
+              disabled={isPending || sendState === 'sending' || sendState === 'done'}
+              className={`px-3 py-1.5 text-xs rounded-md transition-colors disabled:cursor-not-allowed ${
+                sendState === 'done'
+                  ? 'bg-emerald-900 text-emerald-400 border border-emerald-700'
+                  : sendState === 'error'
+                    ? 'bg-red-900 text-red-400 border border-red-700'
+                    : 'bg-indigo-800 hover:bg-indigo-700 text-indigo-200'
+              }`}
+            >
+              {sendState === 'sending' ? 'Sending…' : sendState === 'done' ? 'Sent' : sendState === 'error' ? 'Failed' : 'Send Now'}
+            </button>
+          )}
           <button
             onClick={() => handleStatusChange('disqualified')}
             disabled={isPending}
@@ -173,16 +277,20 @@ export function MlsOffersClient({
   statusCounts: Record<string, number>
 }) {
   const [leads, setLeads] = useState<MlsLead[]>(initialLeads)
-  const [activeTab, setActiveTab] = useState<TabKey>('warm')
+  const [activeTab, setActiveTab] = useState<TabKey>('all')
+  const [minScore, setMinScore] = useState(0)
+  const [strategy, setStrategy] = useState<StrategyFilter>('ALL')
 
   const total = Object.values(statusCounts).reduce((s, n) => s + n, 0)
   const warmTotal = (statusCounts['warm_cash'] ?? 0) + (statusCounts['warm_creative'] ?? 0)
 
-  const handleRemove = (id: string) => {
-    setLeads((prev) => prev.filter((l) => l.id !== id))
+  const handleOptimisticUpdate = (id: string, status: MlsLead['status']) => {
+    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status } : l)))
   }
 
-  const visibleLeads = filterLeads(leads, activeTab)
+  const visibleLeads = filterLeads(leads, activeTab, minScore, strategy)
+
+  const STRATEGY_OPTIONS: StrategyFilter[] = ['ALL', 'CASH', 'CREATIVE']
 
   return (
     <div className="min-h-screen bg-black text-zinc-100 p-6">
@@ -217,9 +325,10 @@ export function MlsOffersClient({
           ))}
         </div>
 
+        {/* Tab bar */}
         <div className="flex gap-1 mb-4 bg-zinc-950 border border-zinc-800 rounded-lg p-1">
           {TABS.map((tab) => {
-            const count = tabCount(leads, tab.key)
+            const count = filterLeads(leads, tab.key, minScore, strategy).length
             const isActive = activeTab === tab.key
             return (
               <button
@@ -244,6 +353,39 @@ export function MlsOffersClient({
           })}
         </div>
 
+        {/* Filter bar */}
+        <div className="flex items-center gap-6 mb-4 bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3">
+          <div className="flex items-center gap-3 flex-1">
+            <label className="text-xs text-zinc-500 whitespace-nowrap">
+              Min score: <span className="text-zinc-300 font-medium">{minScore}</span>
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={10}
+              step={1}
+              value={minScore}
+              onChange={(e) => setMinScore(Number(e.target.value))}
+              className="w-32 accent-emerald-500"
+            />
+          </div>
+          <div className="flex gap-1">
+            {STRATEGY_OPTIONS.map((opt) => (
+              <button
+                key={opt}
+                onClick={() => setStrategy(opt)}
+                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  strategy === opt
+                    ? 'bg-zinc-700 text-zinc-100'
+                    : 'bg-zinc-900 text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {visibleLeads.length === 0 ? (
           <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-12 text-center">
             <p className="text-zinc-500">{EMPTY_MESSAGES[activeTab]}</p>
@@ -251,7 +393,7 @@ export function MlsOffersClient({
         ) : (
           <div className="space-y-3">
             {visibleLeads.map((lead) => (
-              <LeadCard key={lead.id} lead={lead} onRemove={handleRemove} />
+              <LeadCard key={lead.id} lead={lead} onOptimisticUpdate={handleOptimisticUpdate} />
             ))}
           </div>
         )}

@@ -14,12 +14,17 @@ async function isAuthenticated() {
 export default async function MlsOffersPage() {
   if (!(await isAuthenticated())) redirect('/admin')
 
+  const ALL_STATUSES = [
+    'new', 'scored', 'queued', 'contacted',
+    'warm_cash', 'warm_creative', 'dead', 'disqualified',
+  ]
+
   const { data: leads } = await supabase
     .from('mls_leads')
     .select('*')
-    .in('status', ['warm_cash', 'warm_creative'])
-    .order('warm_at', { ascending: false })
-    .limit(50)
+    .in('status', ALL_STATUSES)
+    .order('created_at', { ascending: false })
+    .limit(200)
 
   const { data: allStatuses } = await supabase.from('mls_leads').select('status')
   const counts = (allStatuses ?? []).reduce<Record<string, number>>((acc, r) => {
