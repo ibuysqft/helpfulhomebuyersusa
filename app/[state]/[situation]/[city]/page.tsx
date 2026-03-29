@@ -178,6 +178,7 @@ export default async function CityPage({ params }: Props) {
     phone: siteConfig.phone,
     phoneDisplay: siteConfig.phoneDisplay,
     siteUrl: siteConfig.url,
+    tagline: `We buy houses fast in ${cityObj.name}, ${stateObj.abbr}.`,
   }
   const faqs = getHomepageFaqs(stateConfig)
 

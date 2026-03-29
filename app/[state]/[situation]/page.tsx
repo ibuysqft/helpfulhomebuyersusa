@@ -94,6 +94,7 @@ export default async function StateSituationHub({ params }: Props) {
     phone: siteConfig.phone,
     phoneDisplay: siteConfig.phoneDisplay,
     siteUrl: siteConfig.url,
+    tagline: `We buy houses fast across ${stateObj.name}.`,
   }
   const faqs = getHomepageFaqs(stateConfig)
 

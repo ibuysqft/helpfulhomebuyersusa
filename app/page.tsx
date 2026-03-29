@@ -20,7 +20,7 @@ import { CompsSection } from '@/components/sections/comps-section'
 import { siteConfig } from '@/config/site'
 import { ratingsConfig } from '@/config/ratings'
 import { getHomepageFaqs } from '@/data/faqs'
-import { getStateConfig } from '@/lib/state-context'
+import { getStateConfigFromHeaders } from '@/lib/state-context'
 
 export const metadata: Metadata = siteConfig.isNational
   ? {
@@ -63,8 +63,10 @@ const nationalFaqs = [
   },
 ]
 
-export default function HomePage() {
-  const stateConfig = getStateConfig()
+import { StateHero } from '@/components/state-hero'
+
+export default async function HomePage() {
+  const stateConfig = await getStateConfigFromHeaders()
 
   // National homepage
   if (stateConfig.isNational) {
@@ -207,9 +209,11 @@ export default function HomePage() {
       <ReturnVisitorBanner />
       <main className="pb-16 md:pb-0">
 
-        {/* Hero */}
+        <StateHero stateConfig={stateConfig} />
+
+        {/* Legacy hero kept below for reference — hidden */}
         <section
-          className="py-20 px-4"
+          className="py-20 px-4 hidden"
           style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #2563EB 100%)' }}
         >
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
