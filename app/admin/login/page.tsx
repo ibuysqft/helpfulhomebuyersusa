@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react'
 
+export const dynamic = 'force-dynamic'
+
 export default function AdminLogin() {
   const [pw, setPw] = useState('')
   const [error, setError] = useState('')

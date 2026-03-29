@@ -95,7 +95,7 @@ export default function Image() {
               color: '#f59e0b',
             }}
           >
-            helpfulhomebuyersusa.com
+            {process.env.NEXT_PUBLIC_SITE_URL?.replace(/^https?:\/\//, '') ?? 'helpfulhomebuyersusa.com'}
           </span>
         </div>
 

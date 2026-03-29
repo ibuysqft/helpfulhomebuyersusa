@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   title: 'Title Problems? We Buy Houses With Liens, Judgments & Title Issues',
   description: 'We buy houses with title problems — liens, judgments, IRS levies, missing heirs, HOA super liens, code violations, and more. Our attorneys cure title at no out-of-pocket cost to you. Serving 15 states.',
   alternates: {
-    canonical: 'https://www.helpfulhomebuyersusa.com/curative-title',
+    canonical: `${siteConfig.url}/curative-title`,
   },
   openGraph: {
     title: 'Title Problems? We Buy Houses With Liens, Judgments & Title Issues',
     description: 'We buy houses with title problems. Our attorneys cure title at no upfront cost to you. Serving 15 states.',
-    url: 'https://www.helpfulhomebuyersusa.com/curative-title',
+    url: `${siteConfig.url}/curative-title`,
     type: 'website',
   },
 }
@@ -28,7 +28,7 @@ const SCHEMA = {
   provider: {
     '@type': 'RealEstateAgent',
     name: 'Helpful Homebuyers USA',
-    url: 'https://www.helpfulhomebuyersusa.com',
+    url: siteConfig.url,
   },
   areaServed: { '@type': 'Country', name: 'United States' },
   serviceType: 'Curative Title Cash Home Buying',
@@ -38,8 +38,8 @@ const BREADCRUMB = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.helpfulhomebuyersusa.com' },
-    { '@type': 'ListItem', position: 2, name: 'Curative Title', item: 'https://www.helpfulhomebuyersusa.com/curative-title' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+    { '@type': 'ListItem', position: 2, name: 'Curative Title', item: `${siteConfig.url}/curative-title` },
   ],
 }
 

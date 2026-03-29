@@ -2,6 +2,8 @@ import { getAllDeals } from '@/lib/deals'
 import { HotStrip } from '@/components/pipeline/HotStrip'
 import { KanbanBoard } from '@/components/pipeline/KanbanBoard'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PipelinePage() {
   const deals = await getAllDeals()
   return (

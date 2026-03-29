@@ -1,6 +1,8 @@
 import { supabase } from '@/lib/supabase'
 import { ScrapeTargetsClient } from './ScrapeTargetsClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function ScrapeTargetsPage() {
   const { data: targets } = await supabase
     .from('scrape_targets')

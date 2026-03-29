@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 import { MlsControlClient } from './MlsControlClient'
 
+export const dynamic = 'force-dynamic'
+
 async function getData() {
   const sb = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

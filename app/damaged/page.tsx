@@ -45,6 +45,8 @@ const FAQ_SCHEMA = {
   })),
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? ''
+
 const SERVICE_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'Service',
@@ -54,14 +56,14 @@ const SERVICE_JSONLD = {
   provider: {
     '@type': 'RealEstateAgent',
     name: 'Helpful Homebuyers USA',
-    url: 'https://www.helpfulhomebuyersusa.com',
+    url: SITE_URL,
   },
   areaServed: {
     '@type': 'State',
     name: 'Virginia',
   },
   serviceType: 'Cash Home Buying',
-  url: 'https://www.helpfulhomebuyersusa.com/damaged',
+  url: `${SITE_URL}/damaged`,
 }
 
 export default function DamagedPage() {

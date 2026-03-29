@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { supabase } from '@/lib/supabase'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PaidCompetitorsPage() {
   const cookieStore = await cookies()
   const adminToken = cookieStore.get('admin_token')

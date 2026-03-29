@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   title: 'Foreclosure Surplus Funds | Get What You\'re Owed After a Foreclosure',
   description: 'If your home was sold at foreclosure for more than you owed, you may be owed surplus funds. We help homeowners recover foreclosure surplus funds in all 15 states — and can buy your home before the auction to preserve your equity.',
   alternates: {
-    canonical: 'https://www.helpfulhomebuyersusa.com/surplus-funds',
+    canonical: `${siteConfig.url}/surplus-funds`,
   },
   openGraph: {
     title: 'Foreclosure Surplus Funds | Get What You\'re Owed After a Foreclosure',
     description: 'Recover foreclosure surplus funds owed to you — or sell before the auction and keep your equity. We serve all 15 states.',
-    url: 'https://www.helpfulhomebuyersusa.com/surplus-funds',
+    url: `${siteConfig.url}/surplus-funds`,
     type: 'website',
   },
 }
@@ -28,7 +28,7 @@ const SCHEMA = {
   provider: {
     '@type': 'RealEstateAgent',
     name: 'Helpful Homebuyers USA',
-    url: 'https://www.helpfulhomebuyersusa.com',
+    url: siteConfig.url,
   },
   areaServed: { '@type': 'Country', name: 'United States' },
   serviceType: 'Foreclosure Surplus Funds Recovery',
@@ -38,8 +38,8 @@ const BREADCRUMB = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.helpfulhomebuyersusa.com' },
-    { '@type': 'ListItem', position: 2, name: 'Surplus Funds', item: 'https://www.helpfulhomebuyersusa.com/surplus-funds' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+    { '@type': 'ListItem', position: 2, name: 'Surplus Funds', item: `${siteConfig.url}/surplus-funds` },
   ],
 }
 

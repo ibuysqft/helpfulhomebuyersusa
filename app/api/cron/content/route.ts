@@ -4,14 +4,20 @@ import { generateBlogPost } from '@/lib/content-generator'
 import { analyzeGaps, type CompetitorPage } from '@/lib/competitor-analyzer'
 import { sendDraftNotification } from '@/lib/email'
 
-export const maxDuration = 120
+export const maxDuration = 300
+
+const BATCH_SIZE = 5
 
 export async function POST(req: NextRequest) {
+  if (!process.env.NEXT_PUBLIC_IS_NATIONAL) {
+    return new Response(null, { status: 204 })
+  }
+
   if (req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Pick highest-priority keyword not generated recently
+  // Pick highest-priority keywords not generated recently
   const { data: recentPosts } = await supabase
     .from('blog_posts')
     .select('target_keyword')
@@ -32,61 +38,76 @@ export async function POST(req: NextRequest) {
   const available = (keywords ?? []).filter(k => !usedKeywords.has(k.keyword))
   if (!available.length) return NextResponse.json({ message: 'No available keywords' })
 
-  const chosen = available[0]
+  const chosen = available.slice(0, BATCH_SIZE)
 
-  // Load competitor snapshots for this keyword
-  const { data: snapshots } = await supabase
-    .from('competitor_snapshots')
-    .select('competitor_url, rank_position, word_count, headings, faq_questions, schema_types')
-    .eq('keyword', chosen.keyword)
-    .order('rank_position', { ascending: true })
-    .limit(5)
+  const results: {
+    generated: Array<{ slug: string; wordCount: number; competitorBeat: boolean | null }>
+    failed: Array<{ keyword: string; error: string }>
+  } = { generated: [], failed: [] }
 
-  let competitorContext
-  if (snapshots?.length) {
-    const competitors: CompetitorPage[] = snapshots.map(s => ({
-      url: s.competitor_url,
-      rankPosition: s.rank_position,
-      wordCount: s.word_count ?? 0,
-      headings: (s.headings as string[]) ?? [],
-      faqQuestions: (s.faq_questions as string[]) ?? [],
-      schemaTypes: (s.schema_types as string[]) ?? [],
-    }))
-    competitorContext = analyzeGaps([], [], competitors)
+  for (const candidate of chosen) {
+    // Load competitor snapshots for this keyword
+    const { data: snapshots } = await supabase
+      .from('competitor_snapshots')
+      .select('competitor_url, rank_position, word_count, headings, faq_questions, schema_types')
+      .eq('keyword', candidate.keyword)
+      .order('rank_position', { ascending: true })
+      .limit(5)
+
+    let competitorContext
+    if (snapshots?.length) {
+      const competitors: CompetitorPage[] = snapshots.map(s => ({
+        url: s.competitor_url,
+        rankPosition: s.rank_position,
+        wordCount: s.word_count ?? 0,
+        headings: (s.headings as string[]) ?? [],
+        faqQuestions: (s.faq_questions as string[]) ?? [],
+        schemaTypes: (s.schema_types as string[]) ?? [],
+      }))
+      competitorContext = analyzeGaps([], [], competitors)
+    }
+
+    try {
+      const post = await generateBlogPost(candidate.keyword, [], competitorContext)
+
+      const { error: insertError } = await supabase.from('blog_posts').insert({
+        slug: post.slug,
+        title: post.title,
+        content: post.content,
+        meta_description: post.metaDescription,
+        target_keyword: post.targetKeyword,
+        word_count: post.wordCount,
+        city_tags: post.cityTags,
+        status: 'published',
+        published_at: new Date().toISOString(),
+      })
+
+      if (insertError) throw new Error(insertError.message)
+
+      await supabase
+        .from('keyword_bank')
+        .update({ last_generated_at: new Date().toISOString() })
+        .eq('id', candidate.id)
+
+      const beat = competitorContext
+        ? post.wordCount >= competitorContext.targetWordCount
+        : null
+
+      results.generated.push({ slug: post.slug, wordCount: post.wordCount, competitorBeat: beat })
+    } catch (err) {
+      console.error(`Content generation failed for "${candidate.keyword}":`, err)
+      results.failed.push({ keyword: candidate.keyword, error: String(err) })
+    }
   }
 
-  try {
-    const post = await generateBlogPost(chosen.keyword, [], competitorContext)
-
-    const { error: insertError } = await supabase.from('blog_posts').insert({
-      slug: post.slug,
-      title: post.title,
-      content: post.content,
-      meta_description: post.metaDescription,
-      target_keyword: post.targetKeyword,
-      word_count: post.wordCount,
-      city_tags: post.cityTags,
-      status: 'published',
-      published_at: new Date().toISOString(),
-    })
-
-    if (insertError) return NextResponse.json({ error: insertError.message }, { status: 500 })
-
-    // Mark keyword as generated
-    await supabase
-      .from('keyword_bank')
-      .update({ last_generated_at: new Date().toISOString() })
-      .eq('id', chosen.id)
-
-    await sendDraftNotification(post.title, post.slug)
-
-    const competitorBeat = competitorContext
-      ? { targetWordCount: competitorContext.targetWordCount, actual: post.wordCount, beat: post.wordCount >= competitorContext.targetWordCount }
-      : null
-
-    return NextResponse.json({ generated: post.slug, wordCount: post.wordCount, competitorBeat })
-  } catch (err) {
-    console.error('Content generation failed:', err)
-    return NextResponse.json({ error: String(err) }, { status: 500 })
+  // Single notification summarising the full batch
+  if (results.generated.length > 0) {
+    const summary = results.generated.map(p => p.slug).join(', ')
+    await sendDraftNotification(
+      `Generated ${results.generated.length} post${results.generated.length === 1 ? '' : 's'}: ${summary}`,
+      results.generated[0].slug,
+    )
   }
+
+  return NextResponse.json(results)
 }

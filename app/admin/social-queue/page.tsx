@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { supabase } from '@/lib/supabase'
 
+export const dynamic = 'force-dynamic'
+
 const STATUS_STYLES: Record<string, string> = {
   pending: 'bg-amber-900/40 text-amber-400',
   published: 'bg-green-900/40 text-green-400',

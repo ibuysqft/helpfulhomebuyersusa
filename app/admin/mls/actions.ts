@@ -15,7 +15,7 @@ function cronHeaders() {
 }
 
 function appUrl() {
-  return process.env.NEXT_PUBLIC_APP_URL ?? 'https://helpfulhomebuyersusa.com'
+  return process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? ''
 }
 
 export async function runScrapeAction(): Promise<{ ok: boolean; message: string }> {

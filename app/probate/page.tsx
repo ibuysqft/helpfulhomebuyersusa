@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   title: 'Sell a Probate Property | National Cash Home Buyers for Estates',
   description: 'We buy probate properties nationwide — working directly with executors, estate attorneys, and the court process. Cash offer in 24 hours, close in as few as 14 days after executor authorization. Serving 15 states.',
   alternates: {
-    canonical: 'https://www.helpfulhomebuyersusa.com/probate',
+    canonical: `${siteConfig.url}/probate`,
   },
   openGraph: {
     title: 'Sell a Probate Property | National Cash Home Buyers for Estates',
     description: 'We buy probate properties in 15 states. Work directly with executors and estate attorneys. Cash offer in 24 hours.',
-    url: 'https://www.helpfulhomebuyersusa.com/probate',
+    url: `${siteConfig.url}/probate`,
     type: 'website',
   },
 }
@@ -28,7 +28,7 @@ const SCHEMA = {
   provider: {
     '@type': 'RealEstateAgent',
     name: 'Helpful Homebuyers USA',
-    url: 'https://www.helpfulhomebuyersusa.com',
+    url: siteConfig.url,
   },
   areaServed: { '@type': 'Country', name: 'United States' },
   serviceType: 'Probate Property Cash Home Buying',
@@ -38,8 +38,8 @@ const BREADCRUMB = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.helpfulhomebuyersusa.com' },
-    { '@type': 'ListItem', position: 2, name: 'Probate Properties', item: 'https://www.helpfulhomebuyersusa.com/probate' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+    { '@type': 'ListItem', position: 2, name: 'Probate Properties', item: `${siteConfig.url}/probate` },
   ],
 }
 
