@@ -18,10 +18,6 @@ const SCRAPERAPI_KEY = process.env.SCRAPERAPI_KEY
 export const maxDuration = 300
 
 export async function POST(req: NextRequest) {
-  if (!process.env.NEXT_PUBLIC_IS_NATIONAL) {
-    return new Response(null, { status: 204 })
-  }
-
   if (req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
