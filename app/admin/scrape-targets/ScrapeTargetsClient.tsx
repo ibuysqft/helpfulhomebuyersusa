@@ -1,6 +1,6 @@
 'use client'
 
-import { useTransition, useOptimistic } from 'react'
+import { useState, useTransition, useOptimistic } from 'react'
 import {
   addTargetAction,
   toggleTargetAction,
@@ -14,6 +14,13 @@ interface Target {
   state: string
   active: boolean
   created_at: string
+}
+
+const VALID_TYPES = ['county', 'city', 'zip', 'state'] as const
+type TargetType = (typeof VALID_TYPES)[number]
+
+function isValidType(value: string): value is TargetType {
+  return (VALID_TYPES as readonly string[]).includes(value)
 }
 
 const TYPE_BADGE_COLORS: Record<Target['type'], string> = {
@@ -32,8 +39,60 @@ function groupByState(targets: Target[]): Record<string, Target[]> {
   return groups
 }
 
+interface ParsedCommand {
+  action: 'add' | 'remove' | 'pause' | 'resume'
+  type?: TargetType
+  value: string
+  state?: string
+}
+
+function parseQuickCommand(input: string): ParsedCommand | null {
+  const trimmed = input.trim()
+  if (!trimmed) return null
+
+  const parts = trimmed.split(/\s+/)
+  const verb = parts[0].toLowerCase()
+
+  if (verb === 'remove' || verb === 'delete') {
+    const value = parts.slice(1).join(' ')
+    if (!value) return null
+    return { action: 'remove', value }
+  }
+
+  if (verb === 'pause') {
+    const value = parts.slice(1).join(' ')
+    if (!value) return null
+    return { action: 'pause', value }
+  }
+
+  if (verb === 'resume') {
+    const value = parts.slice(1).join(' ')
+    if (!value) return null
+    return { action: 'resume', value }
+  }
+
+  if (verb === 'add') {
+    parts.shift()
+  }
+
+  if (parts.length < 2) return null
+  const typeStr = parts[0].toLowerCase()
+  if (!isValidType(typeStr)) return null
+
+  const hasState = parts.length >= 3 && parts[parts.length - 1].length === 2
+  const state = hasState ? parts[parts.length - 1].toUpperCase() : 'VA'
+  const value = hasState
+    ? parts.slice(1, parts.length - 1).join(' ')
+    : parts.slice(1).join(' ')
+
+  if (!value) return null
+  return { action: 'add', type: typeStr, value, state }
+}
+
 export function ScrapeTargetsClient({ targets }: { targets: Target[] }) {
   const [isPending, startTransition] = useTransition()
+  const [quickInput, setQuickInput] = useState('')
+  const [quickError, setQuickError] = useState('')
   const [optimisticTargets, setOptimistic] = useOptimistic(
     targets,
     (current: Target[], removedId: string) =>
@@ -56,6 +115,62 @@ export function ScrapeTargetsClient({ targets }: { targets: Target[] }) {
     })
   }
 
+  function findTargetByValue(value: string): Target | undefined {
+    const lower = value.toLowerCase()
+    return optimisticTargets.find(
+      (t) => t.value.toLowerCase() === lower,
+    )
+  }
+
+  function handleQuickSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setQuickError('')
+
+    const parsed = parseQuickCommand(quickInput)
+    if (!parsed) {
+      setQuickError(
+        'Could not parse. Try: county Loudoun VA | remove Loudoun | pause Fairfax',
+      )
+      return
+    }
+
+    startTransition(async () => {
+      if (parsed.action === 'add' && parsed.type) {
+        const formData = new FormData()
+        formData.set('type', parsed.type)
+        formData.set('value', parsed.value)
+        formData.set('state', parsed.state ?? 'VA')
+        await addTargetAction(formData)
+        setQuickInput('')
+      } else if (parsed.action === 'remove') {
+        const target = findTargetByValue(parsed.value)
+        if (!target) {
+          setQuickError(`No target found matching "${parsed.value}"`)
+          return
+        }
+        setOptimistic(target.id)
+        await deleteTargetAction(target.id)
+        setQuickInput('')
+      } else if (parsed.action === 'pause') {
+        const target = findTargetByValue(parsed.value)
+        if (!target) {
+          setQuickError(`No target found matching "${parsed.value}"`)
+          return
+        }
+        await toggleTargetAction(target.id, false)
+        setQuickInput('')
+      } else if (parsed.action === 'resume') {
+        const target = findTargetByValue(parsed.value)
+        if (!target) {
+          setQuickError(`No target found matching "${parsed.value}"`)
+          return
+        }
+        await toggleTargetAction(target.id, true)
+        setQuickInput('')
+      }
+    })
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
@@ -69,6 +184,31 @@ export function ScrapeTargetsClient({ targets }: { targets: Target[] }) {
           {activeCount} active target{activeCount !== 1 ? 's' : ''}
         </span>
       </div>
+
+      {/* Quick-add command bar */}
+      <form onSubmit={handleQuickSubmit} className="mb-4">
+        <div className="relative">
+          <input
+            type="text"
+            value={quickInput}
+            onChange={(e) => {
+              setQuickInput(e.target.value)
+              setQuickError('')
+            }}
+            disabled={isPending}
+            placeholder="county Loudoun VA  |  remove Loudoun  |  pause Fairfax"
+            className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 text-zinc-100 placeholder:text-slate-500 font-mono text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+          />
+          {isPending && (
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+              ...
+            </span>
+          )}
+        </div>
+        {quickError && (
+          <p className="text-red-400 text-xs mt-1.5 pl-1">{quickError}</p>
+        )}
+      </form>
 
       {/* Add form */}
       <form
