@@ -7,7 +7,17 @@ import * as http from 'http'
 
 const EMAIL    = 'anchor.offer.chatgpt@gmail.com'
 const PASSWORD = 'Password!1'
-const COUNTIES = ['Fairfax', 'Henrico', 'Richmond', 'Prince William']
+const NEXT_APP_URL = process.env.NEXT_APP_URL ?? 'https://helpfulhomebuyersusa.com'
+
+async function fetchTargets(): Promise<{ type: string; value: string; state: string }[]> {
+  try {
+    const res = await fetch(`${NEXT_APP_URL}/api/scrape-targets`)
+    const json = await res.json() as { targets?: { type: string; value: string; state: string }[] }
+    return json.targets ?? []
+  } catch {
+    return [{ type: 'county', value: 'Fairfax', state: 'VA' }]
+  }
+}
 const PORT     = parseInt(process.env.PORT ?? '3100', 10)
 const SECRET   = process.env.SCRAPER_SECRET ?? ''
 
@@ -30,7 +40,10 @@ async function scrape(): Promise<ScrapedLead[]> {
     await page.click('button[type="submit"]')
     await page.waitForURL('**/leads**', { timeout: 15_000 })
 
-    for (const county of COUNTIES) {
+    const targets = await fetchTargets()
+    const counties = targets.filter(t => t.type === 'county').map(t => t.value)
+
+    for (const county of counties) {
       await page.goto('https://app.dealsauce.io/leads', { waitUntil: 'networkidle' })
 
       // Try dropdown county filter

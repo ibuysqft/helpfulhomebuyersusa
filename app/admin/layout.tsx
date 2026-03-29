@@ -27,6 +27,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <a href="/admin/failed-leads" className="text-slate-300 hover:text-white">
             Failed Leads
           </a>
+          <a href="/admin/scrape-targets" className="text-slate-300 hover:text-white">
+            Scrape Targets
+          </a>
         </nav>
       </header>
       <main className="p-6">{children}</main>
