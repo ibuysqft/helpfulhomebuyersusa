@@ -129,6 +129,27 @@ export function LandingInlineForm({
         </a>{' '}
         to talk to someone now
       </p>
+
+      <p
+        className="text-xs text-center"
+        style={{
+          color: isDark ? 'rgba(255,255,255,0.35)' : 'var(--color-text-muted)',
+          fontFamily: 'var(--font-body)',
+          lineHeight: '1.5',
+        }}
+      >
+        By submitting, you consent to receive calls and SMS messages (including automated messages) from{' '}
+        {siteConfig.name} at the number provided. Msg &amp; data rates may apply. Reply STOP to opt out.{' '}
+        See our{' '}
+        <a href="/privacy-policy" style={{ color: isDark ? 'rgba(255,255,255,0.5)' : 'var(--color-cta)', textDecoration: 'underline' }}>
+          Privacy Policy
+        </a>{' '}
+        and{' '}
+        <a href="/sms-terms" style={{ color: isDark ? 'rgba(255,255,255,0.5)' : 'var(--color-cta)', textDecoration: 'underline' }}>
+          SMS Terms
+        </a>
+        .
+      </p>
     </form>
   )
 }

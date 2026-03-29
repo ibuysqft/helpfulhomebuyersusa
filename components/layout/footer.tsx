@@ -173,6 +173,9 @@ export function Footer() {
                 Get My Offer
               </Link>
             </li>
+            <li><Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+            <li><Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link></li>
+            <li><Link href="/sms-terms" className="hover:text-white transition-colors">SMS Terms</Link></li>
           </ul>
         </div>
       </div>
