@@ -4,9 +4,12 @@ import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { siteConfig } from '@/config/site'
 
+const { stateName, isNational, markets } = siteConfig
+const regionLabel = isNational ? 'nationwide' : stateName
+
 export const metadata: Metadata = {
-  title: 'About Us | Cash Home Buyers in Virginia',
-  description: `${siteConfig.name} buys houses for cash in Virginia. Learn about our process, our team, and why hundreds of homeowners have chosen us.`,
+  title: `About Us | Cash Home Buyers in ${stateName}`,
+  description: `${siteConfig.name} buys houses for cash in ${stateName}. Learn about our process, our team, and why hundreds of homeowners have chosen us.`,
   alternates: { canonical: `${siteConfig.url}/about` },
 }
 
@@ -21,7 +24,7 @@ export default function AboutPage() {
               About <span className="text-amber-400">{siteConfig.name}</span>
             </h1>
             <p className="text-xl text-slate-300">
-              We are a local Virginia real estate investment company that buys houses directly from homeowners — for cash.
+              We are a local {regionLabel} real estate investment company that buys houses directly from homeowners — for cash.
             </p>
           </div>
         </section>
@@ -30,8 +33,8 @@ export default function AboutPage() {
           <div className="max-w-3xl mx-auto prose prose-invert prose-lg">
             <h2>Who We Are</h2>
             <p>
-              {siteConfig.name} is a local, family-operated real estate investment company based in Northern Virginia.
-              We buy houses for cash in all major Virginia markets — Northern Virginia, Richmond, Hampton Roads, and beyond.
+              {siteConfig.name} is a local, family-operated real estate investment company.
+              We buy houses for cash in all major {stateName} markets — {markets.join(', ')}, and beyond.
             </p>
             <p>
               We are not agents. We are not a listing service. We are the actual buyers — which means when we make you an
@@ -55,7 +58,7 @@ export default function AboutPage() {
               <li><strong>Fair cash offers.</strong> Our offers are based on current comparable sales in your area.</li>
               <li><strong>Any condition.</strong> We buy houses that need major repairs, have liens, or are tenant-occupied.</li>
               <li><strong>Fast closing.</strong> We can close in as little as 7 days or on your preferred date.</li>
-              <li><strong>Local knowledge.</strong> We know Virginia neighborhoods, counties, and markets deeply.</li>
+              <li><strong>Local knowledge.</strong> We know {stateName} neighborhoods, counties, and markets deeply.</li>
             </ul>
 
             <h2>Get Started Today</h2>

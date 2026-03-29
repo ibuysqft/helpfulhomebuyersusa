@@ -49,13 +49,13 @@ const TIMELINES = [
 ] as const
 
 const CONDITIONS = [
-  { value: 'Move-in ready', label: 'Move-in ready', sublabel: 'Good condition, no work needed' },
+  { value: 'Move-in ready', label: 'Move-in ready', sublabel: 'Good condition — note: we pay below retail market value' },
   { value: 'Needs minor repairs', label: 'Needs minor repairs', sublabel: 'Small fixes, cosmetic issues' },
   { value: 'Needs major repairs/renovation', label: 'Needs major repairs', sublabel: 'Significant work required' },
   { value: 'Uninhabitable', label: 'Uninhabitable', sublabel: 'Fire damage, condemned, etc.' },
 ] as const
 
-const TOTAL_STEPS = 6
+const TOTAL_STEPS = 7
 const DRAFT_KEY = 'hhb_funnel_draft'
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -154,6 +154,8 @@ function PropertyInformationPageInner() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isMobileHome, setIsMobileHome] = useState<boolean | null>(null)
+  const [isDisqualified, setIsDisqualified] = useState(false)
 
   // Restore draft from localStorage and URL param on mount
   useEffect(() => {
@@ -234,6 +236,7 @@ function PropertyInformationPageInner() {
           property_type: data.property_type,
           timeline: data.timeline,
           condition: data.condition,
+          is_mobile_home: isMobileHome === true,
           source: 'funnel',
           website: '', // honeypot
         }),
@@ -258,6 +261,42 @@ function PropertyInformationPageInner() {
   const slideClass = slideDir === 'right'
     ? 'animate-in slide-in-from-right-4 duration-200'
     : 'animate-in slide-in-from-left-4 duration-200'
+
+  // ── Disqualify screen (mobile home) ───────────────────────────────────────
+
+  if (isDisqualified) {
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-16">
+          <div className="max-w-lg w-full bg-slate-800 rounded-2xl p-8 text-center">
+            <div className="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl" aria-hidden="true">🏠</span>
+            </div>
+            <h1 className="text-2xl font-bold text-white mb-3">Not Our Specialty</h1>
+            <p className="text-slate-300 text-base mb-6 leading-relaxed">
+              We specialize in traditional single-family homes and don&apos;t purchase mobile or manufactured homes.
+              Call us — we may be able to connect you with a specialist who can help.
+            </p>
+            <a
+              href={`tel:${siteConfig.phone}`}
+              className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-4 px-8 rounded-xl transition-colors text-lg mb-2 w-full"
+            >
+              Call {siteConfig.phoneDisplay}
+            </a>
+            <button
+              type="button"
+              onClick={() => { setIsDisqualified(false); setStep(3) }}
+              className="mt-3 w-full text-center text-slate-400 hover:text-slate-200 text-sm transition-colors py-2"
+            >
+              ← Go back
+            </button>
+          </div>
+        </main>
+        <Footer />
+      </>
+    )
+  }
 
   // ── Thank-you screen (fallback) ────────────────────────────────────────────
 
@@ -365,8 +404,33 @@ function PropertyInformationPageInner() {
                 </div>
               )}
 
-              {/* Step 3 — Timeline */}
+              {/* Step 3 — Mobile Home Check */}
               {step === 3 && (
+                <div>
+                  <h2 className="text-white text-xl font-bold mb-1">Is this a mobile home or manufactured home?</h2>
+                  <p className="text-slate-400 text-sm mb-5">Including homes on lot rent or in mobile home parks</p>
+                  <div className="space-y-2.5">
+                    <RadioTile
+                      label="No — it's a traditional house"
+                      sublabel="Single family, townhouse, condo, multi-family, or land"
+                      icon="🏡"
+                      selected={isMobileHome === false}
+                      onClick={() => { setIsMobileHome(false); advance() }}
+                    />
+                    <RadioTile
+                      label="Yes — mobile or manufactured home"
+                      sublabel="Including homes on lot rent or in a mobile home park"
+                      icon="🚐"
+                      selected={isMobileHome === true}
+                      onClick={() => { setIsMobileHome(true); setIsDisqualified(true) }}
+                    />
+                  </div>
+                  <BackButton onClick={back} />
+                </div>
+              )}
+
+              {/* Step 4 — Timeline */}
+              {step === 4 && (
                 <div>
                   <h2 className="text-white text-xl font-bold mb-1">How quickly do you need to sell?</h2>
                   <p className="text-slate-400 text-sm mb-5">No commitment — just helps us prepare</p>
@@ -385,8 +449,8 @@ function PropertyInformationPageInner() {
                 </div>
               )}
 
-              {/* Step 4 — Condition */}
-              {step === 4 && (
+              {/* Step 5 — Condition */}
+              {step === 5 && (
                 <div>
                   <h2 className="text-white text-xl font-bold mb-1">What condition is the property in?</h2>
                   <p className="text-slate-400 text-sm mb-5">We buy in any condition — no repairs needed</p>
@@ -405,8 +469,8 @@ function PropertyInformationPageInner() {
                 </div>
               )}
 
-              {/* Step 5 — Address */}
-              {step === 5 && (
+              {/* Step 6 — Address */}
+              {step === 6 && (
                 <div>
                   <h2 className="text-white text-xl font-bold mb-1">What&apos;s the property address?</h2>
                   <p className="text-slate-400 text-sm mb-5">We use this to look up your property details</p>
@@ -433,8 +497,8 @@ function PropertyInformationPageInner() {
                 </div>
               )}
 
-              {/* Step 6 — Contact Info */}
-              {step === 6 && (
+              {/* Step 7 — Contact Info */}
+              {step === 7 && (
                 <div>
                   <div className="inline-block bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-full mb-3">
                     You qualify for a cash offer!

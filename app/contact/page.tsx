@@ -6,7 +6,7 @@ import { LeadForm } from '@/components/lead-form'
 import { siteConfig } from '@/config/site'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Cash Home Buyers Virginia',
+  title: `Contact Us | Cash Home Buyers ${siteConfig.stateName}`,
   description: `Contact ${siteConfig.name}. Call us at ${siteConfig.phoneDisplay} or fill out the form to get your cash offer today.`,
   alternates: { canonical: `${siteConfig.url}/contact` },
 }
@@ -55,7 +55,7 @@ export default function ContactPage() {
                   <span className="text-amber-400 text-xl">📍</span>
                   <div>
                     <p className="text-white font-semibold">Service Area</p>
-                    <p className="text-slate-300">All of Virginia — Northern VA, Richmond, Hampton Roads, and surrounding areas</p>
+                    <p className="text-slate-300">All of {siteConfig.stateName} — {siteConfig.markets.join(', ')}, and surrounding areas</p>
                   </div>
                 </div>
               </div>

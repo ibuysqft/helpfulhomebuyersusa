@@ -62,7 +62,7 @@ const faqs = [
   },
   {
     question: 'What areas do you buy in?',
-    answer: 'We buy throughout Virginia including Richmond, Northern Virginia, Hampton Roads, and central Virginia. We\'re expanding nationally — check our states page or call us to confirm your area.',
+    answer: `We buy throughout ${siteConfig.stateName} including ${siteConfig.markets.join(', ')}. We're expanding nationally — check our states page or call us to confirm your area.`,
   },
   {
     question: 'Is there any obligation when I request an offer?',

@@ -16,16 +16,17 @@ const situationLinks = [
   { href: '/behind-payments', label: 'Behind on Payments' },
 ]
 
+const abbr = siteConfig.stateAbbr.toLowerCase()
+
 const areaLinks = [
-  { href: '/sell-my-house-fast-richmond-va', label: 'Richmond' },
-  { href: '/sell-my-house-fast-norfolk-va', label: 'Norfolk' },
-  { href: '/sell-my-house-fast-virginia-beach-va', label: 'Virginia Beach' },
-  { href: '/sell-my-house-fast-chesapeake-va', label: 'Chesapeake' },
-  { href: '/sell-my-house-fast-arlington-va', label: 'Arlington' },
-  { href: '/sell-my-house-fast-alexandria-va', label: 'Alexandria' },
-  { href: '/sell-my-house-fast-roanoke-va', label: 'Roanoke' },
-  { href: '/sell-my-house-fast-newport-news-va', label: 'Newport News' },
-  { href: '/states', label: 'View All States →' },
+  ...siteConfig.markets.map(market => {
+    const slug = market
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '')
+    return { href: `/sell-my-house-fast-${slug}-${abbr}`, label: market }
+  }),
+  { href: '/states', label: 'View All States' },
 ]
 
 export function Header() {

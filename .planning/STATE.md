@@ -18,10 +18,17 @@ Last activity: 2026-03-23 — Milestone v1.0 defined, execution starting
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | Fix GHL Conversation AI Chatbot | ◆ In Progress |
-| 2 | Fix Comp Puller Backend | ○ Pending |
-| 3 | Infrastructure Fixes & Deploy | ○ Pending |
-| 4 | Full Site Audit & Verification | ○ Pending |
+| 1 | Fix GHL Conversation AI Chatbot | ◆ In Progress — API endpoint not found via guessing; need network traffic interception |
+| 2 | Fix Comp Puller Backend | ✓ DONE — Redfin 403 + schema change fixed, Census geocoder + CSV export |
+| 3 | Infrastructure Fixes & Deploy | ✓ DONE — Redis whitespace fixed, deployed to production |
+| 4 | Full Site Audit & Verification | ○ Pending Phase 1 completion |
+
+## Bonus Work In Progress
+
+- **Redfin subject property auto-lookup** — repo cloned at /tmp/comp-puller, NOT yet implemented. Next session: read analyzer/comps.py, add lookup_subject_property(), wire into main.py, update models.py, push + Render deploy.
+- **Gmail app password** — NOT set up yet. Go to myaccount.google.com → Security → App Passwords, create one for "Claude Agents", add as GMAIL_APP_PASSWORD to ~/.hhb/credentials.env
+- **GTM** — No containers exist. Must create: tagmanager.google.com → Create Account → "Helpful Homebuyers USA" → container helpfulhomebuyersusa.com → Web. Generates GTM-XXXXXXX.
+- **Google Ads** — Not checked yet. Check ads.google.com for conversion tracking (AW-XXXXXXXXX/label).
 
 ## Accumulated Context
 

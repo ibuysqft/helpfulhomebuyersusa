@@ -1,27 +1,12 @@
 import { Star } from 'lucide-react'
-
-const testimonials = [
-  {
-    name: 'Michael R.',
-    location: 'Fairfax, VA',
-    text: 'I needed to sell fast due to a job relocation. They gave me a fair cash offer in 24 hours and we closed in 9 days. Zero hassle.',
-    rating: 5,
-  },
-  {
-    name: 'Sandra T.',
-    location: 'Richmond, VA',
-    text: 'Inherited a property that needed a ton of work. They bought it as-is, no repairs required. Process was smooth from start to finish.',
-    rating: 5,
-  },
-  {
-    name: 'James W.',
-    location: 'Virginia Beach, VA',
-    text: 'Was behind on payments and facing foreclosure. They moved fast and helped me avoid it. Professional and honest throughout.',
-    rating: 5,
-  },
-]
+import { getStateConfig } from '@/lib/state-context'
+import { pickReviews } from '@/data/reviews'
 
 export function Testimonials() {
+  const { name: stateName, slug: stateSlug, isNational } = getStateConfig()
+  const testimonials = pickReviews(stateSlug, 3)
+  const displayLabel = isNational ? 'Nationwide' : stateName
+
   return (
     <section id="reviews" className="py-16 px-4" style={{ background: 'var(--color-surface)' }}>
       <div className="max-w-5xl mx-auto">
@@ -29,19 +14,19 @@ export function Testimonials() {
           className="text-center text-sm font-semibold uppercase tracking-widest mb-2"
           style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-body)' }}
         >
-          Real Virginia Sellers
+          Real {displayLabel} Sellers
         </p>
         <h2
           className="text-2xl md:text-3xl font-semibold text-center mb-3"
           style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text)' }}
         >
-          What Virginia Sellers Say
+          What {displayLabel} Sellers Say
         </h2>
         <p
           className="text-center mb-12 max-w-lg mx-auto"
           style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
         >
-          Hundreds of Virginia homeowners have trusted us for a fast, fair, hassle-free sale.
+          Hundreds of {isNational ? '' : `${stateName} `}homeowners have trusted us for a fast, fair, hassle-free sale.
         </p>
         <div className="grid md:grid-cols-3 gap-6">
           {testimonials.map(({ name, location, text, rating }) => (

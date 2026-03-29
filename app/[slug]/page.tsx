@@ -12,9 +12,36 @@ import { HowItWorks } from '@/components/how-it-works'
 import { siteConfig } from '@/config/site'
 import { getSituations } from '@/data/situations'
 import { getHomepageFaqs, getSituationFaqs } from '@/data/faqs'
-import { getStateConfig } from '@/lib/state-context'
+import { getStateConfig, registeredStates } from '@/lib/state-context'
 import { getCitiesForState } from '@/lib/state-data'
 import { situationCityMatrix } from '@/data/situation-city-matrix'
+import { stateSituationContent } from '@/data/state-situation-content'
+
+const SITUATION_STATE_SITUATIONS = ['probate', 'title-issues', 'surplus-funds'] as const
+type SituationStateKey = typeof SITUATION_STATE_SITUATIONS[number]
+
+const SITUATION_STATE_LABELS: Record<SituationStateKey, string> = {
+  probate: 'Probate & Estate Sales',
+  'title-issues': 'Title Problems & Liens',
+  'surplus-funds': 'Foreclosure Surplus Funds',
+}
+
+const SITUATION_STATE_HUB: Record<SituationStateKey, string> = {
+  probate: '/probate',
+  'title-issues': '/curative-title',
+  'surplus-funds': '/surplus-funds',
+}
+
+function parseSituationStateSlug(slug: string): { situationKey: SituationStateKey; stateSlug: string } | null {
+  for (const key of SITUATION_STATE_SITUATIONS) {
+    if (slug.startsWith(`${key}-`)) {
+      const stateSlug = slug.slice(key.length + 1)
+      const state = registeredStates.find(s => s.slug === stateSlug)
+      if (state) return { situationKey: key, stateSlug }
+    }
+  }
+  return null
+}
 
 const iconMap: Record<string, LucideIcon> = {
   Home, FileText, Receipt, Scale, Key, Flame, Building2, CreditCard,
@@ -46,7 +73,10 @@ export async function generateStaticParams() {
   const matrixParams = situationCityMatrix.map(entry => ({
     slug: `${entry.situationSlug}-${entry.citySlug}`,
   }))
-  return [...situationParams, ...matrixParams]
+  const stateSituationParams = SITUATION_STATE_SITUATIONS.flatMap(key =>
+    registeredStates.map(state => ({ slug: `${key}-${state.slug}` }))
+  )
+  return [...situationParams, ...matrixParams, ...stateSituationParams]
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -65,6 +95,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${entry.situationLabel} in ${entry.cityName}, ${siteConfig.stateAbbr} | Cash Offer`,
       description: `We help homeowners in ${entry.cityName}, ${entry.county} who are ${entry.situationLabel.toLowerCase()}. Cash offer in 24 hours. Close in 7 days.`,
       alternates: { canonical: `${siteConfig.url}/${slug}` },
+    }
+  }
+  const parsed = parseSituationStateSlug(slug)
+  if (parsed) {
+    const content = (stateSituationContent as any)[parsed.situationKey]?.[parsed.stateSlug]
+    if (content) {
+      const state = registeredStates.find(s => s.slug === parsed.stateSlug)
+      return {
+        title: `${content.headline} | Helpful Home Buyers USA`,
+        description: `${content.legalContext.slice(0, 155)}...`,
+        alternates: { canonical: `${siteConfig.url}/${slug}` },
+      }
     }
   }
   return {}
@@ -306,6 +348,121 @@ export default async function SlugPage({ params }: Props) {
           <section className="py-16 px-4 bg-amber-500 text-center">
             <h2 className="text-2xl font-bold text-slate-900 mb-4">
               Get Your {city.name} Cash Offer Today
+            </h2>
+            <p className="text-slate-800 mb-6">No obligation. Response within 24 hours.</p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link
+                href="/property-information"
+                className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 py-4 rounded-lg transition-colors"
+              >
+                Get My Cash Offer
+              </Link>
+              <a
+                href={`tel:${siteConfig.phone}`}
+                className="bg-white hover:bg-slate-100 text-slate-900 font-bold px-8 py-4 rounded-lg transition-colors"
+              >
+                Call {siteConfig.phoneDisplay}
+              </a>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </>
+    )
+  }
+
+  // State × situation page (/probate-texas, /title-issues-florida, /surplus-funds-california)
+  const parsed = parseSituationStateSlug(slug)
+  if (parsed) {
+    const content = (stateSituationContent as any)[parsed.situationKey]?.[parsed.stateSlug]
+    if (!content) notFound()
+    const state = registeredStates.find(s => s.slug === parsed.stateSlug)!
+    const hubUrl = SITUATION_STATE_HUB[parsed.situationKey]
+    const situationLabel = SITUATION_STATE_LABELS[parsed.situationKey]
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+        { '@type': 'ListItem', position: 2, name: situationLabel, item: `${siteConfig.url}${hubUrl}` },
+        { '@type': 'ListItem', position: 3, name: `${situationLabel} in ${state.name}` },
+      ],
+    }
+    const faqSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: content.faqs.map((f: { q: string; a: string }) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    }
+    return (
+      <>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+        <Header />
+        <main>
+          <section className="bg-slate-900 py-20 px-4">
+            <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <nav className="text-sm text-slate-400">
+                  <Link href="/" className="hover:text-amber-400">Home</Link>
+                  {' › '}
+                  <Link href={hubUrl} className="hover:text-amber-400">{situationLabel}</Link>
+                  {' › '}
+                  <span className="text-slate-300">{state.name}</span>
+                </nav>
+                <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                  {content.headline.split('|')[0].trim()}
+                </h1>
+                <p className="text-xl text-slate-300">{content.legalContext}</p>
+                <ul className="space-y-2 text-slate-300">
+                  {[
+                    'Cash offer within 24 hours',
+                    'Close in 7 days or on your schedule',
+                    'Buy as-is — no repairs required',
+                    'We pay all closing costs',
+                    'No agents, no commissions',
+                  ].map(item => (
+                    <li key={item} className="flex items-center gap-2">
+                      <CheckCircle2 size={16} aria-hidden={true} className="text-amber-400 flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href={`tel:${siteConfig.phone}`}
+                  className="inline-block bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                >
+                  Call {siteConfig.phoneDisplay}
+                </a>
+              </div>
+              <LeadForm />
+            </div>
+          </section>
+          <TrustBar />
+          <HowItWorks />
+          <FaqSection
+            faqs={content.faqs.map((f: { q: string; a: string }) => ({ question: f.q, answer: f.a }))}
+            title={`${situationLabel} in ${state.name} — FAQ`}
+          />
+          <section className="py-12 px-4 bg-slate-900">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-xl font-bold text-white mb-4">
+                ← Back to National {situationLabel} Guide
+              </h2>
+              <Link
+                href={hubUrl}
+                className="text-amber-400 hover:text-amber-300 underline transition-colors"
+              >
+                View all states →
+              </Link>
+            </div>
+          </section>
+          <section className="py-16 px-4 bg-amber-500 text-center">
+            <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              Get Your {state.name} Cash Offer Today
             </h2>
             <p className="text-slate-800 mb-6">No obligation. Response within 24 hours.</p>
             <div className="flex gap-4 justify-center flex-wrap">

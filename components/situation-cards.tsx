@@ -8,7 +8,7 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 export function SituationCards() {
-  const situations = getSituations(process.env.NEXT_PUBLIC_STATE_SLUG ?? 'virginia')
+  const situations = getSituations(process.env.NEXT_PUBLIC_STATE_SLUG ?? 'national')
   return (
     <section className="py-16 px-4" style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #2563EB 100%)' }}>
       <div className="max-w-5xl mx-auto">

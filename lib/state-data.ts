@@ -14,6 +14,11 @@ import { californiaCities } from '@/data/states/california'
 import { illinoisCities } from '@/data/states/illinois'
 import { arizonaCities } from '@/data/states/arizona'
 import { newYorkCities } from '@/data/states/new-york'
+import { southCarolinaCities } from '@/data/states/south-carolina'
+import { michiganCities } from '@/data/states/michigan'
+import { newJerseyCities } from '@/data/states/new-jersey'
+import { coloradoCities } from '@/data/states/colorado'
+import { connecticutCities } from '@/data/states/connecticut'
 
 export interface BasicCity {
   name: string
@@ -32,6 +37,11 @@ const STATE_CITIES: Record<string, readonly BasicCity[]> = {
   illinois: illinoisCities,
   arizona: arizonaCities,
   'new-york': newYorkCities,
+  'south-carolina': southCarolinaCities,
+  michigan: michiganCities,
+  'new-jersey': newJerseyCities,
+  colorado: coloradoCities,
+  connecticut: connecticutCities,
 }
 
 export function getCitiesForState(stateSlug: string): readonly BasicCity[] {

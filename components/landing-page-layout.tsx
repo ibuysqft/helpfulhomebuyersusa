@@ -67,10 +67,10 @@ export function LandingPageLayout({ children }: LandingPageLayoutProps) {
           {siteConfig.phoneDisplay}
         </a>
         <p className="text-xs" style={{ color: '#64748B' }}>
-          10369 Democracy Ln, Fairfax, VA 22030 &mdash; Paramount Legacy Properties LLC
+          Paramount Legacy Properties LLC
         </p>
         <p className="text-xs mt-1" style={{ color: '#475569' }}>
-          &copy; {new Date().getFullYear()} Helpful Homebuyers USA. Licensed in Virginia. We are direct cash buyers, not real estate agents.
+          &copy; {new Date().getFullYear()} Helpful Homebuyers USA. Licensed in {siteConfig.stateName}. We are direct cash buyers, not real estate agents.
         </p>
       </footer>
     </div>

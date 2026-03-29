@@ -3,6 +3,8 @@ import { siteConfig } from '@/config/site'
 import { registeredStates } from '@/lib/state-context'
 import { NewsletterInlineForm } from '@/components/newsletter-inline-form'
 
+const { stateName, stateAbbr, stateSlug, isNational } = siteConfig
+
 // Split 15 states into 3 columns
 const stateColumns = [
   registeredStates.slice(0, 5),
@@ -145,7 +147,7 @@ export function Footer() {
             <li><Link href="/whats-my-house-worth" className="hover:text-white transition-colors">What&apos;s My House Worth</Link></li>
             <li><Link href="/reviews" className="hover:text-white transition-colors">Reviews</Link></li>
             <li><Link href="/sell-my-house-fast-vs-listing-with-agent" className="hover:text-white transition-colors">Cash Buyer vs Agent</Link></li>
-            <li><Link href="/as-is-home-buyers-virginia" className="hover:text-white transition-colors">Sell As-Is in Virginia</Link></li>
+            <li><Link href={`/as-is-home-buyers-${stateSlug}`} className="hover:text-white transition-colors">Sell As-Is in {stateName}</Link></li>
             <li><Link href="/states" className="hover:text-white transition-colors" style={{ color: '#D4AF37' }}>All States →</Link></li>
           </ul>
         </div>
@@ -250,7 +252,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-slate-800 text-center py-4 text-slate-500 text-xs">
-        &copy; {year} Paramount Legacy Properties &mdash; Licensed in Virginia &mdash; We are direct cash buyers, not real estate agents.
+        &copy; {year} Paramount Legacy Properties &mdash; Licensed in {stateName} &mdash; We are direct cash buyers, not real estate agents.
       </div>
     </footer>
   )

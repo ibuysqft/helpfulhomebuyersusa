@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { siteConfig } from '@/config/site'
 
 export function FunnelEntry() {
+  const displayRegion = siteConfig.isNational ? '' : `${siteConfig.stateName} `
   const router = useRouter()
   const [address, setAddress] = useState('')
 
@@ -22,7 +24,7 @@ export function FunnelEntry() {
           className="text-sm"
           style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
         >
-          47 Virginia homeowners got an offer this month
+          47 {displayRegion}homeowners got an offer this month
         </span>
       </div>
 

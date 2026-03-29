@@ -13,6 +13,10 @@ import { homepageFaqs } from '@/data/faqs'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
+const stAbbr = siteConfig.stateAbbr
+const stAbbrLower = stAbbr.toLowerCase()
+const stName = siteConfig.stateName
+
 export const revalidate = 86400
 
 interface Props { params: Promise<{ county: string }> }
@@ -26,9 +30,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const county = counties.find(c => c.slug === countySlug)
   if (!county) return {}
   return {
-    title: `Sell My House Fast in ${county.name}, VA | Cash Home Buyers`,
+    title: `Sell My House Fast in ${county.name}, ${stAbbr} | Cash Home Buyers`,
     description: `We buy houses for cash throughout ${county.displayName}. No repairs, no fees, close in 7 days. Get your fair cash offer today — serving all cities in ${county.name}.`,
-    alternates: { canonical: `${siteConfig.url}/sell-my-house-fast-${countySlug}-county-va` },
+    alternates: { canonical: `${siteConfig.url}/sell-my-house-fast-${countySlug}-county-${stAbbrLower}` },
   }
 }
 
@@ -52,7 +56,7 @@ export default async function CountyPage({ params }: Props) {
       '@type': 'PostalAddress',
       streetAddress: '10369 Democracy Ln',
       addressLocality: 'Fairfax',
-      addressRegion: 'VA',
+      addressRegion: stAbbr,
       postalCode: '22030',
       addressCountry: 'US',
     },
@@ -79,7 +83,7 @@ export default async function CountyPage({ params }: Props) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
-      { '@type': 'ListItem', position: 2, name: 'Virginia', item: `${siteConfig.url}/sell-my-house-fast-virginia` },
+      { '@type': 'ListItem', position: 2, name: stName, item: `${siteConfig.url}/sell-my-house-fast-${siteConfig.stateSlug}` },
       { '@type': 'ListItem', position: 3, name: `Sell My House Fast in ${county.name} County` },
     ],
   }
@@ -95,7 +99,7 @@ export default async function CountyPage({ params }: Props) {
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                We Buy Houses in <span className="text-amber-400">{county.name}, Virginia</span>
+                We Buy Houses in <span className="text-amber-400">{county.name}, {stName}</span>
               </h1>
               <p className="text-xl text-slate-300">
                 {county.description}
@@ -129,7 +133,7 @@ export default async function CountyPage({ params }: Props) {
 
         <section className="py-16 px-4 bg-slate-800">
           <div className="max-w-3xl mx-auto prose prose-invert prose-lg">
-            <h2>Cash Home Buyers Serving All of {county.name}, VA</h2>
+            <h2>Cash Home Buyers Serving All of {county.name}, {stAbbr}</h2>
             <p>
               If you need to sell your house fast anywhere in {county.displayName}, we make it simple.
               We are direct cash home buyers — not agents, not investors who shop your house to others.
@@ -161,15 +165,15 @@ export default async function CountyPage({ params }: Props) {
         {nearbyCountyLinks.length > 0 && (
           <section className="py-12 px-4 bg-slate-900">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-xl font-bold text-white mb-6 text-center">We Also Serve Nearby Virginia Counties</h2>
+              <h2 className="text-xl font-bold text-white mb-6 text-center">We Also Serve Nearby {stName} Counties</h2>
               <div className="flex flex-wrap gap-3 justify-center">
                 {nearbyCountyLinks.map(nearby => (
                   <Link
                     key={nearby.slug}
-                    href={`/sell-my-house-fast-${nearby.slug}-county-va`}
+                    href={`/sell-my-house-fast-${nearby.slug}-county-${stAbbrLower}`}
                     className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
                   >
-                    {nearby.name}, VA →
+                    {nearby.name}, {stAbbr} →
                   </Link>
                 ))}
               </div>

@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import type { CompetitorContext } from '@/lib/competitor-analyzer'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -16,14 +17,36 @@ function slugify(str: string) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 }
 
-export async function generateBlogPost(keyword: string, cityTags: string[]): Promise<GeneratedPost> {
+function buildCompetitorInstructions(ctx: CompetitorContext): string {
+  const lines: string[] = [
+    `- Length: ${ctx.targetWordCount}+ words (competitors average ${ctx.topCompetitorWordCount} — beat them by 20%+)`,
+  ]
+  if (ctx.missingTopics.length) {
+    lines.push(`- You MUST cover these topics competitors address but we haven't: ${ctx.missingTopics.join(', ')}`)
+  }
+  if (ctx.missingFaqs.length) {
+    lines.push(`- Include FAQ answers for these questions competitors rank for: ${ctx.missingFaqs.join(' | ')}`)
+  }
+  return lines.join('\n')
+}
+
+export async function generateBlogPost(
+  keyword: string,
+  cityTags: string[],
+  competitorContext?: CompetitorContext
+): Promise<GeneratedPost> {
+  const hasCompetitorData = !!competitorContext
+  const wordCountInstruction = hasCompetitorData
+    ? buildCompetitorInstructions(competitorContext)
+    : '- Length: 1200-1500 words'
+
   const prompt = `You are an expert real estate content writer for a Virginia cash home buying company.
 
 Write a comprehensive, SEO-optimized blog post targeting the keyword: "${keyword}"
 
 Requirements:
 - Title format: "[Keyword-rich topic] | Helpful Home Buyers USA" — MUST include a location (city/Virginia) or situation keyword
-- Length: 1200-1500 words
+${wordCountInstruction}
 - Format: Markdown with ## headers, bullet points where helpful
 - H1 (the title) and the first paragraph MUST naturally contain the exact target keyword: "${keyword}"
 - Place an H2 containing the primary keyword within the first 300 words
@@ -48,9 +71,11 @@ Return ONLY valid JSON in this exact format:
   "cityTags": ["city1", "city2"]
 }`
 
+  const maxTokens = competitorContext ? Math.max(4500, Math.round(competitorContext.targetWordCount * 2.5)) : 3500
+
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 3500,
+    max_tokens: maxTokens,
     messages: [{ role: 'user', content: prompt }],
   })
 

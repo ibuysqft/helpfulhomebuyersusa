@@ -429,6 +429,19 @@ export const situationDefs = [
     ],
   },
   {
+    key: 'surplus-funds',
+    label: 'Owed Foreclosure Surplus Funds?',
+    icon: 'PiggyBank',
+    description: 'If your home was foreclosed and sold for more than you owed, you may be owed surplus funds held by the court. We help you recover them — and can buy your property before it ever gets to that point.',
+    bullets: [
+      'We identify surplus funds owed from your foreclosure sale',
+      'We connect you with surplus recovery attorneys in your state',
+      'We can buy your home before foreclosure to preserve your equity',
+      'No upfront fees — we only get paid when you recover',
+      'We know every state\'s surplus fund claim deadline',
+    ],
+  },
+  {
     key: 'deed-in-lieu',
     label: 'Considering a Deed-in-Lieu of Foreclosure?',
     icon: 'FileText',

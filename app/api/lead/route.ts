@@ -101,14 +101,15 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  let body: Record<string, string>
+  let body: Record<string, unknown>
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  const { address, phone, condition, website, name, firstName, lastName, email, situation, property_type, propertyType, timeline } = body
+  const { address, phone, condition, website, name, firstName, lastName, email, situation, property_type, propertyType, timeline } = body as Record<string, string>
+  const isMobileHome = body.is_mobile_home === true
   const resolvedName = name?.trim() || [firstName, lastName].filter(Boolean).join(' ') || undefined
 
   // Honeypot
@@ -137,7 +138,9 @@ export async function POST(req: NextRequest) {
     utm_medium: url.searchParams.get('utm_medium'),
     utm_campaign: url.searchParams.get('utm_campaign'),
     device: req.headers.get('user-agent')?.includes('Mobile') ? 'mobile' : 'desktop',
-    ghl_status: 'pending',
+    is_mobile_home: isMobileHome,
+    disqualify_reason: isMobileHome ? 'mobile_home' : null,
+    ghl_status: isMobileHome ? 'disqualified' : 'pending',
   })
 
   if (dbError) {
@@ -146,6 +149,11 @@ export async function POST(req: NextRequest) {
       { error: 'Something went wrong. Please call us at (703) 940-1159.' },
       { status: 500 }
     )
+  }
+
+  // Mobile home leads are saved but not sent to GHL or Retell
+  if (isMobileHome) {
+    return NextResponse.json({ success: true })
   }
 
   const ghlResult = await sendToGHL({
