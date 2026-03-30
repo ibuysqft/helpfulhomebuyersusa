@@ -42,3 +42,6 @@ yarn-error.log*
 next-env.d.ts
 social-screenshots/
 scripts/create-state-projects.sh
+
+# git worktrees
+.worktrees/
