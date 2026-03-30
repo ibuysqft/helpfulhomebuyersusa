@@ -1,5 +1,20 @@
 // lib/mls-types.ts
 
+export interface ScrapeTarget {
+  id: string
+  type: 'county' | 'city' | 'zip' | 'state'
+  value: string
+  state: string
+  active: boolean
+  min_price: number | null
+  max_price: number | null
+  min_beds: number | null
+  min_baths: number | null
+  max_dom: number | null
+  property_types: string[] | null
+  created_at: string
+}
+
 export type MlsLeadStatus =
   | 'new' | 'scored' | 'queued' | 'contacted'
   | 'warm_cash' | 'warm_creative' | 'dead' | 'retail' | 'disqualified'

@@ -9,17 +9,54 @@ const EMAIL    = 'anchor.offer.chatgpt@gmail.com'
 const PASSWORD = 'Password!1'
 const NEXT_APP_URL = process.env.NEXT_APP_URL ?? 'https://helpfulhomebuyersusa.com'
 
-async function fetchTargets(): Promise<{ type: string; value: string; state: string }[]> {
+interface Target {
+  type: string
+  value: string
+  state: string
+  min_price?: number | null
+  max_price?: number | null
+  min_beds?: number | null
+  min_baths?: number | null
+  max_dom?: number | null
+  property_types?: string[] | null
+}
+
+async function fetchTargets(): Promise<Target[]> {
   try {
     const res = await fetch(`${NEXT_APP_URL}/api/scrape-targets`)
-    const json = await res.json() as { targets?: { type: string; value: string; state: string }[] }
+    const json = await res.json() as { targets?: Target[] }
     return json.targets ?? []
   } catch {
     return [{ type: 'county', value: 'Fairfax', state: 'VA' }]
   }
 }
-const PORT     = parseInt(process.env.PORT ?? '3100', 10)
-const SECRET   = process.env.SCRAPER_SECRET ?? ''
+
+async function applyFilters(page: import('playwright').Page, target: Target): Promise<void> {
+  if (target.min_price) {
+    await page.fill('[name="minPrice"], [data-filter="min-price"]', String(target.min_price)).catch(() => {})
+  }
+  if (target.max_price) {
+    await page.fill('[name="maxPrice"], [data-filter="max-price"]', String(target.max_price)).catch(() => {})
+  }
+  if (target.min_beds) {
+    await page.selectOption('[name="minBeds"], [data-filter="beds"]', String(target.min_beds)).catch(() => {})
+  }
+  if (target.min_baths) {
+    await page.selectOption('[name="minBaths"], [data-filter="baths"]', String(target.min_baths)).catch(() => {})
+  }
+  if (target.max_dom) {
+    await page.fill('[name="maxDom"], [data-filter="dom"]', String(target.max_dom)).catch(() => {})
+  }
+  if (target.property_types?.length) {
+    for (const pt of target.property_types) {
+      await page.check(`[value="${pt}"], [data-type="${pt}"]`).catch(() => {})
+    }
+  }
+  await page.waitForTimeout(1500)
+}
+
+const PORT   = parseInt(process.env.PORT ?? '3100', 10)
+const SECRET = process.env.SCRAPER_SECRET ?? ''
 
 interface ScrapedLead {
   mlsNumber: string; address: string; listPrice: number
@@ -41,14 +78,19 @@ async function scrape(): Promise<ScrapedLead[]> {
     await page.waitForURL('**/leads**', { timeout: 15_000 })
 
     const targets = await fetchTargets()
-    const counties = targets.filter(t => t.type === 'county').map(t => t.value)
+    const countyTargets = targets.filter(t => t.type === 'county')
 
-    for (const county of counties) {
+    for (const target of countyTargets) {
+      const county = target.value
       await page.goto('https://app.dealsauce.io/leads', { waitUntil: 'networkidle' })
 
-      // Try dropdown county filter
+      // Apply county dropdown
       await page.selectOption('select[name="county"], [data-filter="county"]', county).catch(() => {})
       await page.waitForTimeout(2000)
+
+      // Apply per-target filters (selectors are best-guess; misses are swallowed)
+      await applyFilters(page, target)
+      console.log(`[dealsauce] county=${county} filters=${JSON.stringify({ min_price: target.min_price, max_price: target.max_price, min_beds: target.min_beds, min_baths: target.min_baths, max_dom: target.max_dom, property_types: target.property_types })}`)
 
       const rows = await page.$$('[data-testid="lead-row"], .lead-row, tr.lead')
       for (const row of rows) {

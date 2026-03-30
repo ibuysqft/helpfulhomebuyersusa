@@ -14,6 +14,40 @@ interface Target {
   state: string
   active: boolean
   created_at: string
+  min_price: number | null
+  max_price: number | null
+  min_beds: number | null
+  min_baths: number | null
+  max_dom: number | null
+  property_types: string[] | null
+}
+
+const PROPERTY_TYPES = [
+  { value: 'house', label: 'House' },
+  { value: 'condo', label: 'Condo' },
+  { value: 'townhouse', label: 'Townhouse' },
+  { value: 'multi_family', label: 'Multi-Family' },
+  { value: 'land', label: 'Land' },
+] as const
+
+function FilterBadges({ target }: { target: Target }) {
+  const badges: string[] = []
+  if (target.min_price) badges.push(`≥$${(target.min_price / 1000).toFixed(0)}k`)
+  if (target.max_price) badges.push(`≤$${(target.max_price / 1000).toFixed(0)}k`)
+  if (target.min_beds) badges.push(`${target.min_beds}bd+`)
+  if (target.min_baths) badges.push(`${target.min_baths}ba+`)
+  if (target.max_dom) badges.push(`≤${target.max_dom}d`)
+  if (target.property_types?.length) badges.push(target.property_types.join('/'))
+  if (badges.length === 0) return null
+  return (
+    <span className="flex gap-1 flex-wrap">
+      {badges.map((b) => (
+        <span key={b} className="text-xs bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-mono">
+          {b}
+        </span>
+      ))}
+    </span>
+  )
 }
 
 const VALID_TYPES = ['county', 'city', 'zip', 'state'] as const
@@ -253,6 +287,84 @@ export function ScrapeTargetsClient({ targets }: { targets: Target[] }) {
           />
         </label>
 
+        <div className="w-full border-t border-slate-700 mt-1 pt-3 flex flex-wrap gap-3 items-end">
+          <label className="flex flex-col gap-1 text-sm text-slate-300 w-28">
+            Min Price
+            <input
+              name="min_price"
+              type="number"
+              min={0}
+              step={1000}
+              placeholder="200000"
+              className="bg-slate-900 border border-slate-600 rounded px-3 py-2 text-zinc-100 placeholder:text-slate-500"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm text-slate-300 w-28">
+            Max Price
+            <input
+              name="max_price"
+              type="number"
+              min={0}
+              step={1000}
+              placeholder="600000"
+              className="bg-slate-900 border border-slate-600 rounded px-3 py-2 text-zinc-100 placeholder:text-slate-500"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm text-slate-300 w-20">
+            Min Beds
+            <input
+              name="min_beds"
+              type="number"
+              min={0}
+              step={0.5}
+              placeholder="3"
+              className="bg-slate-900 border border-slate-600 rounded px-3 py-2 text-zinc-100 placeholder:text-slate-500"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm text-slate-300 w-20">
+            Min Baths
+            <input
+              name="min_baths"
+              type="number"
+              min={0}
+              step={0.5}
+              placeholder="1"
+              className="bg-slate-900 border border-slate-600 rounded px-3 py-2 text-zinc-100 placeholder:text-slate-500"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm text-slate-300 w-24">
+            Max Days Listed
+            <input
+              name="max_dom"
+              type="number"
+              min={1}
+              placeholder="90"
+              className="bg-slate-900 border border-slate-600 rounded px-3 py-2 text-zinc-100 placeholder:text-slate-500"
+            />
+          </label>
+
+          <fieldset className="flex flex-col gap-1.5">
+            <legend className="text-sm text-slate-300">Property Types</legend>
+            <div className="flex flex-wrap gap-x-4 gap-y-1">
+              {PROPERTY_TYPES.map(({ value, label }) => (
+                <label key={value} className="flex items-center gap-1.5 text-sm text-slate-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="property_types"
+                    value={value}
+                    className="accent-blue-500"
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </div>
+
         <button
           type="submit"
           className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded transition-colors"
@@ -280,13 +392,14 @@ export function ScrapeTargetsClient({ targets }: { targets: Target[] }) {
                     key={target.id}
                     className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 flex items-center justify-between gap-3"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-wrap min-w-0">
                       <span
                         className={`text-xs font-medium px-2 py-0.5 rounded ${TYPE_BADGE_COLORS[target.type]}`}
                       >
                         {target.type}
                       </span>
                       <span className="text-zinc-100">{target.value}</span>
+                      <FilterBadges target={target} />
                     </div>
 
                     <div className="flex items-center gap-2">
