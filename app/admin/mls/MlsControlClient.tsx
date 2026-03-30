@@ -18,16 +18,9 @@ interface BudgetRow {
   pause_reason: string | null
 }
 
-interface LeadCounts {
-  new: number
-  queued: number
-  contacted: number
-  skipped: number
-}
-
 interface Props {
   budget: BudgetRow | null
-  counts: LeadCounts
+  counts: Record<string, number>
 }
 
 interface StepResult {
@@ -90,10 +83,10 @@ export function MlsControlClient({ budget, counts }: Props) {
       {/* Lead Counts */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'New', value: counts.new, color: 'text-blue-400' },
-          { label: 'Queued', value: counts.queued, color: 'text-amber-400' },
-          { label: 'Contacted', value: counts.contacted, color: 'text-emerald-400' },
-          { label: 'Skipped', value: counts.skipped, color: 'text-zinc-500' },
+          { label: 'New', value: counts['new'] ?? 0, color: 'text-blue-400' },
+          { label: 'Queued', value: counts['queued'] ?? 0, color: 'text-orange-400' },
+          { label: 'Contacted', value: counts['contacted'] ?? 0, color: 'text-emerald-400' },
+          { label: 'Warm', value: (counts['warm_cash'] ?? 0) + (counts['warm_creative'] ?? 0), color: 'text-green-400' },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-slate-800 rounded-lg p-4 border border-slate-700">
             <p className="text-xs text-zinc-500 uppercase tracking-wide">{label}</p>
