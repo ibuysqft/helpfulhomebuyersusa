@@ -57,7 +57,12 @@ export async function runScraperAction(
       signal: AbortSignal.timeout(300_000),
     })
     const json = await res.json() as { count?: number; error?: string }
-    if (!res.ok || json.error) return { ok: false, error: json.error ?? `HTTP ${res.status}` }
+    if (!res.ok || json.error) {
+      const raw = json.error ?? `HTTP ${res.status}`
+      // Strip ANSI escape codes from Playwright error output
+      const clean = raw.replace(/\x1b\[[0-9;]*m/g, '').replace(/\[\d+m/g, '').split('\n')[0].trim()
+      return { ok: false, error: clean }
+    }
     return { ok: true, count: json.count }
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : 'fetch failed' }
