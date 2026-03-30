@@ -87,7 +87,7 @@ export interface ScrapeTarget {
 
 export type MlsLeadStatus =
   | 'new' | 'scored' | 'queued' | 'contacted'
-  | 'warm_cash' | 'warm_creative' | 'dead' | 'retail' | 'disqualified'
+  | 'warm_cash' | 'warm_creative' | 'dead' | 'retail' | 'disqualified' | 'needs_review'
 
 export type MlsLeadSource = 'dealsauce' | 'agent_submission'
 export type OfferStrategy = 'cash' | 'creative'

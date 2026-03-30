@@ -38,9 +38,9 @@ export async function runScoreAction(): Promise<{ ok: boolean; message: string }
       method: 'POST',
       headers: cronHeaders(),
     })
-    const json = await res.json() as { scored?: number; error?: string }
+    const json = await res.json() as { queued?: number; scored?: number; retail?: number; disqualified?: number; errors?: number; error?: string }
     if (!res.ok) return { ok: false, message: json.error ?? 'Score failed' }
-    return { ok: true, message: `Scored ${json.scored ?? 0} leads` }
+    return { ok: true, message: `Queued ${json.queued ?? 0}, scored ${json.scored ?? 0}, retail ${json.retail ?? 0}, errors ${json.errors ?? 0}` }
   } catch (err) {
     return { ok: false, message: err instanceof Error ? err.message : 'Network error' }
   }
