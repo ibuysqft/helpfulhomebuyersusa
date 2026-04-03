@@ -5,6 +5,7 @@
     "start": "npm install -g @anthropic-ai/claude-code && npx playwright install chromium && npx tsx scrape-dealsauce.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.39.0",
     "playwright": "1.51.1",
     "tsx": "4.19.2"
   }
