@@ -14,6 +14,8 @@ const TRUST_POINTS = [
   'We work with probate attorneys regularly',
   'Cash offer in 24 hours, close on your timeline',
   'We pay all closing costs — zero fees for the estate',
+  'Out-of-state heir or executor? We handle everything remotely — no travel required',
+  'We move fast — every month vacant costs taxes, insurance, and maintenance',
 ]
 
 const FAQ_ITEMS = [
@@ -32,6 +34,14 @@ const FAQ_ITEMS = [
   {
     question: 'The house is in poor condition. Does that matter?',
     answer: 'Not to us. We buy inherited properties in any condition — outdated systems, deferred maintenance, hoarding situations, you name it. Our offer reflects the property as-is, with no surprise deductions at closing.',
+  },
+  {
+    question: 'I inherited a Virginia property but I live out of state — can you still help?',
+    answer: 'Absolutely. We work with out-of-state heirs and executors all the time. The entire process — offer review, negotiations, and closing — can be handled remotely and electronically. You don\'t need to fly to Virginia.',
+  },
+  {
+    question: 'How long does Virginia probate take, and does the house have to sit vacant that whole time?',
+    answer: 'Virginia probate typically takes 6 to 18 months depending on estate complexity. That\'s months of property taxes, insurance, utilities, and maintenance on a vacant home. We help you plan the sale timeline so it aligns with probate — and we move as fast as possible to stop those ongoing costs.',
   },
 ]
 
@@ -87,7 +97,7 @@ export default function InheritedPage() {
         <section className="py-12 px-4 bg-slate-900">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-xl font-bold text-white mb-6 text-center">
-          We Buy Inherited House Houses in All 15 States
+          We Buy Inherited Houses in All 15 States
         </h2>
         <div className="flex flex-wrap gap-3 justify-center">
           {registeredStates.map(state => (

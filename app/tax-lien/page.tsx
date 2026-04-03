@@ -2,19 +2,10 @@ import type { Metadata } from 'next'
 import { DistressedLandingPage } from '@/components/distressed-landing-page'
 
 export const metadata: Metadata = {
-  title: 'Sell a House With Property Tax Liens in Virginia | We Pay the Taxes',
+  title: 'Sell a House With Tax Liens or Code Violations in Virginia | We Handle It All',
   description:
-    'Behind on property taxes in Virginia? We buy houses with delinquent tax liens — we pay off the back taxes at closing and you walk away clean.',
-  alternates: {
-    canonical: 'https://www.helpfulhomebuyersusa.com/tax-lien',
-  },
-  openGraph: {
-    title: 'Sell a House With Property Tax Liens in Virginia | We Pay the Taxes',
-    description:
-      'Behind on property taxes in Virginia? We buy houses with delinquent tax liens — we pay off the back taxes at closing and you walk away clean.',
-    url: 'https://www.helpfulhomebuyersusa.com/tax-lien',
-    type: 'website',
-  },
+    'Behind on property taxes or hit with code violations in Virginia? We buy houses with delinquent tax liens and city citations — we pay off everything at closing and you walk away clean.',
+  robots: { index: false, follow: false },
 }
 
 const TRUST_POINTS = [
@@ -22,6 +13,8 @@ const TRUST_POINTS = [
   'Avoid a county tax sale and protect your remaining equity',
   'Cash offer in 24 hours, close in as few as 7 days',
   'We handle all title issues and tax payoff coordination with the county',
+  'Code violations and city liens paid off at closing — no upfront resolution required',
+  'We work with Virginia localities directly — Arlington, Fairfax, Norfolk, Richmond, Chesapeake',
 ]
 
 const FAQ_ITEMS = [
@@ -44,6 +37,16 @@ const FAQ_ITEMS = [
     question: 'How fast can you close?',
     answer:
       'As fast as 7 days. We order the tax payoff amount from the county and pay it directly at closing.',
+  },
+  {
+    question: 'I have code violation notices from the city — can I still sell?',
+    answer:
+      "Yes. Code violations don't stop a cash sale. We buy properties with open city citations regularly. The violation payoff or remediation costs are factored into our offer — you don't have to fix anything before closing.",
+  },
+  {
+    question: 'What if the city has already scheduled an inspection or hearing?',
+    answer:
+      "Contact us immediately. We move fast — sometimes faster than city timelines. In many cases we can get under contract and close before an inspection becomes a larger enforcement issue. The sooner you reach out, the more options you have.",
   },
 ]
 
@@ -75,9 +78,9 @@ export default function TaxLienPage() {
       />
       <DistressedLandingPage
         persona="Tax Lien"
-        headline="Sell Your House With Delinquent Property Taxes"
-        subheadline="We pay off the back taxes at closing and you walk away clean. Cash offer in 24 hours."
-        empathyText="Falling behind on property taxes can spiral fast — penalties, interest, and eventually a tax sale that wipes out your equity. We buy homes with delinquent taxes every month. We coordinate with the county, pay off everything owed, and close fast so you keep what's yours."
+        headline="Delinquent Taxes or Code Violations? We Buy Anyway."
+        subheadline="We pay off back taxes and city liens at closing — you walk away clean. Cash offer in 24 hours."
+        empathyText="Falling behind on property taxes or racking up code violations can spiral fast — penalties, interest, city fines, and eventually a forced tax sale or condemnation that wipes out your equity. We buy these properties every month across Virginia. We coordinate directly with the county and city, pay off everything owed at closing, and move fast so you keep what's yours."
         heroCtaText="Get My Cash Offer →"
         trustPoints={TRUST_POINTS}
         faqItems={FAQ_ITEMS}

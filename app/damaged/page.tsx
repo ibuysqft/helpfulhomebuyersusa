@@ -4,16 +4,17 @@ import type { Metadata } from 'next'
 import { DistressedLandingPage } from '@/components/distressed-landing-page'
 
 export const metadata: Metadata = {
-  title: 'We Buy Damaged Houses As-Is | Helpful Home Buyers USA',
-  description: 'Fire damage, mold, foundation issues — any condition. Cash offer in 24 hours. No repairs, no cleanup, no judgment.',
+  title: 'We Buy Condemned, Code Violation & Damaged Houses As-Is | Helpful Home Buyers USA',
+  description: 'Condemned property, city code violations, fire damage, mold — any condition. Cash offer in 24 hours. No repairs, no fines to pay upfront, no judgment.',
   robots: { index: false, follow: false },
 }
 
 const TRUST_POINTS = [
-  'We specialize in damaged, distressed, and problem properties',
+  'We buy condemned, cited, and severely damaged properties — no exceptions',
   'No repairs, no cleanup — we buy exactly as-is',
   'Cash offer in 24 hours regardless of condition',
-  'We handle liens, code violations, and permit issues at closing',
+  'Code violations, city liens, and permit issues handled at closing',
+  'We work with Norfolk, Fairfax, Richmond, and Hampton Roads code enforcement directly',
 ]
 
 const FAQ_ITEMS = [
@@ -22,16 +23,20 @@ const FAQ_ITEMS = [
     answer: 'No. We buy the property exactly as it sits today. No repairs, no cleaning, no staging, no contractor visits. Our offer accounts for everything — we handle all of it after closing.',
   },
   {
-    question: 'Will the damage significantly affect my offer?',
-    answer: 'Our offer accounts for the property\'s current condition and the estimated cost to repair. We\'re always transparent about how we calculate offers — no surprises. Many sellers are pleasantly surprised by how fair the number is.',
+    question: 'The city condemned my property — can you still buy it?',
+    answer: 'Yes. We buy condemned properties. A condemnation notice doesn\'t prevent a cash sale — it actually creates urgency to move quickly. Contact us immediately and we\'ll assess the property and get you an offer fast. The sooner we move, the more options you have.',
   },
   {
-    question: 'What if the property has liens or code violations?',
+    question: 'I have multiple code violation notices. Does that affect my offer?',
+    answer: 'We factor code violation remediation costs into our offer — you don\'t need to pay the fines or fix anything before we buy. We\'ve bought properties with $2K in fines and properties with $40K in city-ordered work orders. If there\'s equity, we can work with it.',
+  },
+  {
+    question: 'What if the property has liens or permit issues?',
     answer: 'We buy properties with liens, code violations, and permit issues regularly. These get handled at closing — your attorney and our closing coordinator work through them together. You don\'t have to resolve them before the sale.',
   },
   {
     question: 'What kinds of damage do you buy?',
-    answer: 'Fire and smoke damage, water and mold damage, foundation issues, roof failure, structural problems, vandalism, hoarding situations — we\'ve seen it all and bought it all. If it\'s a house, we\'ll make an offer.',
+    answer: 'Fire and smoke damage, water and mold damage, foundation issues, roof failure, structural problems, vandalism, hoarding situations, storm damage — we\'ve seen it all and bought it all. If it\'s a house in Virginia, we\'ll make an offer.',
   },
 ]
 
@@ -79,9 +84,9 @@ export default function DamagedPage() {
       />
       <DistressedLandingPage
         persona="Damaged"
-        headline="We Buy Damaged Houses As-Is."
-        subheadline="Fire damage, mold, foundation issues — any condition. Cash offer in 24 hours."
-        empathyText="Most buyers won't touch a damaged property. We specialize in exactly these situations. No repairs, no cleanup, no judgment — just a fair cash offer based on what the property is worth today. We take on the risk and the work so you don't have to."
+        headline="Condemned, Code Violations, or Severely Damaged? We Buy It."
+        subheadline="Fire damage, city citations, condemned notices — any condition. Cash offer in 24 hours."
+        empathyText="Most buyers won't touch a condemned or code-cited property. Banks won't finance them. Agents won't list them. We specialize in exactly these situations — damaged homes, city violations, condemned notices, structural problems. No repairs, no fines to pay upfront, no judgment. Just a fair cash offer based on what the property is worth, and a fast close so you can move on."
         heroCtaText="Get My Cash Offer →"
         trustPoints={TRUST_POINTS}
         faqItems={FAQ_ITEMS}

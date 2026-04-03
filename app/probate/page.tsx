@@ -7,17 +7,9 @@ import { siteConfig } from '@/config/site'
 import { registeredStates } from '@/lib/state-context'
 
 export const metadata: Metadata = {
-  title: 'Sell a Probate Property | National Cash Home Buyers for Estates',
-  description: 'We buy probate properties nationwide — working directly with executors, estate attorneys, and the court process. Cash offer in 24 hours, close in as few as 14 days after executor authorization. Serving 15 states.',
-  alternates: {
-    canonical: `${siteConfig.url}/probate`,
-  },
-  openGraph: {
-    title: 'Sell a Probate Property | National Cash Home Buyers for Estates',
-    description: 'We buy probate properties in 15 states. Work directly with executors and estate attorneys. Cash offer in 24 hours.',
-    url: `${siteConfig.url}/probate`,
-    type: 'website',
-  },
+  title: 'Sell a Virginia Probate Property Fast | We Work With Executors & Estate Attorneys',
+  description: 'We buy probate properties in Northern Virginia, Richmond, and Hampton Roads — working directly with executors, estate attorneys, and the court. Cash offer in 24 hours. Out-of-state executors welcome.',
+  robots: { index: false, follow: false },
 }
 
 const SCHEMA = {
@@ -99,6 +91,8 @@ export default function ProbatePage() {
                   'Cash offer in 24 hours, close in as few as 14 days after authorization',
                   'We pay all closing costs — zero out-of-pocket for the estate',
                   'Multiple heirs? We coordinate with all parties',
+                  'Out-of-state executor? Entire process handled remotely — no travel required',
+                  'Virginia probate typically takes 6–18 months — we help you plan the sale to stop carrying costs',
                 ].map(item => (
                   <li key={item} className="flex items-start gap-2">
                     <span className="text-amber-400 mt-1 flex-shrink-0">✓</span>
@@ -168,6 +162,14 @@ export default function ProbatePage() {
                 {
                   q: 'How are sale proceeds handled in probate?',
                   a: 'Sale proceeds go into the estate account. The executor pays estate debts, taxes, and administration costs per the probate court\'s requirements, then distributes the balance to beneficiaries. We coordinate with the title company and your attorney to ensure proper accounting.',
+                },
+                {
+                  q: 'I\'m the executor but I live out of state — how does this work?',
+                  a: 'We work with out-of-state executors regularly. Everything — offer review, negotiation, contract signing, and closing — can be handled electronically. You don\'t need to fly to Virginia. We coordinate with local Virginia title companies and your probate attorney to make the process seamless.',
+                },
+                {
+                  q: 'How long does Virginia probate take, and what does that mean for the property?',
+                  a: 'Virginia probate typically takes 6 to 18 months depending on estate complexity, the size of the estate, and whether there are creditor claims or heir disputes. Every month the property sits vacant means ongoing property taxes, insurance, utilities, and maintenance. We help you plan the sale so it closes as soon as probate allows — minimizing those carrying costs.',
                 },
               ].map(({ q, a }) => (
                 <div key={q} className="border-b border-slate-700 pb-6">
