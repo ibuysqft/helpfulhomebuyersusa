@@ -24,6 +24,7 @@ const TOP_SITUATIONS = [
   'vacant',
   'tired-landlord',
   'code-violations',
+  'senior-transition',
 ] as const
 
 type TopSituation = typeof TOP_SITUATIONS[number]
@@ -39,6 +40,7 @@ const SITUATION_LABELS: Record<TopSituation, string> = {
   vacant: 'Vacant Property',
   'tired-landlord': 'Tired Landlord',
   'code-violations': 'Code Violations',
+  'senior-transition': 'Senior Transition',
 }
 
 interface Props {

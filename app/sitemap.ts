@@ -79,7 +79,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const hubPages: MetadataRoute.Sitemap = [
-    { url: `${base}/probate`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/curative-title`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/surplus-funds`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
   ]
@@ -97,6 +96,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const TOP_SITUATIONS_FOR_SITEMAP = [
     'foreclosure', 'inherited', 'divorce', 'probate', 'behind-payments',
     'tax-lien', 'fire-damage', 'vacant', 'tired-landlord', 'code-violations',
+    'senior-transition',
   ]
 
   const programmaticHubPages: MetadataRoute.Sitemap = registeredStates.flatMap(state =>
