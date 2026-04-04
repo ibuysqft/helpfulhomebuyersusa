@@ -467,6 +467,58 @@ export const situationDefs = [
       'We handle all payoff coordination with your servicer',
     ],
   },
+  {
+    key: 'out-of-state-landlord',
+    label: 'Out-of-State Landlord Ready to Sell?',
+    icon: 'MapPin',
+    description: 'Managing a rental from out of state is exhausting. We buy landlord properties as-is — tenants in place or vacant — and handle the entire closing remotely.',
+    bullets: [
+      'Buy with tenants in place — no eviction needed',
+      'Close remotely — no travel required',
+      'Cash offer within 24 hours',
+      'We handle all local coordination and inspections',
+      'No repairs, no commissions, no headaches',
+    ],
+  },
+  {
+    key: 'reverse-mortgage',
+    label: 'Reverse Mortgage Heir or Heir-in-Waiting?',
+    icon: 'Heart',
+    description: 'When a parent passes with a reverse mortgage, heirs face a 30-day call-due window. We buy reverse mortgage homes fast and work directly with your HUD servicer.',
+    bullets: [
+      'We understand HECM and proprietary reverse mortgage payoffs',
+      'Close before the 30-day due-and-payable deadline',
+      'We work directly with HUD-approved servicers',
+      'Heirs pay nothing out of pocket — we cover closing costs',
+      'Cash offer within 24 hours of inspection',
+    ],
+  },
+  {
+    key: 'job-relocation',
+    label: 'Relocating for a New Job?',
+    icon: 'Briefcase',
+    description: 'When your start date is weeks away and your house isn\'t sold, a cash offer removes the pressure. We close on your timeline — sometimes in as few as 7 days.',
+    bullets: [
+      'Close before your relocation start date',
+      'No contingencies, no financing delays',
+      'Cash offer within 24 hours',
+      'Skip the showings and open houses',
+      'We pay all closing costs — more cash for your move',
+    ],
+  },
+  {
+    key: 'military-pcs',
+    label: 'Military PCS — Need to Sell Fast?',
+    icon: 'Shield',
+    description: 'PCS orders don\'t wait for the housing market. We buy military homes fast, close on your report date, and work with BAH and VA loan payoffs so you don\'t have to.',
+    bullets: [
+      'Close by your PCS report date — guaranteed',
+      'We handle VA loan payoff coordination',
+      'No repairs, no showings, no delays',
+      'Cash offer within 24 hours of walk-through',
+      'We buy near all major US military installations',
+    ],
+  },
 ] as const
 
 export type SituationKey = typeof situationDefs[number]['key']

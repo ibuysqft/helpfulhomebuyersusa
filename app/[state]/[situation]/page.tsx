@@ -24,6 +24,16 @@ const TOP_SITUATIONS = [
   'vacant',
   'tired-landlord',
   'code-violations',
+  'senior-transition',
+  'pre-foreclosure',
+  'hoarder-house',
+  'out-of-state-landlord',
+  'reverse-mortgage',
+  'job-relocation',
+  'military-pcs',
+  'irs-lien',
+  'bankruptcy',
+  'medical-bills',
 ] as const
 
 type TopSituation = typeof TOP_SITUATIONS[number]
@@ -39,6 +49,16 @@ const SITUATION_LABELS: Record<TopSituation, string> = {
   vacant: 'Vacant Property',
   'tired-landlord': 'Tired Landlord',
   'code-violations': 'Code Violations',
+  'senior-transition': 'Senior Transition',
+  'pre-foreclosure': 'Pre-Foreclosure',
+  'hoarder-house': 'Hoarder House',
+  'out-of-state-landlord': 'Out-of-State Landlord',
+  'reverse-mortgage': 'Reverse Mortgage',
+  'job-relocation': 'Job Relocation',
+  'military-pcs': 'Military PCS',
+  'irs-lien': 'IRS Lien',
+  bankruptcy: 'Bankruptcy',
+  'medical-bills': 'Medical Bills',
 }
 
 interface Props {
