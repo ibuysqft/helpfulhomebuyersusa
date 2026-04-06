@@ -24,6 +24,16 @@ const TOP_SITUATIONS = [
   'vacant',
   'tired-landlord',
   'code-violations',
+  'senior-transition',
+  'pre-foreclosure',
+  'hoarder-house',
+  'out-of-state-landlord',
+  'reverse-mortgage',
+  'job-relocation',
+  'military-pcs',
+  'irs-lien',
+  'bankruptcy',
+  'medical-bills',
 ] as const
 
 type TopSituation = typeof TOP_SITUATIONS[number]
@@ -49,6 +59,26 @@ const SITUATION_PROMPTS: Record<TopSituation, string> = {
     'the landlord-tenant law framework, specifically tenant rights when a property is sold, required notice periods before closing with tenants in place, and any rent control or just-cause eviction rules that apply',
   'code-violations':
     'how open code violations and unpermitted work are handled in property sales, whether violations transfer with the title, city-run abatement programs that could place liens, and how condemned status affects a sale',
+  'senior-transition':
+    'the legal and financial considerations for seniors selling a home to transition to assisted living or memory care, including Medicaid look-back rules for home equity, any homestead exemption implications, and power-of-attorney requirements for a sale when the owner has diminished capacity',
+  'pre-foreclosure':
+    "Virginia's non-judicial pre-foreclosure process specifically — from the first missed payment through the Notice of Default and the 14-day trustee sale notice window, distinguishing pre-foreclosure from active foreclosure, and what options a homeowner has during the NOD period before the auction is advertised",
+  'hoarder-house':
+    'how severely cluttered or hoarding-condition properties are handled under state code enforcement, whether local health departments can issue condemnation or abatement orders for hoarding conditions, and how the presence of biohazards or structural damage from accumulation affects a cash sale timeline',
+  'out-of-state-landlord':
+    'the landlord-tenant laws that apply when a non-resident property owner sells a tenant-occupied rental, including required notice periods to tenants before closing, whether leases transfer to the buyer by operation of law, and any state withholding requirements on sale proceeds for non-resident sellers',
+  'reverse-mortgage':
+    "the HECM and proprietary reverse mortgage payoff process in this state when a borrower dies or vacates, the 30-day due-and-payable notice and 6-month extension window under HUD rules, and how Virginia title companies handle federal HUD lien discharge — distinguishing federal HECM rules from any state-level reverse mortgage statutes",
+  'job-relocation':
+    'the practical legal and financial considerations for a homeowner who must sell quickly due to a job relocation, including typical Virginia closing timelines, whether a home sale contingency can be waived, and how a cash sale compares to a traditional listing when the seller has a hard start-date deadline',
+  'military-pcs':
+    "the Servicemembers Civil Relief Act (SCRA) protections available to military homeowners during a PCS move, Virginia-specific considerations for VA loan payoffs on a quick sale, and the resources available at major Virginia installations (Fort Belvoir, Quantico, Pentagon area) for military families who must sell on short PCS timelines",
+  'irs-lien':
+    'how federal IRS tax liens attach to real property in Virginia, the IRS Certificate of Discharge (Form 14135) process that allows a sale to close despite an outstanding lien, the typical timeline for IRS lien discharge, and how Virginia title companies handle federal lien payoffs at closing — noting that IRS lien rules are federal and apply uniformly regardless of state',
+  bankruptcy:
+    'how Chapter 7 and Chapter 13 bankruptcy affect a homeowner\'s ability to sell their Virginia home, the automatic stay and how it interacts with a pending sale, whether the bankruptcy trustee must approve a sale, and the homestead exemption under Virginia Code § 34-4 that protects up to $25,000 of home equity in bankruptcy proceedings',
+  'medical-bills':
+    'how medical debt and hospital liens can attach to real property in Virginia, the Virginia Hospital Lien Act and whether unpaid medical bills can become judgment liens on a home, and the practical process for clearing medical judgment liens at closing so a cash buyer can take clear title',
 }
 
 const REGISTRY_PATH = path.resolve('data/state-content/registry.ts')

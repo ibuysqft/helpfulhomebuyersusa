@@ -97,6 +97,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const TOP_SITUATIONS_FOR_SITEMAP = [
     'foreclosure', 'inherited', 'divorce', 'probate', 'behind-payments',
     'tax-lien', 'fire-damage', 'vacant', 'tired-landlord', 'code-violations',
+    'senior-transition', 'pre-foreclosure', 'hoarder-house', 'out-of-state-landlord',
+    'reverse-mortgage', 'job-relocation', 'military-pcs', 'irs-lien',
+    'bankruptcy', 'medical-bills',
   ]
 
   const programmaticHubPages: MetadataRoute.Sitemap = registeredStates.flatMap(state =>

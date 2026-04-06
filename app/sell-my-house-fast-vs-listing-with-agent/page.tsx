@@ -42,6 +42,44 @@ const schema = {
         },
       ],
     },
+    {
+      '@type': 'HowTo',
+      name: 'How to Sell Your House Fast to a Cash Buyer',
+      description: 'The complete step-by-step process for selling your home to Helpful Home Buyers USA — from first contact to closing.',
+      totalTime: 'P14D',
+      step: [
+        {
+          '@type': 'HowToStep',
+          position: 1,
+          name: 'Request a Cash Offer',
+          text: 'Fill out our online form or call (703) 940-1159. We need your property address and a brief description of the home\'s condition. Takes 2 minutes.',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 2,
+          name: 'Property Walkthrough',
+          text: 'We schedule a quick walkthrough (or virtual tour) within 24–48 hours to assess the property as-is. No repairs or cleaning needed beforehand.',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 3,
+          name: 'Receive a Written Cash Offer',
+          text: 'Within 24 hours of the walkthrough you receive a written, no-obligation cash offer. There is no pressure and no expiration deadline.',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 4,
+          name: 'Choose Your Closing Date',
+          text: 'Accept the offer and pick any closing date that works for you — as fast as 7 days or as far out as 60+ days. We work on your schedule.',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 5,
+          name: 'Close and Get Paid',
+          text: 'Sign closing documents at a local title company. No agent commissions, no closing costs, no fees. You receive the full offer amount in cash at closing.',
+        },
+      ],
+    },
   ],
 }
 

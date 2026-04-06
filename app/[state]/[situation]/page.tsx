@@ -24,6 +24,16 @@ const TOP_SITUATIONS = [
   'vacant',
   'tired-landlord',
   'code-violations',
+  'senior-transition',
+  'pre-foreclosure',
+  'hoarder-house',
+  'out-of-state-landlord',
+  'reverse-mortgage',
+  'job-relocation',
+  'military-pcs',
+  'irs-lien',
+  'bankruptcy',
+  'medical-bills',
 ] as const
 
 type TopSituation = typeof TOP_SITUATIONS[number]
@@ -39,6 +49,16 @@ const SITUATION_LABELS: Record<TopSituation, string> = {
   vacant: 'Vacant Property',
   'tired-landlord': 'Tired Landlord',
   'code-violations': 'Code Violations',
+  'senior-transition': 'Senior Transition',
+  'pre-foreclosure': 'Pre-Foreclosure',
+  'hoarder-house': 'Hoarder House',
+  'out-of-state-landlord': 'Out-of-State Landlord',
+  'reverse-mortgage': 'Reverse Mortgage',
+  'job-relocation': 'Job Relocation',
+  'military-pcs': 'Military PCS',
+  'irs-lien': 'IRS Lien',
+  bankruptcy: 'Bankruptcy',
+  'medical-bills': 'Medical Bills',
 }
 
 interface Props {
@@ -100,11 +120,20 @@ export default async function StateSituationHub({ params }: Props) {
 
   const localSchema = {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
+    '@type': 'RealEstateAgent',
     name: siteConfig.name,
     telephone: siteConfig.phone,
     url: siteConfig.url,
     areaServed: stateObj.name,
+    priceRange: '$$',
+    description: `We buy ${situationLabel.toLowerCase()} houses throughout ${stateObj.name} for cash. No repairs, no commissions, close in 7 days or on your schedule.`,
+    knowsAbout: [
+      'Cash home buying',
+      situationLabel,
+      `Selling a house in ${stateObj.name}`,
+      'As-is home sales',
+      'Fast home sales',
+    ],
   }
 
   const breadcrumbSchema = {
@@ -171,26 +200,34 @@ export default async function StateSituationHub({ params }: Props) {
 
         <TrustBar />
 
-        {/* City grid */}
+        {/* Top cities we buy in */}
         <section className="py-16 px-4 bg-slate-800">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-2xl font-bold text-white mb-2 text-center">
-              Cities We Serve in {stateObj.name}
+              Top Cities We Buy Houses In — {stateObj.name}
             </h2>
             <p className="text-slate-400 text-center mb-8">
-              Select your city for local-specific information.
+              We buy houses for cash in every city across {stateObj.name}. Select yours for local details.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {cities.map(city => (
+              {cities.slice(0, 8).map(city => (
                 <Link
                   key={city.slug}
                   href={`/${stateSlug}/${situationSlug}/${city.slug}`}
-                  className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm text-center transition-colors"
+                  className="bg-slate-700 hover:bg-amber-600 text-white px-4 py-3 rounded-lg text-sm text-center font-medium transition-colors"
                 >
                   {city.name}
                 </Link>
               ))}
             </div>
+            <p className="text-center mt-6">
+              <Link
+                href={`/${stateSlug}/${situationSlug}`}
+                className="text-amber-400 hover:text-amber-300 text-sm underline underline-offset-4"
+              >
+                View all {stateObj.name} cities →
+              </Link>
+            </p>
           </div>
         </section>
 
